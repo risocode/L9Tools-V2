@@ -1,3 +1,4 @@
+
 /*
  * =================================================================
  * PROFILE PAGE
@@ -22,7 +23,7 @@
 
 .profile-banner {
   @apply h-36 w-full bg-cover bg-center rounded-t-lg relative overflow-hidden;
-  background-image: url('/l9rs/bg_spot.jpg');
+  background-image: url('/l9rs/bg_header.jpg');
 }
 
 .profile-banner-border {
@@ -44,7 +45,7 @@
 }
 
 .profile-avatar {
-  @apply w-full h-full border-2 border-cyan-300;
+  @apply w-full h-full border-4;
 }
 
 .profile-avatar-hover-overlay {
@@ -129,11 +130,11 @@
   box-shadow: 0 0 12px #FFD700;
 }
 .profile-tier-lifetime {
-  @apply bg-[#ff4d4d]/20 border border-[#ff4d4d] text-white;
-  box-shadow: 0 0 8px #ff4d4d80;
+  @apply bg-amber-500/20 border border-amber-500 text-white;
+  box-shadow: 0 0 8px #f59e0b80;
 }
 .profile-tier-lifetime:hover {
-  box-shadow: 0 0 12px #ff4d4d;
+  box-shadow: 0 0 12px #f59e0b;
 }
 
 .profile-tier-admin {

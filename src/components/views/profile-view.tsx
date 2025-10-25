@@ -39,6 +39,15 @@ export function ProfileView() {
             default: return 'profile-tier-free';
         }
     }
+    
+    const getAvatarBorderClass = (tier: string | null | undefined) => {
+        if (user.is_admin) return 'border-purple-500';
+        switch (tier) {
+            case 'pro': return 'border-yellow-400';
+            case 'lifetime': return 'border-amber-500';
+            default: return 'border-white';
+        }
+    }
 
     const expiresDate = user.subscription_expires_at ? new Date(user.subscription_expires_at) : null;
     const isExpired = expiresDate ? new Date() > expiresDate : false;
@@ -51,13 +60,10 @@ export function ProfileView() {
                 </div>
                 <div className="profile-avatar-container">
                     <div className="profile-avatar-ring" />
-                     <Avatar className="profile-avatar">
+                     <Avatar className={cn("profile-avatar", getAvatarBorderClass(user.subscription_tier))}>
                         <AvatarImage src={user.user_photo_url || ''} alt={user.display_name || 'User'} />
                         <AvatarFallback className="text-4xl bg-gray-800">{fallback}</AvatarFallback>
                     </Avatar>
-                     <div className="profile-avatar-hover-overlay">
-                        <span>Change Avatar</span>
-                    </div>
                 </div>
                  <div className="profile-name-container pt-20">
                     <h1 className="profile-username flex items-center justify-center gap-2">
