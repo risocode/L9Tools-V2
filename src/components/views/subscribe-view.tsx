@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, Star, Flame } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PaymentMethodDialog } from "./payment-method-dialog";
+import { useAuth } from "@/context/auth-context";
 
 const proPerks = [
     "Save your boss timers across all devices",
@@ -23,6 +24,7 @@ export function SubscribeView() {
   const [selectedPlan, setSelectedPlan] = useState<Plan>("lifetime");
   const [isPaymentMethodDialogOpen, setIsPaymentMethodDialogOpen] = useState(false);
   const router = useRouter();
+  const { user, openAuthDialog } = useAuth();
 
   const showPromo = true; // Assuming promo is always on
 
@@ -42,7 +44,11 @@ export function SubscribeView() {
   }
 
   const handleSubscribeClick = () => {
-    setIsPaymentMethodDialogOpen(true);
+    if (!user) {
+      openAuthDialog();
+    } else {
+      setIsPaymentMethodDialogOpen(true);
+    }
   };
   
   const handlePaymentMethodSelect = (method: 'gcash' | 'usdt') => {
