@@ -54,7 +54,7 @@ export function DonationDialog({ isOpen, onClose }: DonationDialogProps) {
             </DialogClose>
           <DialogHeader className="text-center pt-2">
             <DialogTitle className="sr-only">Support Our Quest</DialogTitle>
-             <h2 className="font-cinzel text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-600">
+             <h2 className="font-cinzel text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-600 text-center">
               Support Our Quest
             </h2>
             <p className="text-center text-sm text-silver/80 pt-2 pb-4 max-w-sm mx-auto">
