@@ -29,6 +29,7 @@ export function TimePickerDialog({ isOpen, onClose, boss, isSubmitting, onConfir
   const [manualMinute, setManualMinute] = useState<string>('');
   const [manualAmPm, setManualAmPm] = useState<string>('AM');
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [showSlowLoadingTip, setShowSlowLoadingTip] = useState(false);
   const { toast } = useToast();
 
   const hours = useMemo(() => Array.from({ length: 12 }, (_, i) => String(i + 1)), []);
@@ -41,8 +42,21 @@ export function TimePickerDialog({ isOpen, onClose, boss, isSubmitting, onConfir
         setManualHour(String(now.getHours() % 12 || 12));
         setManualMinute(String(now.getMinutes()).padStart(2, '0'));
         setManualAmPm(now.getHours() >= 12 ? 'PM' : 'AM');
+        setShowSlowLoadingTip(false); // Reset tip on open
     }
   }, [isOpen]);
+  
+  useEffect(() => {
+    let timer: NodeJS.Timeout | undefined;
+    if (isSubmitting) {
+      timer = setTimeout(() => {
+        setShowSlowLoadingTip(true);
+      }, 5000); // 5 seconds
+    } else {
+      setShowSlowLoadingTip(false);
+    }
+    return () => clearTimeout(timer);
+  }, [isSubmitting]);
 
   const handleDateSelect = (date: Date | undefined) => {
     setManualDate(date);
@@ -145,9 +159,11 @@ export function TimePickerDialog({ isOpen, onClose, boss, isSubmitting, onConfir
                     </div>
                 </div>
             </div>
-            <div className="text-center text-xs text-muted-foreground/50 pt-2">
-                Tip: If this takes too long, try a hard refresh (Ctrl + Shift + R).
-            </div>
+            {showSlowLoadingTip && (
+                <div className="text-center text-xs text-muted-foreground/50 pt-2">
+                    Tip: If this takes too long, try a hard refresh (Ctrl + Shift + R).
+                </div>
+            )}
             <DialogFooter className="pt-4">
                 <DialogClose asChild><Button variant="destructive">Cancel</Button></DialogClose>
                 <Button onClick={handleSubmit} disabled={isSubmitting}>
