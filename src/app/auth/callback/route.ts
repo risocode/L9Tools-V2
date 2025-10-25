@@ -8,20 +8,14 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get('code')
   
   // This is the URL that the user should be redirected to after a successful login.
-  const redirectTo = process.env.NEXT_PUBLIC_SITE_URL;
-
-  if (!redirectTo) {
-    console.error('CRITICAL: NEXT_PUBLIC_SITE_URL is not set in environment variables.');
-    // Fallback to a relative path if the env var is not set, though it should be.
-    return NextResponse.redirect(new URL('/auth/auth-code-error', request.url));
-  }
+  const redirectTo = 'https://www.l9tools.online/dashboard';
 
   if (code) {
     const supabase = await createSupabaseServerClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      // On successful login, redirect to the main dashboard using the site URL.
-      return NextResponse.redirect(`${redirectTo}/dashboard`)
+      // On successful login, redirect to the main dashboard.
+      return NextResponse.redirect(redirectTo)
     }
     console.error('Error exchanging code for session:', error.message);
   } else {
@@ -29,5 +23,5 @@ export async function GET(request: NextRequest) {
   }
 
   // If there's an error or no code, redirect to an error page.
-  return NextResponse.redirect(`${redirectTo}/auth/auth-code-error`)
+  return NextResponse.redirect('https://www.l9tools.online/auth/auth-code-error')
 }
