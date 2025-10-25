@@ -201,7 +201,7 @@ export function BossHuntView({ initialBosses }: BossHuntViewProps) {
 
         <TimePickerDialog 
           isOpen={isTimePickerDialog}
-          onClose={() => setIsTimePickerDialog(false)}
+          onClose={setIsTimePickerDialog}
           boss={timeDialogBoss}
           isSubmitting={isSubmittingTime}
           onConfirm={handleConfirmSetTime}
