@@ -112,7 +112,7 @@ export function TimePickerDialog({ isOpen, onClose, boss, isSubmitting, onConfir
                         <PopoverTrigger asChild>
                             <Button
                                 variant={"outline"}
-                                className={cn("w-full justify-center text-center font-normal text-lg h-12", !manualDate && "text-muted-foreground")}
+                                className={cn("w-full justify-center text-center font-normal text-lg h-12 futuristic-select-trigger", !manualDate && "text-muted-foreground")}
                             >
                                 <CalendarIcon className="mr-2 h-4 w-4" />
                                 {manualDate ? format(manualDate, "PPP") : <span>Pick a date</span>}
@@ -132,7 +132,7 @@ export function TimePickerDialog({ isOpen, onClose, boss, isSubmitting, onConfir
                     <div className="grid gap-2 text-center">
                         <Label htmlFor="hour" className="text-lg">Hour</Label>
                         <Select value={manualHour} onValueChange={setManualHour}>
-                            <SelectTrigger id="hour" className="text-xl h-14"><SelectValue /></SelectTrigger>
+                            <SelectTrigger variant="futuristic" id="hour" className="text-xl h-14"><SelectValue /></SelectTrigger>
                             <SelectContent>
                                 {hours.map(h => <SelectItem key={h} value={h} className="text-lg">{h}</SelectItem>)}
                             </SelectContent>
@@ -141,7 +141,7 @@ export function TimePickerDialog({ isOpen, onClose, boss, isSubmitting, onConfir
                     <div className="grid gap-2 text-center">
                         <Label htmlFor="minute" className="text-lg">Minute</Label>
                         <Select value={manualMinute} onValueChange={setManualMinute}>
-                            <SelectTrigger id="minute" className="text-xl h-14"><SelectValue /></SelectTrigger>
+                            <SelectTrigger variant="futuristic" id="minute" className="text-xl h-14"><SelectValue /></SelectTrigger>
                             <SelectContent>
                                 {minutes.map(m => <SelectItem key={m} value={m} className="text-lg">{m}</SelectItem>)}
                             </SelectContent>
@@ -150,7 +150,7 @@ export function TimePickerDialog({ isOpen, onClose, boss, isSubmitting, onConfir
                     <div className="grid gap-2 text-center">
                         <Label htmlFor="ampm" className="text-lg">AM/PM</Label>
                         <Select value={manualAmPm} onValueChange={setManualAmPm}>
-                          <SelectTrigger id="ampm" className="text-xl h-14"><SelectValue /></SelectTrigger>
+                          <SelectTrigger variant="futuristic" id="ampm" className="text-xl h-14"><SelectValue /></SelectTrigger>
                           <SelectContent>
                             <SelectItem value="AM" className="text-lg">AM</SelectItem>
                             <SelectItem value="PM" className="text-lg">PM</SelectItem>
