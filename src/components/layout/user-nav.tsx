@@ -70,7 +70,7 @@ export function UserNav({}: UserNavProps) {
               </Avatar>
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56" align="end" forceMount>
+          <DropdownMenuContent className="fantasy-dropdown-menu w-56" align="end" forceMount>
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">{user.display_name || user.username}</p>
