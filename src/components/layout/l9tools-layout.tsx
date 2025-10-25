@@ -39,7 +39,6 @@ import { DonationDialog } from '../views/donation-dialog';
 import { AdDialog } from '../views/ad-dialog';
 import { AdProvider } from '@/context/ad-context';
 import { useLoading } from '@/context/loading-context';
-import { LogoUploader } from '../views/logo-uploader';
 
 const donateButtonImages = ['/l9rs/donate1.png', '/l9rs/donate2.png'];
 
@@ -72,7 +71,6 @@ export function L9ToolsLayout({
   const { showLoader, isLoading } = useLoading();
   const [isLegalOpen, setIsLegalOpen] = useState(false);
   const [isDonationOpen, setIsDonationOpen] = useState(false);
-  const [isLogoUploaderOpen, setIsLogoUploaderOpen] = useState(false);
   const [legalType, setLegalType] = useState<'terms' | 'privacy' | 'disclaimer' | 'cookie'>('terms');
   const [donateButtonImage, setDonateButtonImage] = useState(donateButtonImages[0]);
   const [isSubscribeExpanded, setIsSubscribeExpanded] = useState(false);
@@ -209,8 +207,7 @@ export function L9ToolsLayout({
 
 
   const isSubscribed = user?.subscription_tier === 'pro' || user?.subscription_tier === 'lifetime';
-  const showCustomLogo = !!(isSubscribed && user?.custom_logo_url);
-  const logoSrc = (isSubscribed && user?.custom_logo_url) ? user.custom_logo_url : "/l9logo.png";
+  const logoSrc = "/l9logo.png";
 
 
   const headerProps: ViewHeaderProps = { 
@@ -230,7 +227,7 @@ export function L9ToolsLayout({
             <Image src="/l9rs/subs1.png" alt="Subscribe Icon" width={50} height={50} className="subscribe-img-icon" />
           </button>
         )}
-         {!isDashboardPage && <UserNav onOpenLogoUploader={() => setIsLogoUploaderOpen(true)} />}
+         {!isDashboardPage && <UserNav />}
       </div>
     )
   };
@@ -280,12 +277,8 @@ export function L9ToolsLayout({
                   alt="L9 Tools Logo" 
                   fill
                   sizes="18rem"
-                  className={cn(
-                    "z-10 object-contain",
-                    showCustomLogo ? "p-6" : "p-4" // Less padding for custom logo if needed
-                  )}
+                  className="z-10 object-contain p-4"
                   priority={true}
-                  unoptimized={showCustomLogo} // Important for external URLs
                 />
               </a>
             </SidebarHeader>
@@ -398,7 +391,6 @@ export function L9ToolsLayout({
         <AuthDialog />
         <LegalDialog isOpen={isLegalOpen} onClose={() => setIsLegalOpen(false)} type={legalType} />
         <DonationDialog isOpen={isDonationOpen} onClose={() => setIsDonationOpen(false)} />
-        <LogoUploader isOpen={isLogoUploaderOpen} onClose={() => setIsLogoUploaderOpen(false)} />
         <AdDialog />
       </SidebarProvider>
     </AdProvider>

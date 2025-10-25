@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Copy, LogOut, User as UserIcon, Repeat, Replace } from "lucide-react";
+import { Copy, LogOut, User as UserIcon, Repeat } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import Image from "next/image";
@@ -19,11 +19,9 @@ import Loader from "../ui/loader";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useState, useEffect } from "react";
 
-interface UserNavProps {
-  onOpenLogoUploader: () => void;
-}
+interface UserNavProps {}
 
-export function UserNav({ onOpenLogoUploader }: UserNavProps) {
+export function UserNav({}: UserNavProps) {
   const { user, openAuthDialog, logout, isInitialLoading } = useAuth();
   const { toast } = useToast();
   const [hasMounted, setHasMounted] = useState(false);
@@ -92,12 +90,6 @@ export function UserNav({ onOpenLogoUploader }: UserNavProps) {
                     <span>Renew Subscription</span>
                   </Link>
                 </DropdownMenuItem>
-              )}
-              {isSubscribed && (
-                  <DropdownMenuItem onSelect={() => onOpenLogoUploader()}>
-                      <Replace className="mr-2 h-4 w-4" />
-                      <span>Change Logo</span>
-                  </DropdownMenuItem>
               )}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
