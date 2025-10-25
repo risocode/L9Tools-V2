@@ -107,12 +107,17 @@ export default {
           '50%': { transform: 'scale(0.7, 1.3)' },
           '75%': { transform: 'scale(1.3, 0.7)' },
           '100%': { transform: 'scale(1, 1)' },
+        },
+        'toast-progress': {
+          '0%': { width: '100%' },
+          '100%': { width: '0%' },
         }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'bounce-scale': 'bounce-scale 0.5s linear',
+        'toast-progress': 'toast-progress linear 1',
       },
     },
   },
