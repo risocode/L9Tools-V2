@@ -8,11 +8,10 @@ import { headers } from 'next/headers';
 export async function signInWithGoogle() {
   const supabase = await createSupabaseServerClient();
 
-  const headersList = await headers();
-  const origin = headersList.get('origin');
+  const origin = process.env.NEXT_PUBLIC_SITE_URL || headers().get('origin');
 
   if (!origin) {
-    // Fallback if origin is missing
+    // Fallback if origin is missing from both env and headers
     return redirect('/auth/auth-code-error');
   }
 
