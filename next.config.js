@@ -11,12 +11,7 @@ const withPWA = require('next-pwa')({
 const nextConfig = {
   output: 'standalone',
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'picsum.photos',
-      }
-    ],
+    remotePatterns: [],
   },
   webpack: (config, { isServer }) => {
     config.resolve.alias = {

@@ -7,11 +7,12 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')
   
-  // Force the use of the environment variable to ensure consistency.
-  const origin = process.env.NEXT_PUBLIC_SITE_URL;
+  // This is the URL that the user should be redirected to after a successful login.
+  const redirectTo = process.env.NEXT_PUBLIC_SITE_URL;
 
-  if (!origin) {
+  if (!redirectTo) {
     console.error('CRITICAL: NEXT_PUBLIC_SITE_URL is not set in environment variables.');
+    // Fallback to a relative path if the env var is not set, though it should be.
     return NextResponse.redirect(new URL('/auth/auth-code-error', request.url));
   }
 
@@ -19,12 +20,14 @@ export async function GET(request: NextRequest) {
     const supabase = await createSupabaseServerClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      // On successful login, redirect to the main dashboard.
-      return NextResponse.redirect(`${origin}/dashboard`)
+      // On successful login, redirect to the main dashboard using the site URL.
+      return NextResponse.redirect(`${redirectTo}/dashboard`)
     }
+    console.error('Error exchanging code for session:', error.message);
+  } else {
+    console.error('No code found in authentication callback.');
   }
 
   // If there's an error or no code, redirect to an error page.
-  console.error('Authentication callback error or no code found.');
-  return NextResponse.redirect(`${origin}/auth/auth-code-error`)
+  return NextResponse.redirect(`${redirectTo}/auth/auth-code-error`)
 }
