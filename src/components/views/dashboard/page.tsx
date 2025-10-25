@@ -11,7 +11,6 @@ import Image from 'next/image';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { UserNav } from '@/components/layout/user-nav';
-import { useState } from 'react';
 
 interface FeatureButtonProps {
   title: string;
@@ -84,7 +83,6 @@ const FeatureButton = ({ title, href, disabled, imageSrc }: FeatureButtonProps) 
 
 
 export default function DashboardPage() {
-  const [isLogoUploaderOpen, setIsLogoUploaderOpen] = useState(false);
   return (
     <L9ToolsLayout>
       <div className="relative h-full">
@@ -97,7 +95,7 @@ export default function DashboardPage() {
                             <h1 className="banner-title">Welcome to the Player Hall</h1>
                             <p className="banner-subtitle">Select a tool to begin your journey.</p>
                              <div className="flex justify-center mt-6">
-                                <UserNav onOpenLogoUploader={() => setIsLogoUploaderOpen(true)} />
+                                <UserNav />
                             </div>
                         </div>
                   </div>
