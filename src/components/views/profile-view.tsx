@@ -40,8 +40,8 @@ export function ProfileView() {
         }
     }
     
-    const getAvatarBorderClass = (tier: string | null | undefined) => {
-        if (user.is_admin) return 'border-purple-500';
+    const getAvatarBorderClass = (tier: string | null | undefined, isAdmin: boolean | undefined) => {
+        if (isAdmin) return 'border-purple-500';
         switch (tier) {
             case 'pro': return 'border-yellow-400';
             case 'lifetime': return 'border-amber-500';
@@ -60,12 +60,12 @@ export function ProfileView() {
                 </div>
                 <div className="profile-avatar-container">
                     <div className="profile-avatar-ring" />
-                     <Avatar className={cn("profile-avatar", getAvatarBorderClass(user.subscription_tier))}>
+                     <Avatar className={cn("profile-avatar", getAvatarBorderClass(user.subscription_tier, user.is_admin))}>
                         <AvatarImage src={user.user_photo_url || ''} alt={user.display_name || 'User'} />
                         <AvatarFallback className="text-4xl bg-gray-800">{fallback}</AvatarFallback>
                     </Avatar>
                 </div>
-                 <div className="profile-name-container pt-20">
+                 <div className="profile-name-container pt-16">
                     <h1 className="profile-username flex items-center justify-center gap-2">
                         {user.display_name || user.username}
                         {user.is_admin && <Crown className="h-5 w-5 text-red-400" />}
@@ -75,11 +75,11 @@ export function ProfileView() {
             </header>
             <div className="profile-content">
 
-                <Separator className="profile-divider my-6" />
+                <Separator className="profile-divider my-4" />
 
-                <div className="px-6 py-4 space-y-6">
+                <div className="px-4 py-2 space-y-4">
                     <h3 className="profile-section-title"><User className="mr-3" /> Profile Details</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
                        <div className="profile-detail-item">
                            <p className="profile-detail-label"><User className="h-4 w-4" />Username</p>
                            <p className="profile-detail-value-cyan">{user.username || 'Not set'}</p>
@@ -95,11 +95,11 @@ export function ProfileView() {
                     </div>
                 </div>
                 
-                <Separator className="profile-divider my-6" />
+                <Separator className="profile-divider my-4" />
                 
-                <div className="px-6 py-4 space-y-6">
+                <div className="px-4 py-2 space-y-4">
                      <h3 className="profile-section-title"><Star className="mr-3 text-yellow-400" /> Subscription</h3>
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 items-center">
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
                         <div className="profile-detail-item">
                             <p className="profile-detail-label">Current Tier</p>
                             <div className={cn("profile-tier-pill", getTierPillClass(user.subscription_tier))}>
@@ -120,7 +120,7 @@ export function ProfileView() {
                      </div>
                 </div>
 
-                <div className="flex justify-center pt-8 pb-6">
+                <div className="flex justify-center pt-6 pb-4">
                     <Button className="profile-update-button" disabled>Update Profile</Button>
                 </div>
             </div>
