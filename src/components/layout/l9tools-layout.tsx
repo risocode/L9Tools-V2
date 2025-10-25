@@ -138,6 +138,17 @@ export function L9ToolsLayout({
     },
   ];
 
+  if (user?.is_admin) {
+    navItems.push({
+      id: 'admin',
+      label: 'Admin Panel',
+      icon: Shield,
+      href: '/admin',
+      isSpaceButton: true,
+      ariaLabel: 'Admin Panel'
+    });
+  }
+
   
   let currentTitle = 'Boss Hunt';
   let description = 'Track and prepare for upcoming boss battles.';
