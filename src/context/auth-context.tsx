@@ -31,6 +31,7 @@ interface AuthContextState {
   closeAuthDialog: () => void;
   login: () => Promise<void>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextState | undefined>(undefined);
@@ -52,7 +53,6 @@ async function updateUserWithProfile(
 
   if (error) {
     console.error("Error fetching profile:", error.message);
-    // Return the session user even if profile fetch fails
     return sessionUser as User;
   }
 
@@ -67,14 +67,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const router = useRouter();
   const { showLoader } = useLoading();
 
+  const refreshUser = useCallback(async () => {
+    const { data: { user: sessionUser } } = await supabase.auth.getUser();
+    if (sessionUser) {
+      const fullUser = await updateUserWithProfile(sessionUser);
+      setUser(fullUser);
+      router.refresh(); // This helps re-render server components with fresh data
+    }
+  }, [router]);
+
   useEffect(() => {
     let isMounted = true;
 
     async function getInitialSession() {
-      // First, get the session on component mount
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      const { data: { session } } = await supabase.auth.getSession();
       
       if (isMounted) {
         if (session) {
@@ -84,17 +90,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setIsInitialLoading(false);
       }
 
-      // Then, subscribe to auth state changes
-      const {
-        data: { subscription },
-      } = supabase.auth.onAuthStateChange(
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
         async (event: AuthChangeEvent, session: Session | null) => {
           if (!isMounted) return;
 
           const fullUser = await updateUserWithProfile(session?.user ?? null);
           setUser(fullUser);
 
-          // On sign in, refresh router to refetch server components with new auth state
           if (event === "SIGNED_IN") {
             closeAuthDialog();
             router.refresh();
@@ -116,7 +118,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const closeAuthDialog = () => setIsAuthDialogOpen(false);
 
   const login = async () => {
-    // Show loader immediately, but don't wait as this action causes a page redirect.
     showLoader(() => {}); 
     try {
       await signInWithGoogle();
@@ -138,7 +139,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
             title: "Logged Out",
             description: "You have been successfully logged out.",
         });
-        // Use replace to avoid back button issues, then refresh for clean state.
         router.replace("/");
         router.refresh();
     });
@@ -152,6 +152,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     closeAuthDialog,
     login,
     logout,
+    refreshUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

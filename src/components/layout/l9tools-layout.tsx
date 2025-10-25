@@ -24,7 +24,8 @@ import {
   Crown,
   LayoutGrid,
   Info,
-  MessageSquare
+  MessageSquare,
+  HelpCircle,
 } from 'lucide-react';
 import { ViewHeader, ViewHeaderProps } from '@/components/views/view-header';
 import { UserNav } from './user-nav';
@@ -38,6 +39,7 @@ import { DonationDialog } from '../views/donation-dialog';
 import { AdDialog } from '../views/ad-dialog';
 import { AdProvider } from '@/context/ad-context';
 import { useLoading } from '@/context/loading-context';
+import { LogoUploader } from '../views/logo-uploader';
 
 const donateButtonImages = ['/l9rs/donate1.png', '/l9rs/donate2.png'];
 
@@ -70,6 +72,7 @@ export function L9ToolsLayout({
   const { showLoader, isLoading } = useLoading();
   const [isLegalOpen, setIsLegalOpen] = useState(false);
   const [isDonationOpen, setIsDonationOpen] = useState(false);
+  const [isLogoUploaderOpen, setIsLogoUploaderOpen] = useState(false);
   const [legalType, setLegalType] = useState<'terms' | 'privacy' | 'disclaimer' | 'cookie'>('terms');
   const [donateButtonImage, setDonateButtonImage] = useState(donateButtonImages[0]);
   const [isSubscribeExpanded, setIsSubscribeExpanded] = useState(false);
@@ -128,6 +131,13 @@ export function L9ToolsLayout({
       ariaLabel: 'Player Dashboard'
     },
     {
+      id: 'how-to-use',
+      label: 'How To Use',
+      icon: HelpCircle,
+      href: '/how-to-use',
+      ariaLabel: 'How to use the bot'
+    },
+    {
       id: 'autobuild',
       label: 'AI Autobuild',
       icon: 'sparkles',
@@ -174,7 +184,7 @@ export function L9ToolsLayout({
     currentTitle = 'Subscribe';
     description = 'Upgrade to Pro to unlock exclusive features.';
     headerIcon = Crown;
-  } else if (pathname.startsWith('/admin')) {
+  } else if (isAdminPage) {
     currentTitle = 'Admin Panel';
     description = 'Manage users and application settings.';
     headerIcon = Shield;
@@ -186,6 +196,10 @@ export function L9ToolsLayout({
     currentTitle = 'Contact Us';
     description = 'Get in touch with the L9 Tools team.';
     headerIcon = MessageSquare;
+  } else if (pathname.startsWith('/how-to-use')) {
+    currentTitle = 'How to Use the Bot';
+    description = 'Your guide to mastering the L9 Tools Discord Bot.';
+    headerIcon = HelpCircle;
   }
 
 
@@ -206,6 +220,9 @@ export function L9ToolsLayout({
 
 
   const isSubscribed = user?.subscription_tier === 'pro' || user?.subscription_tier === 'lifetime';
+  const showCustomLogo = isSubscribed && user?.custom_logo_url;
+  const logoSrc = showCustomLogo ? user.custom_logo_url! : "/l9logo.png";
+
 
   const headerProps: ViewHeaderProps = { 
     title: currentTitle,
@@ -224,7 +241,7 @@ export function L9ToolsLayout({
             <Image src="/l9rs/subs1.png" alt="Subscribe Icon" width={50} height={50} className="subscribe-img-icon" />
           </button>
         )}
-         {!isDashboardPage && <UserNav />}
+         {!isDashboardPage && <UserNav onOpenLogoUploader={() => setIsLogoUploaderOpen(true)} />}
       </div>
     )
   };
@@ -270,12 +287,16 @@ export function L9ToolsLayout({
             <SidebarHeader className="p-0 relative z-10 bg-transparent">
               <a href="/boss-hunt" onClick={(e) => handleNavClick(e, '/boss-hunt')} className="relative aspect-square flex items-center justify-center cursor-pointer group" aria-label="Home">
                 <Image 
-                  src={"/l9logo.png"} 
+                  src={logoSrc}
                   alt="L9 Tools Logo" 
                   fill
                   sizes="18rem"
-                  className="z-10 p-4 object-contain"
+                  className={cn(
+                    "z-10 object-contain",
+                    showCustomLogo ? "p-6" : "p-4" // Less padding for custom logo if needed
+                  )}
                   priority={true}
+                  unoptimized={showCustomLogo} // Important for external URLs
                 />
               </a>
             </SidebarHeader>
@@ -388,6 +409,7 @@ export function L9ToolsLayout({
         <AuthDialog />
         <LegalDialog isOpen={isLegalOpen} onClose={() => setIsLegalOpen(false)} type={legalType} />
         <DonationDialog isOpen={isDonationOpen} onClose={() => setIsDonationOpen(false)} />
+        <LogoUploader isOpen={isLogoUploaderOpen} onClose={() => setIsLogoUploaderOpen(false)} />
         <AdDialog />
       </SidebarProvider>
     </AdProvider>

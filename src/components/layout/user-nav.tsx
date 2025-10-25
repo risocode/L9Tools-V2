@@ -10,9 +10,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
-import { Copy, LogOut, User as UserIcon, Crown, Replace, Repeat } from "lucide-react";
+import { Copy, LogOut, User as UserIcon, Repeat, Replace } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import Image from "next/image";
@@ -20,7 +19,11 @@ import Loader from "../ui/loader";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useState, useEffect } from "react";
 
-export function UserNav() {
+interface UserNavProps {
+  onOpenLogoUploader: () => void;
+}
+
+export function UserNav({ onOpenLogoUploader }: UserNavProps) {
   const { user, openAuthDialog, logout, isInitialLoading } = useAuth();
   const { toast } = useToast();
   const [hasMounted, setHasMounted] = useState(false);
@@ -41,8 +44,6 @@ export function UserNav() {
   };
 
   const renderContent = () => {
-    // On the server or before the client has mounted, always show the loader
-    // to match the server-rendered HTML and prevent hydration errors.
     if (!hasMounted || isInitialLoading) {
       return <Loader className="h-6 w-6" />;
     }
@@ -93,10 +94,9 @@ export function UserNav() {
                 </DropdownMenuItem>
               )}
               {isSubscribed && (
-                  <DropdownMenuItem disabled>
+                  <DropdownMenuItem onSelect={() => onOpenLogoUploader()}>
                       <Replace className="mr-2 h-4 w-4" />
                       <span>Change Logo</span>
-                      <DropdownMenuShortcut>Soon</DropdownMenuShortcut>
                   </DropdownMenuItem>
               )}
             </DropdownMenuGroup>
@@ -110,7 +110,6 @@ export function UserNav() {
       );
     }
   
-    // Once mounted and not loading, show the login button if there's no user.
     return (
       <button
         onClick={openAuthDialog}
