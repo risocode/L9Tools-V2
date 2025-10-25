@@ -45,11 +45,9 @@ export function useTimeDialog(
         }
     }, [onConfirm]);
 
-    const handleClose = useCallback((open: boolean) => {
-        if (!open) {
-            setIsTimePickerDialog(false);
-            setTimeDialogBoss(null);
-        }
+    const handleClose = useCallback(() => {
+        setIsTimePickerDialog(false);
+        setTimeDialogBoss(null);
     }, []);
 
     return {
