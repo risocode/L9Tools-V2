@@ -2,20 +2,30 @@
 'use server';
 
 import type { Boss } from '@/types';
-import bossesData from '@/lib/boss-data.json';
+import { createSupabaseServerClient } from '@/lib/supabase-server';
 
-// This function now only fetches and returns the raw boss data.
-// All timer processing, filtering, and sorting will be handled client-side.
+// This function now fetches boss data directly from the Supabase database.
 export async function getInitialBosses(): Promise<{ bosses: Boss[]; error: string | null; }> {
   try {
-    const allBosses: Boss[] = bossesData.map((b: any, index: number) => ({
-      id: (index + 1).toString(),
+    const supabase = await createSupabaseServerClient();
+    const { data, error } = await supabase
+      .from('bosses')
+      .select('*')
+      .order('level', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching bosses from database:', error.message);
+      throw new Error('Failed to fetch boss data from the database.');
+    }
+    
+    const allBosses: Boss[] = data.map((b: any) => ({
+      id: b.id.toString(),
       level: b.level,
       name: b.name,
       location: b.location,
-      spawnTime: b.spawnTime,
-      isFixedSpawn: b.isFixedSpawn,
-      respawnCooldown: b.respawnCooldown,
+      spawnTime: b.spawn_time,
+      isFixedSpawn: b.is_fixed_spawn,
+      respawnCooldown: b.respawn_cooldown,
       lastKilled: null, // This will be hydrated on the client
       image: '/bosses/img_boss.jpg',
       map: `/map/m_${b.name.toLowerCase().replace(/\s+/g, '')}.png`

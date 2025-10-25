@@ -1,3 +1,4 @@
+
 // Use require for dotenv in this CJS-style script
 import { config } from 'dotenv';
 import { resolve } from 'path';
@@ -26,11 +27,15 @@ if (!supabaseUrl || !supabaseServiceKey) {
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 async function seedBosses() {
-  console.log('Deleting existing boss data...');
-  const { error: deleteError } = await supabase.from('bosses').delete().neq('id', 0);
-  if (deleteError) {
-    console.error('Error deleting bosses:', deleteError);
-    return;
+  console.log('Checking for existing boss data...');
+  const { data: existingBosses, error: checkError } = await supabase.from('bosses').select('id');
+  if (checkError) {
+      console.error('Error checking for existing bosses:', checkError);
+      return;
+  }
+  if (existingBosses && existingBosses.length > 0) {
+      console.log('Boss data already exists. Skipping seeding.');
+      return;
   }
 
   const bossesToInsert: BossInsert[] = bossData.map(boss => ({
@@ -101,7 +106,8 @@ async function seedRareAvatars() {
 
 
 async function main() {
-  console.log('Starting database seed for rare avatars...');
+  console.log('Starting database seed...');
+  await seedBosses();
   await seedRareAvatars();
   console.log('Database seeding complete.');
 }
