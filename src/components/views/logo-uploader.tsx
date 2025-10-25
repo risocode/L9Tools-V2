@@ -19,7 +19,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Loader from '@/components/ui/loader';
-import { UploadCloud, Image as ImageIcon, X } from 'lucide-react';
+import { UploadCloud, X } from 'lucide-react';
 import Image from 'next/image';
 
 interface LogoUploaderProps {
@@ -57,7 +57,7 @@ export function LogoUploader({ isOpen, onClose }: LogoUploaderProps) {
         setIsUploading(true);
         try {
             const fileExt = file.name.split('.').pop();
-            // Corrected file path to match security policies
+            // This path structure is critical for matching the RLS policies.
             const filePath = `${user.id}/${Date.now()}.${fileExt}`;
             
             // 1. Upload to Supabase Storage
@@ -65,19 +65,26 @@ export function LogoUploader({ isOpen, onClose }: LogoUploaderProps) {
                 .from('user_logos')
                 .upload(filePath, file);
 
-            if (uploadError) throw uploadError;
+            if (uploadError) {
+                // This will catch "bucket not found", policy violations, etc.
+                throw uploadError;
+            }
 
             // 2. Get public URL
-            const { data } = supabase.storage
+            const { data: urlData } = supabase.storage
                 .from('user_logos')
                 .getPublicUrl(filePath);
             
-            if (!data.publicUrl) throw new Error("Could not get public URL for the uploaded logo.");
+            if (!urlData.publicUrl) {
+                throw new Error("Could not get public URL for the uploaded logo.");
+            }
             
-            // 3. Update profile with the new URL
-            const result = await updateUserLogo(data.publicUrl);
+            // 3. Update profile with the new URL via server action
+            const result = await updateUserLogo(urlData.publicUrl);
             
-            if (result.error) throw new Error(result.error);
+            if (result.error) {
+                throw new Error(result.error);
+            }
 
             toast({
                 variant: 'success',
@@ -85,18 +92,18 @@ export function LogoUploader({ isOpen, onClose }: LogoUploaderProps) {
                 description: "Your new logo has been saved.",
             });
             
-            // Refresh user context to show the new logo
             await refreshUser();
-            
-            handleClose(); // Use handleClose to reset state and close dialog
+            handleClose();
+
         } catch (error: any) {
             console.error("Error uploading logo:", error);
             toast({
                 variant: "destructive",
                 title: "Upload Failed",
-                description: error.message || "Could not upload your logo. Please try again.",
+                description: error.message || "An unexpected error occurred. Please try again.",
             });
         } finally {
+            // This block will always run, ensuring the loading state is turned off.
             setIsUploading(false);
         }
     };
@@ -110,7 +117,7 @@ export function LogoUploader({ isOpen, onClose }: LogoUploaderProps) {
     }
 
     const handleClose = () => {
-        if (isUploading) return; // Prevent closing while uploading
+        if (isUploading) return; 
         resetState();
         onClose();
     }
