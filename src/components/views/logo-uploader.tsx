@@ -57,8 +57,8 @@ export function LogoUploader({ isOpen, onClose }: LogoUploaderProps) {
         setIsUploading(true);
         try {
             const fileExt = file.name.split('.').pop();
-            const fileName = `${user.id}/${Date.now()}.${fileExt}`;
-            const filePath = `user_logos/${fileName}`;
+            // Corrected file path to match security policies
+            const filePath = `${user.id}/${Date.now()}.${fileExt}`;
             
             // 1. Upload to Supabase Storage
             const { error: uploadError } = await supabase.storage
@@ -88,7 +88,7 @@ export function LogoUploader({ isOpen, onClose }: LogoUploaderProps) {
             // Refresh user context to show the new logo
             await refreshUser();
             
-            onClose();
+            handleClose(); // Use handleClose to reset state and close dialog
         } catch (error: any) {
             console.error("Error uploading logo:", error);
             toast({
@@ -110,6 +110,7 @@ export function LogoUploader({ isOpen, onClose }: LogoUploaderProps) {
     }
 
     const handleClose = () => {
+        if (isUploading) return; // Prevent closing while uploading
         resetState();
         onClose();
     }
@@ -131,6 +132,7 @@ export function LogoUploader({ isOpen, onClose }: LogoUploaderProps) {
                         className="hidden"
                         accept="image/png, image/jpeg, image/gif, image/webp"
                         onChange={handleFileChange}
+                        disabled={isUploading}
                     />
                     
                     {!preview ? (
@@ -164,7 +166,7 @@ export function LogoUploader({ isOpen, onClose }: LogoUploaderProps) {
                 </div>
                 <DialogFooter>
                     <DialogClose asChild>
-                        <Button variant="outline" onClick={handleClose}>Cancel</Button>
+                        <Button variant="outline" onClick={handleClose} disabled={isUploading}>Cancel</Button>
                     </DialogClose>
                     <Button onClick={handleUpload} disabled={!file || isUploading}>
                         {isUploading && <Loader className="mr-2" />}
