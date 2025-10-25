@@ -145,7 +145,10 @@ export function TimePickerDialog({ isOpen, onClose, boss, isSubmitting, onConfir
                     </div>
                 </div>
             </div>
-            <DialogFooter>
+            <div className="text-center text-xs text-muted-foreground/50 pt-2">
+                Tip: If this takes too long, try a hard refresh (Ctrl + Shift + R).
+            </div>
+            <DialogFooter className="pt-4">
                 <DialogClose asChild><Button variant="destructive">Cancel</Button></DialogClose>
                 <Button onClick={handleSubmit} disabled={isSubmitting}>
                   {isSubmitting && <Loader className="mr-2" />}
