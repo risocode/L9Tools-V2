@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useTransition } from 'react';
 import type { Profile } from '@/types';
 import { useAuth } from '@/context/auth-context';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,8 +16,11 @@ import { refreshUserStatsCache } from '@/app/actions/refresh-user-stats-cache';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AccessDenied } from '../access-denied';
+import { cn } from '@/lib/utils';
 
 const PAGE_SIZE = 20;
+
+type SubscriptionTierFilter = 'all' | 'free' | 'pro' | 'lifetime';
 
 interface Stats {
     totalUsers: number;
@@ -50,6 +53,9 @@ export function AdminDashboard() {
   const [isRefreshingStats, setIsRefreshingStats] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+  const [tierFilter, setTierFilter] = useState<SubscriptionTierFilter>('all');
+  const [isPending, startTransition] = useTransition();
+
   const { toast } = useToast();
 
   const fetchStats = useCallback(async () => {
@@ -72,7 +78,7 @@ export function AdminDashboard() {
     try {
       const [statsResult, profilesResult] = await Promise.all([
         getCachedUserStats(),
-        getAllProfiles({ page: 1, pageSize: PAGE_SIZE, query: '' })
+        getAllProfiles({ page: 1, pageSize: PAGE_SIZE, query: '', tier: 'all' })
       ]);
 
       if (statsResult.error || !statsResult.data) {
@@ -105,9 +111,9 @@ export function AdminDashboard() {
     }
   }, []);
   
-  const fetchProfiles = useCallback(async (page: number, query: string) => {
+  const fetchProfiles = useCallback(async (page: number, query: string, tier: SubscriptionTierFilter) => {
     setIsTableLoading(true);
-    const { profiles: fetchedProfiles, count, error: fetchError } = await getAllProfiles({ page, pageSize: PAGE_SIZE, query });
+    const { profiles: fetchedProfiles, count, error: fetchError } = await getAllProfiles({ page, pageSize: PAGE_SIZE, query, tier });
     
     if (fetchError) {
       setError(fetchError);
@@ -136,8 +142,10 @@ export function AdminDashboard() {
   
   useEffect(() => {
     const handler = setTimeout(() => {
+      startTransition(() => {
         setDebouncedSearchQuery(searchQuery);
         setCurrentPage(1);
+      });
     }, 300);
     return () => clearTimeout(handler);
   }, [searchQuery]);
@@ -152,19 +160,26 @@ export function AdminDashboard() {
 
   useEffect(() => {
     if (isDataLoading) return;
-    fetchProfiles(currentPage, debouncedSearchQuery);
-  }, [currentPage, debouncedSearchQuery, isDataLoading, fetchProfiles]);
+    fetchProfiles(currentPage, debouncedSearchQuery, tierFilter);
+  }, [currentPage, debouncedSearchQuery, tierFilter, isDataLoading, fetchProfiles]);
 
   const handleProfileUpdate = useCallback(async () => {
     if (user?.is_admin) {
         setIsTableLoading(true);
         await Promise.all([
-            fetchProfiles(currentPage, debouncedSearchQuery), 
+            fetchProfiles(currentPage, debouncedSearchQuery, tierFilter), 
             fetchStats()
         ]);
         setIsTableLoading(false);
     }
-  }, [user, fetchProfiles, currentPage, debouncedSearchQuery, fetchStats]);
+  }, [user, fetchProfiles, currentPage, debouncedSearchQuery, tierFilter, fetchStats]);
+
+  const handleTierFilterChange = (tier: SubscriptionTierFilter) => {
+      startTransition(() => {
+        setTierFilter(tier);
+        setCurrentPage(1);
+      });
+  };
   
   if (isAuthLoading || isDataLoading) {
     return (
@@ -181,7 +196,6 @@ export function AdminDashboard() {
     )
   }
 
-  // This check is now redundant due to the page-level check, but kept as a fallback.
   if (!user || !user.is_admin) {
     return (
       <div className="admin-bg-overlay absolute inset-0">
@@ -191,6 +205,7 @@ export function AdminDashboard() {
   }
   
   const totalPages = totalProfileCount > 0 ? Math.ceil(totalProfileCount / PAGE_SIZE) : 1;
+  const isLoadingOrPending = isTableLoading || isPending;
   
   return (
     <div className="admin-bg-overlay absolute inset-0 flex h-full flex-col gap-6 p-4 md:p-6 overflow-y-auto">
@@ -251,10 +266,24 @@ export function AdminDashboard() {
             </div>
         </div>
 
+        <div className="flex items-center justify-center gap-2 rounded-lg bg-black/20 p-2">
+            {(['all', 'free', 'pro', 'lifetime'] as SubscriptionTierFilter[]).map((tier) => (
+                <Button
+                    key={tier}
+                    variant={tierFilter === tier ? 'secondary' : 'ghost'}
+                    onClick={() => handleTierFilterChange(tier)}
+                    className={cn("capitalize flex-1", tierFilter === tier && "admin-filter-button-active")}
+                    disabled={isLoadingOrPending}
+                >
+                    {tier}
+                </Button>
+            ))}
+        </div>
+
         <div className="flex-1 flex flex-col min-h-0">
             <UserTable 
               profiles={paginatedProfiles} 
-              isLoading={isTableLoading}
+              isLoading={isLoadingOrPending}
               onSubscriptionUpdate={handleProfileUpdate}
               currentPage={currentPage}
               totalPages={totalPages}

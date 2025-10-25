@@ -5,15 +5,17 @@ import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { getSupabaseAdmin, verifyAdminStatus } from '@/lib/supabase-admin';
 import type { Profile } from '@/types'
 
+type SubscriptionTier = 'all' | 'free' | 'pro' | 'lifetime';
+
 interface GetAllProfilesParams {
   page: number;
   pageSize: number;
   query?: string;
+  tier?: SubscriptionTier;
 }
 
-export async function getAllProfiles({ page, pageSize, query }: GetAllProfilesParams): Promise<{ profiles: Profile[] | null; count: number | null; error: string | null; }> {
+export async function getAllProfiles({ page, pageSize, query, tier = 'all' }: GetAllProfilesParams): Promise<{ profiles: Profile[] | null; count: number | null; error: string | null; }> {
   
-  // 1. Get the current user using the standard server client
   const supabaseUserClient = await createSupabaseServerClient();
   const { data: authData, error: authError } = await supabaseUserClient.auth.getUser();
 
@@ -23,21 +25,17 @@ export async function getAllProfiles({ page, pageSize, query }: GetAllProfilesPa
   
   const user = authData.user;
   
-  // 2. Use the centralized function to check for admin privileges.
   const isAdmin = await verifyAdminStatus(user);
   
   if (!isAdmin) {
     return { profiles: null, count: null, error: 'You are not authorized to perform this action.' };
   }
 
-  // 3. Get the admin client
   const supabaseAdmin = getSupabaseAdmin();
   if (!supabaseAdmin) {
     return { profiles: null, count: null, error: 'Could not create admin database client.' };
   }
 
-
-  // 4. If the user is an admin, build the query
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
 
@@ -45,9 +43,17 @@ export async function getAllProfiles({ page, pageSize, query }: GetAllProfilesPa
     .from('profiles')
     .select('*', { count: 'exact' });
 
+  // Apply tier filter
+  if (tier && tier !== 'all') {
+      if (tier === 'free') {
+          queryBuilder = queryBuilder.or('subscription_tier.eq.free,subscription_tier.is.null');
+      } else {
+          queryBuilder = queryBuilder.eq('subscription_tier', tier);
+      }
+  }
+
   // Apply search query if it exists
   if (query) {
-    // Use ilike for case-insensitive partial matching.
     const searchPattern = `%${query}%`;
     queryBuilder = queryBuilder.or(
       `email.ilike.${searchPattern},display_name.ilike.${searchPattern},short_id.ilike.${searchPattern}`

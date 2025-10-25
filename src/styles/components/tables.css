@@ -82,6 +82,12 @@
   box-shadow: 0 0 15px #00e5ff;
 }
 
+.admin-filter-button-active {
+    background-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+    box-shadow: 0 0 10px hsl(var(--primary));
+}
+
 /* ShadCN Tabs Customization */
 .tab-glow {
   box-shadow: 0 0 8px var(--glow-color), 0 0 12px var(--glow-color), 0 0 16px var(--glow-color);
