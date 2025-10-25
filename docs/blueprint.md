@@ -1,19 +1,19 @@
-# **App Name**: Lord Nine Tools
+# **App Name**: Lord Nine
 
 ## Core Features:
 
-- Character Stats Tracker: Track detailed character statistics such as strength, intelligence, and equipped gear. The tool assists users with the stat tracking.
-- Quest Management: Manage active quests, track objectives, and provide progress updates.
-- Item Database: View a comprehensive database of game items, including their stats, uses, and locations. A LLM can be used to filter based on user's current need or status in game, making the AI serve as a 'tool' to allow users to specify requirements
-- Skill Tree Planner: Plan character skill trees and builds, simulating the effects of skill choices and synergies.
+- Event Calendar: Interactive event calendar for managing guild events and member sign-ups.
+- Member Roster: Detailed member roster with roles, status, and key stats display.
+- Activity Feed: Dynamic activity feed for real-time guild news and announcements.
+- Discord Integration: Discord webhook integration for automated guild notifications.
+- Story Generator: AI-powered tool to generate engaging fantasy RPG stories and event descriptions to assist the Game Master
 
 ## Style Guidelines:
 
-- Primary color: Deep blue (#30475E) to establish a dark fantasy atmosphere.
-- Background color: Dark desaturated blue (#222831).
-- Accent color: Arcane purple (#6A4C93) to highlight interactive elements and magical themes.
-- Body text: 'Literata' serif for readability.
-- Headline text: 'Space Grotesk' sans-serif, giving the interface a contemporary style. When used in conjunction with 'Literata', body text, 'Space Grotesk' creates contrast and provides for readability of smaller details and metadata.
-- Use icons resembling runes and symbols to convey a dark fantasy aesthetic.
-- Arrange elements in a clear, structured manner to allow for user accessibility.
-- Add subtle animated transitions when viewing, editing, or confirming builds to increase engagement and make the experience feel unique.
+- Primary color: Deep forest green (#228B22) to evoke a natural and mystical feel.
+- Background color: Rustic brown (#A0522D) to mimic a wooden guild hall interior.
+- Accent color: Gold (#FFD700) for highlighting interactive elements and important information.
+- Headline font: 'Playfair', a modern sans-serif for elegant headers; body font: 'PT Sans' for readability in content sections
+- Use thematic icons to enhance visual cues in event categories, member roles, and activity types.
+- Design the layout to mimic a physical guild hall with distinct sections for the calendar, roster, and news.
+- Subtle animations for event transitions and notifications to enhance user engagement.

@@ -1,0 +1,343 @@
+
+[
+  {
+    "id": 40,
+    "name": "Forgotten Collectible Blanco",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      { "attribute": "Attack Speed", "value": "+30%", "icon": "wind" },
+      { "attribute": "Channeling Speed", "value": "+5%", "icon": "zap" },
+      { "attribute": "Attack", "value": "+80", "icon": "swords" },
+      { "attribute": "Defense Power", "value": "+70", "icon": "shield" },
+      { "attribute": "Dmg Received Decrease in PvP", "value": "4%", "icon": "minus-circle" }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 41,
+    "name": "Subjugated Morres",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      { "attribute": "Attack Speed", "value": "+30%", "icon": "wind" },
+      { "attribute": "Channeling Speed", "value": "+5%", "icon": "zap" },
+      { "attribute": "Attack", "value": "+60", "icon": "swords" },
+      { "attribute": "Defense Power", "value": "+50", "icon": "shield" },
+      { "attribute": "All Damage in PvP", "value": "4%", "icon": "swords" }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 42,
+    "name": "Supremacist Eowyn",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      { "attribute": "Attack Speed", "value": "+29%", "icon": "wind" },
+      { "attribute": "Channeling Speed", "value": "+5%", "icon": "zap" },
+      { "attribute": "Attack", "value": "+60", "icon": "swords" },
+      { "attribute": "Defense Power", "value": "+50", "icon": "shield" },
+      { "attribute": "Dmg Rcvd from Monsters", "value": "-5%", "icon": "minus-circle" }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 43,
+    "name": "False Hero Kyle",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      { "attribute": "Attack Speed", "value": "+29%", "icon": "wind" },
+      { "attribute": "Channeling Speed", "value": "+5%", "icon": "zap" },
+      { "attribute": "Attack", "value": "+60", "icon": "swords" },
+      { "attribute": "Defense Power", "value": "+50", "icon": "shield" },
+      { "attribute": "Dmg to Monsters", "value": "+5%", "icon": "dna" }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 44,
+    "name": "Village Fixer Gia",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      { "attribute": "Attack Speed", "value": "+29%", "icon": "wind" },
+      { "attribute": "Channeling Speed", "value": "+5%", "icon": "zap" },
+      { "attribute": "Attack", "value": "+60", "icon": "swords" },
+      { "attribute": "Defense Power", "value": "+50", "icon": "shield" },
+      { "attribute": "Skill Damage", "value": "5%", "icon": "gem" }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 45,
+    "name": "Lost Happiness Travis",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      { "attribute": "Attack Speed", "value": "+28%", "icon": "wind" },
+      { "attribute": "Channeling Speed", "value": "+5%", "icon": "zap" },
+      { "attribute": "Attack", "value": "+58", "icon": "swords" },
+      { "attribute": "Defense Power", "value": "+48", "icon": "shield" },
+      { "attribute": "Critical Hit Resistance", "value": "70", "icon": "shield-check" }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 46,
+    "name": "Wolf Tamer Cassian",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      { "attribute": "Attack Speed", "value": "+28%", "icon": "wind" },
+      { "attribute": "Channeling Speed", "value": "+5%", "icon": "zap" },
+      { "attribute": "Attack", "value": "+58", "icon": "swords" },
+      { "attribute": "Defense Power", "value": "+48", "icon": "shield" },
+      { "attribute": "Critical Hit", "value": "70", "icon": "target" }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 47,
+    "name": "Fallen Shadow Naomi",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      { "attribute": "Attack Speed", "value": "+28%", "icon": "wind" },
+      { "attribute": "Channeling Speed", "value": "+5%", "icon": "zap" },
+      { "attribute": "Attack", "value": "+58", "icon": "swords" },
+      { "attribute": "Defense Power", "value": "+48", "icon": "shield" },
+      { "attribute": "Critical Hit Damage", "value": "5%", "icon": "gem" }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 48,
+    "name": "Departed Happiness Closer",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      { "attribute": "Attack Speed", "value": "+27%", "icon": "wind" },
+      { "attribute": "Channeling Speed", "value": "+5%", "icon": "zap" },
+      { "attribute": "Attack", "value": "+56", "icon": "swords" },
+      { "attribute": "Defense Power", "value": "+46", "icon": "shield" },
+      { "attribute": "Damage Received Decrease", "value": "3%", "icon": "minus-circle" }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 49,
+    "name": "Aide Andres",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      { "attribute": "Attack Speed", "value": "+27%", "icon": "wind" },
+      { "attribute": "Channeling Speed", "value": "+5%", "icon": "zap" },
+      { "attribute": "Attack", "value": "+56", "icon": "swords" },
+      { "attribute": "Defense Power", "value": "+46", "icon": "shield" },
+      { "attribute": "Defense Penetration", "value": "60", "icon": "target" }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 50,
+    "name": "Blooming Desire Sven",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      { "attribute": "Attack Speed", "value": "+26%", "icon": "wind" },
+      { "attribute": "Channeling Speed", "value": "+5%", "icon": "zap" },
+      { "attribute": "Attack", "value": "+54", "icon": "swords" },
+      { "attribute": "Defense Power", "value": "+44", "icon": "shield" },
+      { "attribute": "Endurance Ignore", "value": "40", "icon": "target" }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 51,
+    "name": "Gray Wolf Brandy",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      { "attribute": "Attack Speed", "value": "+26%", "icon": "wind" },
+      { "attribute": "Channeling Speed", "value": "+5%", "icon": "zap" },
+      { "attribute": "Attack", "value": "+54", "icon": "swords" },
+      { "attribute": "Defense Power", "value": "+44", "icon": "shield" },
+      { "attribute": "Endurance", "value": "40", "icon": "heart-pulse" }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 52,
+    "name": "Bright Smile Linden",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      { "attribute": "Attack Speed", "value": "+26%", "icon": "wind" },
+      { "attribute": "Channeling Speed", "value": "+5%", "icon": "zap" },
+      { "attribute": "Attack", "value": "+54", "icon": "swords" },
+      { "attribute": "Defense Power", "value": "+44", "icon": "shield" },
+      { "attribute": "Gold Gain", "value": "2%", "icon": "gem" }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 53,
+    "name": "Swindler Henry",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      { "attribute": "Attack Speed", "value": "+25%", "icon": "wind" },
+      { "attribute": "Channeling Speed", "value": "+5%", "icon": "zap" },
+      { "attribute": "Attack", "value": "+52", "icon": "swords" },
+      { "attribute": "Defense Power", "value": "+42", "icon": "shield" },
+      { "attribute": "Max HP", "value": "270", "icon": "heart-pulse" }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 54,
+    "name": "Commander of Condemnation Garain",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      { "attribute": "Attack Speed", "value": "+25%", "icon": "wind" },
+      { "attribute": "Channeling Speed", "value": "+5%", "icon": "zap" },
+      { "attribute": "Attack", "value": "+52", "icon": "swords" },
+      { "attribute": "Defense Power", "value": "+42", "icon": "shield" },
+      { "attribute": "Max MP", "value": "135", "icon": "gem" }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 55,
+    "name": "Falcon Trainer Harper",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      { "attribute": "Attack Speed", "value": "+25%", "icon": "wind" },
+      { "attribute": "Channeling Speed", "value": "+5%", "icon": "zap" },
+      { "attribute": "Attack", "value": "+52", "icon": "swords" },
+      { "attribute": "Defense Power", "value": "+42", "icon": "shield" },
+      { "attribute": "Gold Gain", "value": "2%", "icon": "gem" }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 56,
+    "name": "Blind Savior Riley",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      { "attribute": "Attack Speed", "value": "+24%", "icon": "wind" },
+      { "attribute": "Channeling Speed", "value": "+5%", "icon": "zap" },
+      { "attribute": "Attack", "value": "+50", "icon": "swords" },
+      { "attribute": "Defense Power", "value": "+40", "icon": "shield" },
+      { "attribute": "MP Recovery in Battle", "value": "10", "icon": "gem" }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 57,
+    "name": "Advisor Louis",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      { "attribute": "Attack Speed", "value": "+24%", "icon": "wind" },
+      { "attribute": "Channeling Speed", "value": "+5%", "icon": "zap" },
+      { "attribute": "Attack", "value": "+50", "icon": "swords" },
+      { "attribute": "Defense Power", "value": "+40", "icon": "shield" },
+      { "attribute": "HP Recovery in Battle", "value": "20", "icon": "heart-pulse" }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 58,
+    "name": "Eyes of the Void Emily",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      { "attribute": "Attack Speed", "value": "+24%", "icon": "wind" },
+      { "attribute": "Channeling Speed", "value": "+5%", "icon": "zap" },
+      { "attribute": "Attack", "value": "+50", "icon": "swords" },
+      { "attribute": "Defense Power", "value": "+40", "icon": "shield" },
+      { "attribute": "Accuracy", "value": "70", "icon": "target" }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 59,
+    "name": "Taciturn Xaion",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      { "attribute": "Attack Speed", "value": "+27%", "icon": "wind" },
+      { "attribute": "Channeling Speed", "value": "+5%", "icon": "zap" },
+      { "attribute": "Attack", "value": "+56", "icon": "swords" },
+      { "attribute": "Defense Power", "value": "+46", "icon": "shield" },
+      { "attribute": "All Damage", "value": "3%", "icon": "swords" }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  }
+]

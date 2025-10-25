@@ -1,0 +1,41 @@
+/*
+ * =================================================================
+ * UTILITIES
+ * =================================================================
+ * This file contains reusable utility classes that can be applied
+ * anywhere in the application, such as text glows and separators.
+ * =================================================================
+ */
+
+.text-glow-crimson {
+  text-shadow: 0 0 8px var(--color-crimson);
+}
+.text-glow-purple {
+  text-shadow: 0 0 8px var(--color-purple);
+}
+.text-glow-amber {
+  text-shadow: 0 0 6px var(--color-amber-gold);
+}
+.text-shadow-soft {
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.icon-glow-purple-on-hover:hover {
+  filter: drop-shadow(0 0 5px var(--color-purple));
+}
+
+.separator-with-text {
+  @apply flex items-center text-xs text-muted-foreground;
+}
+.separator-with-text::before,
+.separator-with-text::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid hsl(var(--border));
+}
+.separator-with-text:not(:empty)::before {
+  margin-right: .25em;
+}
+.separator-with-text:not(:empty)::after {
+  margin-left: .25em;
+}

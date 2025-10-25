@@ -1,0 +1,46 @@
+/*
+ * =================================================================
+ * DROPDOWNS
+ * =================================================================
+ * This file contains styles for custom dropdown components.
+ * =================================================================
+ */
+
+/* Fantasy Dropdown Styles */
+.fantasy-dropdown-menu {
+  @apply p-[1px] bg-transparent rounded-[10px] shadow-[0_6px_24px_rgba(0,0,0,0.8)] overflow-hidden;
+  background-image: var(--dropdown-border-gradient);
+  animation: dropdown-fade-in 0.25s ease-out;
+}
+
+.fantasy-dropdown-inner {
+  background-color: rgba(13, 15, 24, 0.9);
+  @apply rounded-[9px] space-y-2 p-2;
+}
+
+.fantasy-dropdown-item {
+  @apply font-cinzel font-semibold text-[#C9C9C9] px-5 py-3 flex items-center gap-3 transition-all duration-200;
+}
+
+.fantasy-dropdown-item:hover {
+  background-image: var(--dropdown-item-hover-gradient);
+  @apply text-white scale-[1.02];
+  text-shadow: 0 0 8px rgba(255,255,255,0.6);
+}
+
+.fantasy-dropdown-item:hover .fantasy-dropdown-icon {
+  color: #00C3FF;
+}
+
+.fantasy-dropdown-item:active {
+  background-image: var(--dropdown-item-active-gradient);
+  color: var(--color-golden);
+}
+
+.fantasy-dropdown-item:active .fantasydropdown-icon {
+  color: var(--color-golden);
+}
+
+.fantasy-dropdown-icon {
+  @apply text-[#888] text-lg transition-colors duration-200;
+}

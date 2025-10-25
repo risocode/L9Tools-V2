@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -14,7 +15,7 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
+      "inline-flex items-center justify-center rounded-md p-1 text-muted-foreground",
       className
     )}
     {...props}
@@ -29,7 +30,14 @@ const TabsTrigger = React.forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
+      "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-4 py-2 text-base font-cinzel font-bold ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+      "text-silver bg-transparent",
+      "hover:underline hover:text-glow-purple",
+      "data-[state=active]:bg-[#1A1A2E] data-[state=active]:text-white data-[state=active]:scale-105 data-[state=active]:tab-glow",
+      "data-[state=active][data-value='all']:[--glow-color:theme(colors.silver)]",
+      "data-[state=active][data-value='fixed']:[--glow-color:var(--color-purple)]",
+      "data-[state=active][data-value='variable']:[--glow-color:theme(colors.amber-gold)]",
+      "data-[state=active][data-value='spawning']:[--glow-color:theme(colors.crimson)]",
       className
     )}
     {...props}

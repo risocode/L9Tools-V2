@@ -1,0 +1,130 @@
+/*
+ * =================================================================
+ * THEME & BASE STYLES
+ * =================================================================
+ * This file contains the foundational styles for the application.
+ * - CSS custom properties (variables) for colors, fonts, etc.
+ * - Base element styles (body, *, input resets).
+ * - Global styles like the custom scrollbar.
+ * =================================================================
+ */
+
+:root {
+  --background: 214 62% 11%;
+  --foreground: 210 40% 98%;
+  --card: 214 62% 11%;
+  --card-foreground: 210 40% 98%;
+  --popover: 214 62% 11%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 210 40% 98%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 212.7 26.8% 83.9%;
+  --radius: 0.5rem;
+
+  /* RPG Theme Colors */
+  --color-crimson: #E94560;
+  --color-purple: #6C63FF;
+  --color-silver: #B0B0B0;
+  --color-amber-gold: #F39C12;
+  --color-obsidian: #0D0F18;
+  --color-golden: #FFD369;
+
+  --sidebar-background: transparent;
+  --sidebar-foreground: 210 40% 98%;
+  --sidebar-primary: 210 40% 98%;
+  --sidebar-primary-foreground: 222.2 47.4% 11.2%;
+  --sidebar-accent: 217.2 32.6% 17.5%;
+  --sidebar-accent-foreground: 210 40% 98%;
+  --sidebar-border: 217.2 32.6% 17.5%;
+  --sidebar-ring: 212.7 26.8% 83.9%;
+
+  /* Dropdown Specific */
+  --dropdown-border-gradient: linear-gradient(135deg, var(--color-purple), var(--color-crimson));
+  --dropdown-item-hover-gradient: linear-gradient(90deg, var(--color-crimson), var(--color-purple));
+  --dropdown-item-active-gradient: linear-gradient(90deg, #2C1B36, #1B1D3A);
+}
+
+html {
+  /* This creates a fluid font size that scales with the viewport, with min and max caps. */
+  font-size: clamp(12.6px, 1rem + 0.1vw, 16px);
+}
+
+.dark {
+  --background: 214 62% 11%;
+  --foreground: 210 40% 98%;
+  --card: 214 62% 11%;
+  --card-foreground: 210 40% 98%;
+  --popover: 214 62% 11%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 210 40% 98%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2- 32.6% 17.5%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 212.7 26.8% 83.9%;
+
+  --sidebar-background: transparent;
+  --sidebar-foreground: 210 40% 98%;
+  --sidebar-primary: 210 40% 98%;
+  --sidebar-primary-foreground: 222.2 47.4% 11.2%;
+  --sidebar-accent: 217.2 32.6% 17.5%;
+  --sidebar-accent-foreground: 210 40% 98%;
+  --sidebar-border: 217.2 32.6% 17.5%;
+  --sidebar-ring: 212.7 26.8% 83.9%;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+/* Hide spinner arrows on number inputs */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Custom placeholder color */
+::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+  opacity: 1 !important; /* Firefox */
+}
