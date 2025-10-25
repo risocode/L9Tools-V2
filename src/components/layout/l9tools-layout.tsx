@@ -131,13 +131,6 @@ export function L9ToolsLayout({
       ariaLabel: 'Player Dashboard'
     },
     {
-      id: 'how-to-use',
-      label: 'How To Use',
-      icon: HelpCircle,
-      href: '/how-to-use',
-      ariaLabel: 'How to use the bot'
-    },
-    {
       id: 'autobuild',
       label: 'AI Autobuild',
       icon: 'sparkles',
