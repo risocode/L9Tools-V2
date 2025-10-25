@@ -18,6 +18,7 @@ import Image from "next/image";
 import Loader from "../ui/loader";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 interface UserNavProps {}
 
@@ -41,6 +42,15 @@ export function UserNav({}: UserNavProps) {
     }
   };
 
+  const getAvatarBorderClass = (tier: string | null | undefined, isAdmin: boolean | undefined) => {
+      if (isAdmin) return 'border-purple-500';
+      switch (tier) {
+          case 'pro': return 'border-yellow-400';
+          case 'lifetime': return 'border-amber-500';
+          default: return 'border-white';
+      }
+  }
+
   const renderContent = () => {
     if (!hasMounted || isInitialLoading) {
       return <Loader className="h-6 w-6" />;
@@ -49,14 +59,12 @@ export function UserNav({}: UserNavProps) {
     if (user) {
       const fallback = user.display_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || '?';
       const isPro = user.subscription_tier === 'pro';
-      const isLifetime = user.subscription_tier === 'lifetime';
-      const isSubscribed = isPro || isLifetime;
 
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="profile-avatar bg-transparent border-none rounded-full" aria-label="Open user menu">
-              <Avatar className="h-full w-full">
+              <Avatar className={cn("h-full w-full border-2", getAvatarBorderClass(user.subscription_tier, user.is_admin))}>
                 {user.user_photo_url && <AvatarImage src={user.user_photo_url} alt={user.display_name || 'User'} />}
                 <AvatarFallback>{fallback}</AvatarFallback>
               </Avatar>
