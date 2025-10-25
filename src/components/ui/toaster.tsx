@@ -40,7 +40,7 @@ export function Toaster() {
             </div>
             {action}
             <ToastClose />
-            <ToastProgress variant={props.variant} duration={duration || 3000} />
+            <ToastProgress variant={props.variant ?? 'default'} duration={duration || 3000} />
           </Toast>
         )
       })}
