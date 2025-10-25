@@ -3,16 +3,16 @@
 
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { redirect } from 'next/navigation';
-import { headers } from 'next/headers';
 
 export async function signInWithGoogle() {
   const supabase = await createSupabaseServerClient();
 
-  // Use NEXT_PUBLIC_SITE_URL for production, but fall back to request origin for dynamic environments (like Cloud Workstations)
-  const origin = process.env.NEXT_PUBLIC_SITE_URL || headers().get('origin');
+  // Force the use of the environment variable to ensure consistency.
+  // This is more reliable than relying on request headers in some environments.
+  const origin = process.env.NEXT_PUBLIC_SITE_URL;
 
   if (!origin) {
-    // Fallback if origin is missing from both env and headers
+    console.error('CRITICAL: NEXT_PUBLIC_SITE_URL is not set in environment variables.');
     return redirect('/auth/auth-code-error');
   }
 

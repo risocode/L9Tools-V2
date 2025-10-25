@@ -7,9 +7,13 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')
   
-  // Use NEXT_PUBLIC_SITE_URL for production, fall back to request origin for dynamic environments.
-  // This must match the logic in the signIn action.
-  const origin = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
+  // Force the use of the environment variable to ensure consistency.
+  const origin = process.env.NEXT_PUBLIC_SITE_URL;
+
+  if (!origin) {
+    console.error('CRITICAL: NEXT_PUBLIC_SITE_URL is not set in environment variables.');
+    return NextResponse.redirect(new URL('/auth/auth-code-error', request.url));
+  }
 
   if (code) {
     const supabase = await createSupabaseServerClient();
