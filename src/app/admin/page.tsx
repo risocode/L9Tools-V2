@@ -29,7 +29,7 @@ export default function AdminPage() {
 
   return (
     <main className="flex">
-      <L9ToolsLayout>
+      <L9ToolsLayout hideHeader={true}>
         <AdminDashboard />
       </L9ToolsLayout>
     </main>

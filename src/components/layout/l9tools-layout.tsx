@@ -57,8 +57,10 @@ interface NavItem {
 
 export function L9ToolsLayout({
   children,
+  hideHeader = false,
 }: {
   children: React.ReactNode;
+  hideHeader?: boolean;
 }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -363,7 +365,7 @@ export function L9ToolsLayout({
           >
             <div className="absolute inset-0 z-0 bg-black/60" />
             <div className="relative flex-1 flex flex-col min-h-0">
-                <ViewHeader {...headerProps} />
+                {!hideHeader && <ViewHeader {...headerProps} />}
                 <main className="flex-1 flex flex-col min-h-0 z-10">
                     {!isLoading && (
                         <motion.div
@@ -379,7 +381,7 @@ export function L9ToolsLayout({
                         </motion.div>
                     )}
                 </main>
-                {footer}
+                {!hideHeader && footer}
             </div>
           </div>
         </div>
