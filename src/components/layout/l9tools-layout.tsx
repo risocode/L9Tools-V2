@@ -189,10 +189,6 @@ export function L9ToolsLayout({
     currentTitle = 'Contact Us';
     description = 'Get in touch with the L9 Tools team.';
     headerIcon = MessageSquare;
-  } else if (pathname.startsWith('/how-to-use')) {
-    currentTitle = 'How to Use the Bot';
-    description = 'Your guide to mastering the L9 Tools Discord Bot.';
-    headerIcon = HelpCircle;
   }
 
 
@@ -213,8 +209,8 @@ export function L9ToolsLayout({
 
 
   const isSubscribed = user?.subscription_tier === 'pro' || user?.subscription_tier === 'lifetime';
-  const showCustomLogo = isSubscribed && user?.custom_logo_url;
-  const logoSrc = showCustomLogo ? user.custom_logo_url! : "/l9logo.png";
+  const showCustomLogo = !!(isSubscribed && user?.custom_logo_url);
+  const logoSrc = (isSubscribed && user?.custom_logo_url) ? user.custom_logo_url : "/l9logo.png";
 
 
   const headerProps: ViewHeaderProps = { 
