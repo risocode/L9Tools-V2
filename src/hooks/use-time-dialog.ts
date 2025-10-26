@@ -18,7 +18,7 @@ export function useTimeDialog(
     const [isSubmittingTime, setIsSubmittingTime] = useState(false);
 
     const handleOpenTimeDialog = useCallback((boss: Boss) => {
-        const isProUser = user?.subscription_tier === 'pro' || user?.subscription_tier === 'lifetime';
+        const isProUser = user?.subscription_tier === 'pro' || user?.subscription_tier === 'lifetime' || user?.is_admin;
 
         // Check if it's a high-level VARIABLE boss and the user is not Pro
         if (!boss.isFixedSpawn && boss.level >= 90 && !isProUser) {
