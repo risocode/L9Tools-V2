@@ -132,26 +132,26 @@ export function ReportDialog({ isOpen, onClose, bosses, onConfirm, isSending, is
               </div>
               
               <p className="text-sm font-medium">{`Bosses to Report (${editableBosses.length})`}</p>
-              <div className="h-60 border rounded-md">
+              <div className="h-60 border border-[#00e5ff]/20 rounded-md bg-[#0d1117]/50">
                   <ScrollArea className="h-full">
                       <Table>
-                        <TableHeader className="sticky top-0 bg-muted/60 backdrop-blur-sm z-10">
-                          <TableRow>
-                            <TableHead className="w-[40%]">Boss</TableHead>
-                            <TableHead className="w-[15%]">Lvl</TableHead>
-                            <TableHead>Spawn Time</TableHead>
-                            <TableHead className="text-right w-[10%]">Action</TableHead>
+                        <TableHeader className="sticky top-0 bg-[#0d1117]/90 backdrop-blur-sm z-10">
+                          <TableRow className="border-b-[#00e5ff]/20">
+                            <TableHead className="w-[40%] text-[#00e5ff]">Boss</TableHead>
+                            <TableHead className="w-[15%] text-[#00e5ff]">Lvl</TableHead>
+                            <TableHead className="text-[#00e5ff]">Spawn Time</TableHead>
+                            <TableHead className="text-right w-[10%] text-[#00e5ff]">Action</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                             {editableBosses.length > 0 ? editableBosses.map((boss) => (
-                            <TableRow key={boss.id}>
-                                <TableCell className="font-medium">{boss.name}</TableCell>
-                                <TableCell>{boss.level}</TableCell>
-                                <TableCell>{boss.spawnTime}</TableCell>
+                            <TableRow key={boss.id} className="border-b-[#00e5ff]/10 hover:bg-[#15202b]/70">
+                                <TableCell className="font-medium text-white">{boss.name}</TableCell>
+                                <TableCell className="text-muted-foreground">{boss.level}</TableCell>
+                                <TableCell className="text-muted-foreground">{boss.spawnTime}</TableCell>
                                 <TableCell className="text-right">
-                                <Button variant="ghost" size="icon" onClick={() => handleRemoveBoss(boss.id)}>
-                                    <Trash2 className="h-4 w-4 text-destructive" />
+                                <Button variant="ghost" size="icon" onClick={() => handleRemoveBoss(boss.id)} className="text-destructive/70 hover:text-destructive hover:bg-destructive/10">
+                                    <Trash2 className="h-4 w-4" />
                                 </Button>
                                 </TableCell>
                             </TableRow>
