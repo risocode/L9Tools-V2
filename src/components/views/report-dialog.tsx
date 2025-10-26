@@ -72,111 +72,113 @@ export function ReportDialog({ isOpen, onClose, bosses, onConfirm, isSending, is
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={cn(
-        "max-w-2xl grid-rows-[auto_1fr_auto] max-h-[90vh] profile-pattern-bg",
-        "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-90 data-[state=open]:slide-in-from-bottom-24"
-      )}>
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-2xl">
-            <Send className="h-6 w-6" />
-            Confirm Boss Report
-          </DialogTitle>
-          <DialogDescription>
-            Review the list of upcoming boss spawns before sending the report to Discord.
-          </DialogDescription>
-        </DialogHeader>
-        
-        <div className="overflow-y-auto space-y-4 pr-2">
-            {isGuest && (
-                <div className="rounded-lg border bg-primary/5 border-primary/20 p-4">
-                    <div className="flex items-start gap-3">
-                        <Info className="h-5 w-5 flex-shrink-0 text-primary mt-0.5" />
-                        <div>
-                        <h3 className="font-bold text-primary">You are in Guest Mode!</h3>
-                        <p className="text-sm text-primary/80">
-                            Timers reset after sending a report or refreshing the page. Sign in to save your data permanently.
-                        </p>
-                        </div>
-                    </div>
-                </div>
-            )}
-            <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="webhook-url">Discord Webhook URL</Label>
-                   <Popover>
-                    <PopoverTrigger asChild>
-                      <button>
-                        <Info className="h-4 w-4 text-muted-foreground hover:text-foreground cursor-pointer" />
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent side="top" className="text-sm max-w-xs sm:max-w-sm">
-                      <h4 className="font-bold mb-2">How to get a Webhook URL</h4>
-                      <ol className="list-decimal list-inside space-y-2 text-muted-foreground">
-                        <li>Go to Server Settings {'>'} Integrations.</li>
-                        <li>Click Webhooks {'>'} New Webhook.</li>
-                        <li>Name it and choose a channel.</li>
-                        <li>Click Copy Webhook URL.</li>
-                      </ol>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <Input
-                    id="webhook-url"
-                    placeholder="https://discord.com/api/webhooks/..."
-                    value={webhookUrl}
-                    onChange={(e) => setWebhookUrl(e.target.value)}
-                />
-            </div>
-            
-            <p className="text-sm font-medium">{`Bosses to Report (${editableBosses.length})`}</p>
-            <div className="h-60 border rounded-md">
-                <ScrollArea className="h-full">
-                    <Table>
-                      <TableHeader className="sticky top-0 bg-muted/60 backdrop-blur-sm z-10">
-                        <TableRow>
-                          <TableHead className="w-[40%]">Boss</TableHead>
-                          <TableHead className="w-[15%]">Lvl</TableHead>
-                          <TableHead>Spawn Time</TableHead>
-                          <TableHead className="text-right w-[10%]">Action</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                          {editableBosses.length > 0 ? editableBosses.map((boss) => (
-                          <TableRow key={boss.id}>
-                              <TableCell className="font-medium">{boss.name}</TableCell>
-                              <TableCell>{boss.level}</TableCell>
-                              <TableCell>{boss.spawnTime}</TableCell>
-                              <TableCell className="text-right">
-                              <Button variant="ghost" size="icon" onClick={() => handleRemoveBoss(boss.id)}>
-                                  <Trash2 className="h-4 w-4 text-destructive" />
-                              </Button>
-                              </TableCell>
-                          </TableRow>
-                          )) : (
+      <DialogContent 
+        className={cn(
+            "glowing-card sm:max-w-2xl bg-transparent border-0 shadow-none p-0 grid-rows-[auto_1fr_auto] max-h-[90vh]",
+            "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-90 data-[state=open]:slide-in-from-bottom-24"
+        )}
+      >
+        <div className="bg-[#181818] m-1 rounded-[28px] p-6 relative z-10 flex flex-col max-h-[calc(90vh-1rem)]">
+          <DialogHeader className="text-center">
+            <DialogTitle className="flex items-center justify-center gap-2 text-2xl">
+              <Send className="h-6 w-6" />
+              Confirm Boss Report
+            </DialogTitle>
+            <DialogDescription>
+              Review the list of upcoming boss spawns before sending the report to Discord.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="flex-1 overflow-y-auto space-y-4 pr-2 mt-4">
+              {isGuest && (
+                  <div className="rounded-lg border bg-primary/5 border-primary/20 p-4">
+                      <div className="flex items-start gap-3">
+                          <Info className="h-5 w-5 flex-shrink-0 text-primary mt-0.5" />
+                          <div>
+                          <h3 className="font-bold text-primary">You are in Guest Mode!</h3>
+                          <p className="text-sm text-primary/80">
+                              Timers reset after sending a report or refreshing the page. Sign in to save your data permanently.
+                          </p>
+                          </div>
+                      </div>
+                  </div>
+              )}
+              <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="webhook-url">Discord Webhook URL</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button>
+                          <Info className="h-4 w-4 text-muted-foreground hover:text-foreground cursor-pointer" />
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent side="top" className="text-sm max-w-xs sm:max-w-sm">
+                        <h4 className="font-bold mb-2">How to get a Webhook URL</h4>
+                        <ol className="list-decimal list-inside space-y-2 text-muted-foreground">
+                          <li>Go to Server Settings {'>'} Integrations.</li>
+                          <li>Click Webhooks {'>'} New Webhook.</li>
+                          <li>Name it and choose a channel.</li>
+                          <li>Click Copy Webhook URL.</li>
+                        </ol>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  <Input
+                      id="webhook-url"
+                      placeholder="https://discord.com/api/webhooks/..."
+                      value={webhookUrl}
+                      onChange={(e) => setWebhookUrl(e.target.value)}
+                  />
+              </div>
+              
+              <p className="text-sm font-medium">{`Bosses to Report (${editableBosses.length})`}</p>
+              <div className="h-60 border rounded-md">
+                  <ScrollArea className="h-full">
+                      <Table>
+                        <TableHeader className="sticky top-0 bg-muted/60 backdrop-blur-sm z-10">
                           <TableRow>
-                              <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
-                              No upcoming boss spawns to report.
-                              </TableCell>
+                            <TableHead className="w-[40%]">Boss</TableHead>
+                            <TableHead className="w-[15%]">Lvl</TableHead>
+                            <TableHead>Spawn Time</TableHead>
+                            <TableHead className="text-right w-[10%]">Action</TableHead>
                           </TableRow>
-                          )}
-                      </TableBody>
-                    </Table>
-                </ScrollArea>
-            </div>
-        </div>
-        
-        <DialogFooter className="mt-4 border-t pt-4">
-          <div className="flex gap-2 justify-end shrink-0 w-full">
-            <Button variant="outline" onClick={onClose}>Cancel</Button>
-            <Button onClick={handleConfirm} disabled={isSending}>
-              {isSending && <Loader className="mr-2" />}
-              Send to Discord
-            </Button>
+                        </TableHeader>
+                        <TableBody>
+                            {editableBosses.length > 0 ? editableBosses.map((boss) => (
+                            <TableRow key={boss.id}>
+                                <TableCell className="font-medium">{boss.name}</TableCell>
+                                <TableCell>{boss.level}</TableCell>
+                                <TableCell>{boss.spawnTime}</TableCell>
+                                <TableCell className="text-right">
+                                <Button variant="ghost" size="icon" onClick={() => handleRemoveBoss(boss.id)}>
+                                    <Trash2 className="h-4 w-4 text-destructive" />
+                                </Button>
+                                </TableCell>
+                            </TableRow>
+                            )) : (
+                            <TableRow>
+                                <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
+                                No upcoming boss spawns to report.
+                                </TableCell>
+                            </TableRow>
+                            )}
+                        </TableBody>
+                      </Table>
+                  </ScrollArea>
+              </div>
           </div>
-        </DialogFooter>
+          
+          <DialogFooter className="mt-4 border-t pt-4">
+            <div className="flex gap-2 justify-end shrink-0 w-full">
+              <Button variant="outline" onClick={onClose}>Cancel</Button>
+              <Button onClick={handleConfirm} disabled={isSending}>
+                {isSending && <Loader className="mr-2" />}
+                Send to Discord
+              </Button>
+            </div>
+          </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );
 }
-
-    
