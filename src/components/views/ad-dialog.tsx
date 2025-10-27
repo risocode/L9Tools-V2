@@ -5,6 +5,9 @@ import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useAd } from "@/context/ad-context";
@@ -38,6 +41,12 @@ export function AdDialog() {
   return (
     <Dialog open={ad.isOpen} onOpenChange={(open) => !open && closeAdDialog()}>
       <DialogContent className="sm:max-w-md p-0 overflow-hidden border-primary/50">
+        <DialogHeader className="sr-only">
+          <DialogTitle>Upgrade to Pro</DialogTitle>
+          <DialogDescription>
+            An advertisement for the Pro subscription. Unlock unlimited reports, an ad-free experience, and more.
+          </DialogDescription>
+        </DialogHeader>
         <div className="aspect-video bg-gradient-to-br from-purple-950 via-slate-900 to-black flex flex-col items-center justify-center p-6 text-center text-white">
             <Star className="h-12 w-12 text-yellow-400 animate-pulse" style={{ filter: 'drop-shadow(0 0 10px #facc15)'}} />
             <h3 className="font-cinzel text-2xl font-bold mt-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-600">
