@@ -26,8 +26,8 @@ export function useTimeDialog(
             return;
         }
 
-        // Show ad for free tier users on any allowed action
-        if (user && user.subscription_tier === 'free') {
+        // Show ad for free tier or guest users on any allowed action
+        if (!user || user.subscription_tier === 'free') {
             openAdDialog();
         }
         

@@ -28,6 +28,7 @@ import { cn } from '@/lib/utils';
 import { buttonVariants } from '../ui/button';
 import { ViewHeader } from './view-header';
 import { UserNav } from '../layout/user-nav';
+import { useAd } from '@/context/ad-context';
 
 interface BossHuntViewProps {
   initialBosses: Boss[];
@@ -38,6 +39,7 @@ export function BossHuntView({ initialBosses }: BossHuntViewProps) {
   const isMobile = useIsMobile();
   const router = useRouter();
   const { showLoader } = useLoading();
+  const { openAdDialog } = useAd();
   
   const {
     bossesWithTimers,
@@ -94,6 +96,10 @@ export function BossHuntView({ initialBosses }: BossHuntViewProps) {
   const [mapBoss, setMapBoss] = useState<Boss | null>(null);
   
   const handleOpenMapDialog = (boss: Boss) => {
+    // Show ad for guest or free users when they click the map
+    if (!user || user.subscription_tier === 'free') {
+        openAdDialog();
+    }
     setMapBoss(boss);
     setIsMapDialogOpen(true);
   };
