@@ -17,14 +17,14 @@ import { useRouter } from "next/navigation";
 
 export function AdDialog() {
   const { ad, closeAdDialog } = useAd();
-  const [countdown, setCountdown] = useState(5);
+  const [countdown, setCountdown] = useState(3);
   const { showLoader } = useLoading();
   const router = useRouter();
 
 
   useEffect(() => {
     if (ad.isOpen) {
-      setCountdown(5); // Reset countdown when dialog opens
+      setCountdown(3); // Reset countdown when dialog opens
       const timer = setInterval(() => {
         setCountdown((prev) => (prev > 0 ? prev - 1 : 0));
       }, 1000);
