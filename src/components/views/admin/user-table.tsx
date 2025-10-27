@@ -63,7 +63,7 @@ const ExpiresCell = ({ profile }: { profile: Profile }) => {
     return <span className="text-muted-foreground">N/A</span>;
 };
 
-const LastSeenCell = ({ profile }: { profile: Profile }) => {
+const UserStatusCell = ({ profile }: { profile: Profile }) => {
     if (!profile.last_sign_in_at) {
         return <span className="text-muted-foreground text-xs">Never</span>;
     }
@@ -113,8 +113,8 @@ const UserCard = ({ profile, onManageClick }: { profile: Profile; onManageClick:
 
             <div className="space-y-2 text-sm">
                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Last Seen:</span>
-                    <LastSeenCell profile={profile} />
+                    <span className="text-muted-foreground">Status:</span>
+                    <UserStatusCell profile={profile} />
                 </div>
                 <div className="flex justify-between">
                     <span className="text-muted-foreground">Email:</span>
@@ -222,7 +222,7 @@ export function UserTable({ profiles, isLoading, onSubscriptionUpdate, currentPa
                 <TableRow className="border-[#00e5ff]/20 hover:bg-transparent">
                     <TableHead className="w-[30%] text-[#00e5ff]">User</TableHead>
                     <TableHead className="w-[20%] text-[#00e5ff]">Email</TableHead>
-                    <TableHead className="w-[20%] text-[#00e5ff]">Last Seen</TableHead>
+                    <TableHead className="w-[20%] text-[#00e5ff]">Status</TableHead>
                     <TableHead className="w-[10%] text-[#00e5ff]">Tier</TableHead>
                     <TableHead className="w-[10%] text-[#00e5ff]">Expires</TableHead>
                     <TableHead className="w-[10%] text-right text-[#00e5ff]">Actions</TableHead>
@@ -244,7 +244,7 @@ export function UserTable({ profiles, isLoading, onSubscriptionUpdate, currentPa
                         </div>
                         </TableCell>
                         <TableCell className="w-[20%] admin-table-email">{profile.email}</TableCell>
-                        <TableCell className="w-[20%]"><LastSeenCell profile={profile} /></TableCell>
+                        <TableCell className="w-[20%]"><UserStatusCell profile={profile} /></TableCell>
                         <TableCell className="w-[10%]">
                             <TierBadge profile={profile} />
                         </TableCell>
@@ -288,3 +288,5 @@ export function UserTable({ profiles, isLoading, onSubscriptionUpdate, currentPa
     </>
   );
 }
+
+    
