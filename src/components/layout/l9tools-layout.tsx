@@ -368,6 +368,11 @@ export function L9ToolsLayout({
           >
             <div className="absolute inset-0 z-0 bg-black/60" />
             <div className="relative flex-1 flex flex-col min-h-0">
+                {hideHeader && (
+                  <div className="absolute top-4 left-4 z-20 md:hidden">
+                    <SidebarTrigger />
+                  </div>
+                )}
                 {!hideHeader && <ViewHeader {...headerProps} />}
                 <main className="flex-1 flex flex-col min-h-0 z-10">
                     {!isLoading && (
