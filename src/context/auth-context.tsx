@@ -55,6 +55,17 @@ async function updateUserWithProfile(
     console.error("Error fetching profile:", error.message);
     return sessionUser as User;
   }
+  
+  // Also update last_sign_in_at on profile fetch for active users
+  if (profile) {
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ last_sign_in_at: new Date().toISOString(), online_status: 'online' })
+        .eq('id', sessionUser.id);
+      if (updateError) {
+          console.error("Error updating last_sign_in_at:", updateError.message);
+      }
+  }
 
   return { ...sessionUser, ...profile };
 }
