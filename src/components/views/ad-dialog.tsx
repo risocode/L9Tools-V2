@@ -39,8 +39,8 @@ export function AdDialog() {
   };
 
   return (
-    <Dialog open={ad.isOpen} onOpenChange={(open) => !open && closeAdDialog()}>
-      <DialogContent className="sm:max-w-md p-0 overflow-hidden border-primary/50">
+    <Dialog open={ad.isOpen} onOpenChange={(open) => !open && countdown === 0 && closeAdDialog()}>
+      <DialogContent className="sm:max-w-md p-0 overflow-hidden border-primary/50" hideCloseButton>
         <DialogHeader className="sr-only">
           <DialogTitle>Upgrade to Pro</DialogTitle>
           <DialogDescription>
