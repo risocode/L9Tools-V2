@@ -9,9 +9,7 @@ import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import Image from 'next/image';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { SidebarTrigger } from '@/components/ui/sidebar';
 import { UserNav } from '@/components/layout/user-nav';
-import { useState } from 'react';
 
 interface FeatureButtonProps {
   title: string;
@@ -86,7 +84,7 @@ const FeatureButton = ({ title, href, disabled, imageSrc }: FeatureButtonProps) 
 export default function DashboardPage() {
 
   return (
-    <L9ToolsLayout>
+    <L9ToolsLayout hideHeader={true}>
       <div className="relative h-full">
         <ScrollArea className="h-full">
           <div className="space-y-8 p-4 md:p-8 pt-6 md:pt-8 pb-12">
