@@ -4,7 +4,7 @@
 
 import { useState } from 'react';
 import type { Profile } from '@/types';
-import { format } from 'date-fns';
+import { format, formatDistanceToNow } from 'date-fns';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface UserTableProps {
     profiles: Profile[];
@@ -62,6 +63,39 @@ const ExpiresCell = ({ profile }: { profile: Profile }) => {
     return <span className="text-muted-foreground">N/A</span>;
 };
 
+const LastSeenCell = ({ profile }: { profile: Profile }) => {
+    if (!profile.last_sign_in_at) {
+        return <span className="text-muted-foreground text-xs">Never</span>;
+    }
+    const lastSeenDate = new Date(profile.last_sign_in_at);
+    const isOnline = profile.online_status === 'online' && (new Date().getTime() - lastSeenDate.getTime()) < 15 * 60 * 1000;
+    
+    return (
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger>
+                    <div className="flex items-center gap-2">
+                        {isOnline ? (
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                            </span>
+                        ) : (
+                            <span className="relative flex h-2 w-2">
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-gray-500"></span>
+                            </span>
+                        )}
+                        <span className="text-xs text-muted-foreground">{formatDistanceToNow(lastSeenDate, { addSuffix: true })}</span>
+                    </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>{format(lastSeenDate, 'MMM d, yyyy, h:mm a')}</p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
+    )
+}
+
 const UserCard = ({ profile, onManageClick }: { profile: Profile; onManageClick: (profile: Profile) => void; }) => (
     <Card className="admin-table-row bg-transparent border-b-0 rounded-lg mb-4">
         <CardContent className="p-4">
@@ -78,6 +112,10 @@ const UserCard = ({ profile, onManageClick }: { profile: Profile; onManageClick:
             </div>
 
             <div className="space-y-2 text-sm">
+                 <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Last Seen:</span>
+                    <LastSeenCell profile={profile} />
+                </div>
                 <div className="flex justify-between">
                     <span className="text-muted-foreground">Email:</span>
                     <span className="admin-table-email truncate">{profile.email}</span>
@@ -152,7 +190,7 @@ export function UserTable({ profiles, isLoading, onSubscriptionUpdate, currentPa
     if (profiles.length === 0) {
         return (
             <TableRow>
-              <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+              <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                 No profiles found.
               </TableCell>
             </TableRow>
@@ -173,17 +211,18 @@ export function UserTable({ profiles, isLoading, onSubscriptionUpdate, currentPa
         <Table>
             <TableHeader className="admin-table-header">
                 <TableRow className="border-[#00e5ff]/20 hover:bg-transparent">
-                    <TableHead className="w-[35%] text-[#00e5ff]">User</TableHead>
-                    <TableHead className="w-[25%] text-[#00e5ff]">Email</TableHead>
+                    <TableHead className="w-[30%] text-[#00e5ff]">User</TableHead>
+                    <TableHead className="w-[20%] text-[#00e5ff]">Email</TableHead>
+                    <TableHead className="w-[20%] text-[#00e5ff]">Last Seen</TableHead>
                     <TableHead className="w-[10%] text-[#00e5ff]">Tier</TableHead>
-                    <TableHead className="w-[15%] text-[#00e5ff]">Expires</TableHead>
-                    <TableHead className="w-[15%] text-right text-[#00e5ff]">Actions</TableHead>
+                    <TableHead className="w-[10%] text-[#00e5ff]">Expires</TableHead>
+                    <TableHead className="w-[10%] text-right text-[#00e5ff]">Actions</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
                 {profiles.map((profile) => (
                     <TableRow key={profile.id} className="admin-table-row">
-                        <TableCell className="w-[35%]">
+                        <TableCell className="w-[30%]">
                         <div className="flex items-center gap-3">
                             <Avatar>
                                 <AvatarImage src={profile.user_photo_url || undefined} />
@@ -195,14 +234,15 @@ export function UserTable({ profiles, isLoading, onSubscriptionUpdate, currentPa
                             </div>
                         </div>
                         </TableCell>
-                        <TableCell className="w-[25%] admin-table-email">{profile.email}</TableCell>
+                        <TableCell className="w-[20%] admin-table-email">{profile.email}</TableCell>
+                        <TableCell className="w-[20%]"><LastSeenCell profile={profile} /></TableCell>
                         <TableCell className="w-[10%]">
                             <TierBadge profile={profile} />
                         </TableCell>
-                        <TableCell className="w-[15%]">
+                        <TableCell className="w-[10%]">
                             <ExpiresCell profile={profile} />
                         </TableCell>
-                        <TableCell className="w-[15%] text-right">
+                        <TableCell className="w-[10%] text-right">
                         <Button 
                             variant="outline" 
                             size="sm"
@@ -239,3 +279,5 @@ export function UserTable({ profiles, isLoading, onSubscriptionUpdate, currentPa
     </>
   );
 }
+
+    

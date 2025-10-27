@@ -161,6 +161,8 @@ export type Database = {
           email: string | null
           id: string
           is_admin: boolean
+          last_sign_in_at: string | null
+          online_status: string | null
           short_id: string | null
           subscription_expires_at: string | null
           subscription_tier: string
@@ -176,6 +178,8 @@ export type Database = {
           email?: string | null
           id: string
           is_admin?: boolean
+          last_sign_in_at?: string | null
+          online_status?: string | null
           short_id?: string | null
           subscription_expires_at?: string | null
           subscription_tier?: string
@@ -191,6 +195,8 @@ export type Database = {
           email?: string | null
           id?: string
           is_admin?: boolean
+          last_sign_in_at?: string | null
+          online_status?: string | null
           short_id?: string | null
           subscription_expires_at?: string | null
           subscription_tier?: string
@@ -268,6 +274,10 @@ export type Database = {
           pro_users: number
           lifetime_users: number
         }
+      }
+      handle_new_user_session: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       refresh_user_stats_cache: {
         Args: Record<PropertyKey, never>
@@ -364,3 +374,5 @@ export type Enums<
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
     : never
+
+    
