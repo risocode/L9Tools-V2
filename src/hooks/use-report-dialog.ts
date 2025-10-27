@@ -112,8 +112,8 @@ export function useReportDialog(bosses: ProcessedBoss[], onGuestReportReset: (bo
             return;
         }
 
-        // Show ad for free users when they initiate a report
-        if (user && user.subscription_tier === 'free') {
+        // Show ad for guest or free users when they initiate a report
+        if (!user || user.subscription_tier === 'free') {
             openAdDialog();
         }
         
