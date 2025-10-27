@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useState } from 'react';
@@ -14,8 +13,9 @@ import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-is-mobile';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useAuth } from '@/context/auth-context';
 
 interface UserTableProps {
     profiles: Profile[];
@@ -68,7 +68,7 @@ const LastSeenCell = ({ profile }: { profile: Profile }) => {
         return <span className="text-muted-foreground text-xs">Never</span>;
     }
     const lastSeenDate = new Date(profile.last_sign_in_at);
-    const isOnline = profile.online_status === 'online' && (new Date().getTime() - lastSeenDate.getTime()) < 15 * 60 * 1000;
+    const isOnline = (new Date().getTime() - lastSeenDate.getTime()) < 15 * 60 * 1000;
     
     return (
         <TooltipProvider>
@@ -166,6 +166,7 @@ const PaginationControls = ({ currentPage, totalPages, onPageChange, isLoading }
 export function UserTable({ profiles, isLoading, onSubscriptionUpdate, currentPage, totalPages, onPageChange }: UserTableProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
+  const { user: adminUser, refreshUser } = useAuth();
   const isMobile = useIsMobile();
 
   const handleOpenDialog = (profile: Profile) => {
@@ -177,6 +178,14 @@ export function UserTable({ profiles, isLoading, onSubscriptionUpdate, currentPa
     setIsDialogOpen(false);
     setSelectedProfile(null);
   };
+
+  const handleSuccessfulUpdate = () => {
+    onSubscriptionUpdate();
+    // If the admin is editing their own profile, refresh the auth context
+    if (adminUser && selectedProfile && adminUser.id === selectedProfile.id) {
+      refreshUser();
+    }
+  }
 
   const renderContent = () => {
     if (isLoading) {
@@ -274,10 +283,8 @@ export function UserTable({ profiles, isLoading, onSubscriptionUpdate, currentPa
             isOpen={isDialogOpen}
             onClose={handleDialogClose}
             profile={selectedProfile}
-            onSubscriptionUpdate={onSubscriptionUpdate}
+            onSubscriptionUpdate={handleSuccessfulUpdate}
         />
     </>
   );
 }
-
-    

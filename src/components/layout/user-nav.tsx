@@ -59,6 +59,9 @@ export function UserNav({}: UserNavProps) {
     if (user) {
       const fallback = user.display_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || '?';
       const isPro = user.subscription_tier === 'pro';
+      const isLifetime = user.subscription_tier === 'lifetime';
+      const canRenew = isPro && !isLifetime && !user.is_admin;
+
 
       return (
         <DropdownMenu>
@@ -91,7 +94,7 @@ export function UserNav({}: UserNavProps) {
                       <span>My Profile</span>
                   </Link>
               </DropdownMenuItem>
-               {isPro && (
+               {canRenew && (
                 <DropdownMenuItem asChild>
                   <Link href="/subscribe">
                     <Repeat className="mr-2 h-4 w-4" />

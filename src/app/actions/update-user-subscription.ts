@@ -31,23 +31,10 @@ export async function updateUserSubscription({ userId, tier, expiresAt }: Update
     return { success: false, error: 'Could not create admin database client.' };
   }
 
-  // 3. Fetch the target user's current profile to preserve existing data
-  const { data: targetProfile, error: targetProfileError } = await supabaseAdmin
-    .from('profiles')
-    .select('*')
-    .eq('id', userId)
-    .single();
-
-  if (targetProfileError || !targetProfile) {
-    console.error('Error fetching target profile for update:', targetProfileError?.message);
-    return { success: false, error: 'Could not find the user profile to update.' };
-  }
-  
-  // 4. Perform the update using the admin client, merging new data with existing data
+  // 3. Perform the update using the admin client
   const { error } = await supabaseAdmin
     .from('profiles')
     .update({
-      ...targetProfile, // Preserve existing data like is_admin
       subscription_tier: tier,
       subscription_expires_at: expiresAt,
       updated_at: new Date().toISOString(),
@@ -59,10 +46,9 @@ export async function updateUserSubscription({ userId, tier, expiresAt }: Update
     return { success: false, error: 'Failed to update user subscription.' };
   }
 
-  // 5. Revalidate paths to show updated data in case user is viewing their own profile elsewhere
+  // 5. Revalidate paths to show updated data
   revalidatePath('/admin');
   revalidatePath('/profile');
-  revalidatePath(`/profile/${userId}`); // Revalidate specific user profiles if they have public pages
 
   return { success: true, error: null };
 }
