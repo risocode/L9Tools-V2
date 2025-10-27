@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 interface UserNavProps {}
 
 export function UserNav({}: UserNavProps) {
-  const { user, openAuthDialog, logout, isInitialLoading } = useAuth();
+  const { user, openAuthDialog, logout, isInitialLoading, refreshUser } = useAuth();
   const { toast } = useToast();
   const [hasMounted, setHasMounted] = useState(false);
 
@@ -104,7 +104,7 @@ export function UserNav({}: UserNavProps) {
               )}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={logout}>
+            <DropdownMenuItem onClick={() => logout()}>
               <LogOut className="mr-2 h-4 w-4" />
               <span>Log out</span>
             </DropdownMenuItem>
