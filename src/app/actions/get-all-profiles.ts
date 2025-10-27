@@ -62,7 +62,8 @@ export async function getAllProfiles({ page, pageSize, query, tier = 'all' }: Ge
 
   // Apply ordering and pagination
   queryBuilder = queryBuilder
-    .order('created_at', { ascending: false })
+    .order('last_sign_in_at', { ascending: false, nulls: 'last' }) // Online/recently active first
+    .order('created_at', { ascending: false }) // Then by creation date
     .range(from, to);
 
   // Execute the query
