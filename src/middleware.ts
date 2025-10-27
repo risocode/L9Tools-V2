@@ -55,7 +55,9 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // Refresh session if expired - required for Server Components
+  // This is the key change: calling getUser() refreshes the session
+  // and, if the user is active, our onAuthStateChange listener in the
+  // AuthProvider will now update their 'last_sign_in_at' timestamp.
   await supabase.auth.getUser()
 
   return response

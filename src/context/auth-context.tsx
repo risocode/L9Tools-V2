@@ -23,6 +23,11 @@ import { useLoading } from "./loading-context";
 
 type User = SupabaseUser & Partial<Profile>;
 
+interface LogoutOptions {
+  reason?: 'inactive' | 'user_initiated';
+  redirectPath?: string;
+}
+
 interface AuthContextState {
   user: User | null;
   isInitialLoading: boolean;
@@ -30,7 +35,7 @@ interface AuthContextState {
   openAuthDialog: () => void;
   closeAuthDialog: () => void;
   login: () => Promise<void>;
-  logout: () => Promise<void>;
+  logout: (options?: LogoutOptions) => Promise<void>;
   refreshUser: () => Promise<void>;
 }
 
@@ -40,8 +45,11 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+const INACTIVITY_TIMEOUT_HOURS = 12;
+
 async function updateUserWithProfile(
-  sessionUser: SupabaseUser | null
+  sessionUser: SupabaseUser | null,
+  isSessionRestore: boolean = false
 ): Promise<User | null> {
   if (!sessionUser) return null;
 
@@ -56,11 +64,10 @@ async function updateUserWithProfile(
     return sessionUser as User;
   }
   
-  // Also update last_sign_in_at on profile fetch for active users
-  if (profile) {
+  if (profile && !isSessionRestore) {
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({ last_sign_in_at: new Date().toISOString(), online_status: 'online' })
+        .update({ last_sign_in_at: new Date().toISOString() })
         .eq('id', sessionUser.id);
       if (updateError) {
           console.error("Error updating last_sign_in_at:", updateError.message);
@@ -78,12 +85,33 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const router = useRouter();
   const { showLoader } = useLoading();
 
+  const logout = useCallback(async (options: LogoutOptions = {}) => {
+    const { reason = 'user_initiated', redirectPath = '/' } = options;
+
+    showLoader(async () => {
+        await supabase.auth.signOut();
+        setUser(null);
+
+        let title = "Logged Out";
+        let description = "You have been successfully logged out.";
+
+        if (reason === 'inactive') {
+            title = "Session Expired";
+            description = `You have been logged out due to ${INACTIVITY_TIMEOUT_HOURS} hours of inactivity.`;
+        }
+
+        toast({ title, description });
+        router.replace(redirectPath);
+        router.refresh();
+    });
+  }, [showLoader, router, toast]);
+
   const refreshUser = useCallback(async () => {
     const { data: { user: sessionUser } } = await supabase.auth.getUser();
     if (sessionUser) {
       const fullUser = await updateUserWithProfile(sessionUser);
       setUser(fullUser);
-      router.refresh(); // This helps re-render server components with fresh data
+      router.refresh(); 
     }
   }, [router]);
 
@@ -94,8 +122,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (isMounted) {
-        if (session) {
-          const fullUser = await updateUserWithProfile(session.user);
+        if (session?.user) {
+          const fullUser = await updateUserWithProfile(session.user, true); // It's a session restore
+          if (fullUser?.last_sign_in_at) {
+              const lastSeen = new Date(fullUser.last_sign_in_at);
+              const now = new Date();
+              const hoursSinceLastSeen = (now.getTime() - lastSeen.getTime()) / (1000 * 60 * 60);
+
+              if (hoursSinceLastSeen > INACTIVITY_TIMEOUT_HOURS) {
+                  logout({ reason: 'inactive' });
+                  setIsInitialLoading(false);
+                  return; // Don't set user, logout will handle it
+              }
+          }
           setUser(fullUser);
         }
         setIsInitialLoading(false);
@@ -105,12 +144,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
         async (event: AuthChangeEvent, session: Session | null) => {
           if (!isMounted) return;
 
-          const fullUser = await updateUserWithProfile(session?.user ?? null);
-          setUser(fullUser);
-
           if (event === "SIGNED_IN") {
+            const fullUser = await updateUserWithProfile(session?.user ?? null, false);
+            setUser(fullUser);
             closeAuthDialog();
             router.refresh();
+          } else if (event === "SIGNED_OUT") {
+            setUser(null);
+          } else if (event === "TOKEN_REFRESHED" || event === "USER_UPDATED") {
+            if(session?.user) {
+              const fullUser = await updateUserWithProfile(session.user, false);
+              setUser(fullUser);
+            }
           }
         }
       );
@@ -123,7 +168,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     getInitialSession();
 
-  }, [router]);
+  }, [router, logout]);
 
   const openAuthDialog = () => setIsAuthDialogOpen(true);
   const closeAuthDialog = () => setIsAuthDialogOpen(false);
@@ -141,19 +186,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       });
     }
   };
-
-  const logout = useCallback(async () => {
-    showLoader(async () => {
-        await supabase.auth.signOut();
-        setUser(null);
-        toast({
-            title: "Logged Out",
-            description: "You have been successfully logged out.",
-        });
-        router.replace("/");
-        router.refresh();
-    });
-  }, [showLoader, router, toast]);
 
   const value: AuthContextState = {
     user,
