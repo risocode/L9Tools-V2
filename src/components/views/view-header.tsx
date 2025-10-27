@@ -34,8 +34,9 @@ export function ViewHeader({ title, description, icon: Icon, cta, controls }: Vi
                             </CardDescription>
                         </div>
                     </div>
-                    {cta && <div className="hidden md:block">{cta}</div>}
+                     <div className="hidden md:block">{cta}</div>
                 </div>
+                 {cta && <div className="block md:hidden w-full">{cta}</div>}
                 {controls && <div className="w-full">{controls}</div>}
             </CardHeader>
         </div>
