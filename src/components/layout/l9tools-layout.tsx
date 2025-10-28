@@ -309,11 +309,12 @@ export function L9ToolsLayout({
               <SidebarMenu className="py-2">
                 {navItems.map((item) => {
                   const Icon = item.icon as ElementType;
+                  const isLink = item.href && item.href !== '#';
+
                   if (item.isImageButton) {
-                      
                       const linkProps = item.disabled
                         ? { href: '#', onClick: handleDisabledClick, 'aria-disabled': true }
-                        : { href: item.href, onClick: (e: MouseEvent) => handleNavClick(e, item.href) };
+                        : { href: item.href, onClick: (e: MouseEvent) => isLink && handleNavClick(e, item.href) };
 
                       return (
                         <SidebarMenuItem key={item.id} className="flex justify-center p-2">
@@ -337,7 +338,7 @@ export function L9ToolsLayout({
                   if (item.isSpaceButton) {
                       return (
                           <SidebarMenuItem key={item.id} className="p-0 mt-2 flex justify-center">
-                            <a href={item.href} onClick={(e) => handleNavClick(e, item.href)} className="button-container" aria-label={item.ariaLabel}>
+                            <a href={item.href} onClick={(e) => isLink && handleNavClick(e, item.href)} className="button-container" aria-label={item.ariaLabel}>
                                   <div className="space-button">
                                       <div className="bright-particles"></div>
                                       <span>{item.label}</span>
@@ -356,7 +357,7 @@ export function L9ToolsLayout({
                           pathname.startsWith(item.href) && 'bg-primary/20'
                         )}
                       >
-                        <a href={item.href} onClick={(e) => handleNavClick(e, item.href)} aria-label={item.ariaLabel}>
+                        <a href={item.href} onClick={(e) => isLink && handleNavClick(e, item.href)} aria-label={item.ariaLabel}>
                           <Icon className="mr-2 h-5 w-5" />
                           {item.label}
                         </a>
