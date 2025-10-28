@@ -97,9 +97,12 @@ export function L9ToolsLayout({
   }, []);
 
   const handleNavClick = (e: MouseEvent, href: string) => {
-    e.preventDefault();
-    if (pathname !== href) {
-        showLoader(() => router.push(href));
+    // This check prevents the handler from interfering with other buttons in the sidebar
+    if (e.currentTarget.closest('[data-sidebar="menu"]')) {
+      e.preventDefault();
+      if (pathname !== href) {
+          showLoader(() => router.push(href));
+      }
     }
   }
 
@@ -154,12 +157,14 @@ export function L9ToolsLayout({
 
   
   let currentTitle = 'Boss Hunt';
-  let description = 'Track and prepare for upcoming boss battles.';
+  let description = '';
   let headerIcon: any = 'skull';
   
   const currentRoute = navItems.find(item => pathname.startsWith(item.href));
 
-  if (isDashboardPage) {
+  if (pathname.startsWith('/boss-hunt')) {
+    description = '';
+  } else if (isDashboardPage) {
     currentTitle = 'Dashboard';
     description = 'Welcome to your command center.';
     headerIcon = LayoutGrid;
@@ -306,7 +311,7 @@ export function L9ToolsLayout({
               </a>
             </SidebarHeader>
             <SidebarContent className="relative z-10 bg-transparent p-0">
-              <SidebarMenu className="py-2">
+              <SidebarMenu data-sidebar="menu" className="py-2">
                 {navItems.map((item) => {
                   const Icon = item.icon as ElementType;
                   const isLink = item.href && item.href !== '#';
@@ -407,7 +412,7 @@ export function L9ToolsLayout({
                             transition={{ ease: "easeInOut", duration: 0.5 }}
                             className="h-full flex flex-col"
                         >
-                            {hideHeader ? children : content}
+                            {content}
                         </motion.div>
                     )}
                 </main>
