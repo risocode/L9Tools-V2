@@ -4,7 +4,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, Star } from "lucide-react";
 import type { Boss } from '@/types';
 import { useBossData } from '@/hooks/use-boss-data';
 import { useReportDialog } from '@/hooks/use-report-dialog';
@@ -230,25 +230,33 @@ export function BossHuntView({ initialBosses }: BossHuntViewProps) {
         />
 
         <AlertDialog open={isProDialogOpen} onOpenChange={setIsProDialogOpen}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Pro Feature Required</AlertDialogTitle>
-              <AlertDialogDescription>
-                Due to the high volume of users, setting timers for level 90+ bosses is now a Pro feature. This helps keep our service sustainable and allows us to continue providing valuable tools for the community.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                className={cn(buttonVariants({ variant: "default" }))}
-                onClick={() => {
-                  setIsProDialogOpen(false);
-                  handleGoToSubscribe();
-                }}
-              >
-                Upgrade to Pro
-              </AlertDialogAction>
-            </AlertDialogFooter>
+          <AlertDialogContent
+            className={cn(
+                "glowing-card sm:max-w-md bg-transparent border-0 shadow-none p-0",
+                "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-90 data-[state=open]:slide-in-from-bottom-24"
+            )}
+          >
+            <div className="bg-[#181818] m-1 rounded-[28px] p-6 relative z-10 flex flex-col items-center">
+              <AlertDialogHeader className="text-center items-center">
+                <Star className="h-12 w-12 text-yellow-400 mb-2 animate-pulse" style={{ filter: 'drop-shadow(0 0 10px #facc15)'}} />
+                <AlertDialogTitle className="font-cinzel text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-600">Pro Feature Required</AlertDialogTitle>
+                <AlertDialogDescription className="text-sm text-slate-300 pt-2">
+                  Due to the high volume of users, setting timers for level 90+ bosses is now a Pro feature. This helps keep our service sustainable and allows us to continue providing valuable tools for the community.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="flex-col gap-2 w-full mt-6">
+                <AlertDialogAction
+                  className="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-base"
+                  onClick={() => {
+                    setIsProDialogOpen(false);
+                    handleGoToSubscribe();
+                  }}
+                >
+                  Upgrade to Pro
+                </AlertDialogAction>
+                <AlertDialogCancel className="w-full border-slate-700 hover:bg-slate-800 hover:text-white">Cancel</AlertDialogCancel>
+              </AlertDialogFooter>
+            </div>
           </AlertDialogContent>
         </AlertDialog>
       </div>
