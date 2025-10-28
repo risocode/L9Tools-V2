@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useAuth } from "@/context/auth-context";
@@ -22,7 +21,7 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 interface UserNavProps {
-  size?: 'default' | 'large';
+  size?: 'default' | 'large' | 'small';
 }
 
 export function UserNav({ size = 'default' }: UserNavProps) {
@@ -66,6 +65,7 @@ export function UserNav({ size = 'default' }: UserNavProps) {
       const isSubscribed = isPro || isLifetime || user.is_admin;
       const canRenew = isPro && !isLifetime && !user.is_admin;
 
+      const buttonSizeClass = size === 'large' ? 'profile-avatar' : (size === 'small' ? 'h-10 w-10 md:h-12 md:w-12' : 'h-10 w-10 md:h-12 md:w-12');
 
       return (
         <DropdownMenu>
@@ -73,7 +73,7 @@ export function UserNav({ size = 'default' }: UserNavProps) {
             <button 
               className={cn(
                 "bg-transparent border-none rounded-full",
-                size === 'large' ? "profile-avatar" : "h-10 w-10 md:h-12 md:w-12"
+                buttonSizeClass
               )} 
               aria-label="Open user menu"
             >
