@@ -40,6 +40,7 @@ import { AdDialog } from '../views/ad-dialog';
 import { useLoading } from '@/context/loading-context';
 import { AboutDialog } from '../views/about-dialog';
 import { ContactDialog } from '../views/contact-dialog';
+import { AdProvider } from '@/context/ad-context';
 
 
 const donateButtonImages = ['/l9rs/donate1.png', '/l9rs/donate2.png'];
