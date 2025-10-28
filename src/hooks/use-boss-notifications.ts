@@ -37,43 +37,43 @@ export function useBossNotifications(bosses: ProcessedBoss[], notificationsEnabl
   const scheduledNotifications = useRef<Map<string, NodeJS.Timeout[]>>(new Map());
 
   useEffect(() => {
+    // If not in a browser or notifications are disabled, clear all scheduled notifications and stop.
     if (typeof window === 'undefined' || !notificationsEnabled) {
-      // Clear all existing timeouts if notifications are disabled
       scheduledNotifications.current.forEach(timeouts => timeouts.forEach(clearTimeout));
       scheduledNotifications.current.clear();
       return;
     }
 
-    const checkAndSchedule = async () => {
+    const scheduleNotifications = async () => {
       const permission = await checkNotificationPermission();
       if (permission !== 'granted') {
-        return;
+        return; // Stop if permission is not granted
       }
-      
+
       const now = Date.now();
       const newScheduled = new Map<string, NodeJS.Timeout[]>();
 
       bosses.forEach(boss => {
-        if (!boss.respawnTime) {
+        // Only schedule for bosses with a future respawn time
+        if (!boss.respawnTime || boss.respawnTime.getTime() <= now) {
           return;
         }
 
         const respawnTime = boss.respawnTime.getTime();
         const bossKey = `${boss.id}-${respawnTime}`;
         
-        // If we already have timeouts for this exact boss spawn, keep them.
+        // If notifications are already scheduled for this exact spawn time, keep them.
         if (scheduledNotifications.current.has(bossKey)) {
           newScheduled.set(bossKey, scheduledNotifications.current.get(bossKey)!);
-          scheduledNotifications.current.delete(bossKey);
+          scheduledNotifications.current.delete(bossKey); // Avoid clearing it later
           return;
         }
 
         const timeouts: NodeJS.Timeout[] = [];
         
-        // Schedule pre-spawn notification
+        // Schedule 5-minute pre-spawn notification
         const preSpawnTime = respawnTime - PRE_SPAWN_MINUTES * 60 * 1000;
         const preSpawnDelay = preSpawnTime - now;
-
         if (preSpawnDelay > 0) {
           const preSpawnTimeout = setTimeout(() => {
             showNotification(boss.name, `${boss.name} is spawning in ${PRE_SPAWN_MINUTES} minutes!`);
@@ -95,16 +95,16 @@ export function useBossNotifications(bosses: ProcessedBoss[], notificationsEnabl
         }
       });
 
-      // Clean up old timeouts for bosses that are no longer in the list or have changed times
+      // Clean up any old timeouts for bosses that are no longer in the list or whose times have changed.
       scheduledNotifications.current.forEach(timeouts => timeouts.forEach(clearTimeout));
       
-      // Set the new timeouts
+      // Update the reference to the new set of scheduled timeouts.
       scheduledNotifications.current = newScheduled;
     };
 
-    checkAndSchedule();
+    scheduleNotifications();
 
-    // Cleanup function when component unmounts
+    // Cleanup function when the component unmounts or dependencies change
     return () => {
       scheduledNotifications.current.forEach(timeouts => timeouts.forEach(clearTimeout));
       scheduledNotifications.current.clear();
