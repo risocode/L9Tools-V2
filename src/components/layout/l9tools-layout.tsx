@@ -1,7 +1,7 @@
 
-
 "use client";
 
+import * as React from 'react';
 import type { ReactNode, ElementType, MouseEvent } from 'react';
 import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -401,7 +401,7 @@ export function L9ToolsLayout({
                             className="h-full flex flex-col"
                         >
                           <div className="h-full flex-1 flex flex-col">
-                            {hideHeader ? children : React.Children.map(children, child => child)}
+                            {hideHeader ? children : <>{children}</>}
                           </div>
                         </motion.div>
                     )}
