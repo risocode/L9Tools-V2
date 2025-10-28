@@ -93,7 +93,7 @@ export function BossHuntView({ initialBosses }: BossHuntViewProps) {
     isSubmittingTime,
     handleOpenTimeDialog,
     handleConfirmSetTime,
-    setIsTimePickerDialog
+    closeTimePickerDialog
   } = useTimeDialog(handleSetManualTime, handleGoToSubscribe, () => setIsProDialogOpen(true));
 
   const [isMapDialogOpen, setIsMapDialogOpen] = useState(false);
@@ -210,7 +210,7 @@ export function BossHuntView({ initialBosses }: BossHuntViewProps) {
 
         <TimePickerDialog 
           isOpen={isTimePickerDialog}
-          onClose={() => setIsTimePickerDialog(false)}
+          onClose={closeTimePickerDialog}
           boss={timeDialogBoss}
           isSubmitting={isSubmittingTime}
           onConfirm={handleConfirmSetTime}

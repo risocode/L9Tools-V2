@@ -45,7 +45,7 @@ export function useTimeDialog(
         }
     }, [onConfirm]);
 
-    const handleClose = useCallback(() => {
+    const closeTimePickerDialog = useCallback(() => {
         setIsTimePickerDialog(false);
         setTimeDialogBoss(null);
     }, []);
@@ -56,6 +56,6 @@ export function useTimeDialog(
         isSubmittingTime,
         handleOpenTimeDialog,
         handleConfirmSetTime,
-        setIsTimePickerDialog: handleClose,
+        closeTimePickerDialog,
     };
 }
