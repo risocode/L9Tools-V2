@@ -24,7 +24,7 @@ export function PaymentMethodDialog({ isOpen, onClose, onSelectMethod }: Payment
         <DialogHeader>
           <DialogTitle>Choose Payment Method</DialogTitle>
           <DialogDescription>
-            Select how you'd like to complete your subscription.
+            Select how you&apos;d like to complete your subscription.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col space-y-4 pt-4">
