@@ -9,6 +9,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 interface PaymentMethodDialogProps {
   isOpen: boolean;
@@ -23,22 +24,24 @@ export function PaymentMethodDialog({ isOpen, onClose, onSelectMethod }: Payment
         <DialogHeader>
           <DialogTitle>Choose Payment Method</DialogTitle>
           <DialogDescription>
-            Select how you&apos;d like to pay for your subscription.
+            Select how you'd like to complete your subscription.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col space-y-4 pt-4">
           <Button
             variant="outline"
-            className="justify-center h-16 text-lg"
+            className="justify-start h-16 text-lg"
             onClick={() => onSelectMethod('gcash')}
           >
+            <Image src="/wallet/gcash.png" alt="GCash" width={40} height={40} className="mr-4 rounded-full"/>
             Pay with GCash
           </Button>
           <Button
             variant="outline"
-            className="justify-center h-16 text-lg"
+            className="justify-start h-16 text-lg"
             onClick={() => onSelectMethod('usdt')}
           >
+             <Image src="/wallet/usdt.png" alt="USDT" width={40} height={40} className="mr-4 rounded-full"/>
             Pay with USDT
           </Button>
         </div>
