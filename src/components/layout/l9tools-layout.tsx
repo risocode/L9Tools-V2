@@ -73,7 +73,6 @@ export function L9ToolsLayout({
   const [isDonationOpen, setIsDonationOpen] = useState(false);
   const [legalType, setLegalType] = useState<'terms' | 'privacy' | 'disclaimer' | 'cookie'>('terms');
   const [donateButtonImage, setDonateButtonImage] = useState(donateButtonImages[0]);
-  const [isSubscribeExpanded, setIsSubscribeExpanded] = useState(false);
   
   const isAdminPage = pathname.startsWith('/admin');
   const isProfilePage = pathname === '/profile';
@@ -211,35 +210,13 @@ export function L9ToolsLayout({
 
   const desktopCta = (
       <div className="flex flex-col items-end gap-4">
-        {user && !user.is_admin && !isSubscribed && (
-          <button
-            onClick={() => {
-              if (isSubscribeExpanded) {
-                handleSubscribeClick();
-              } else {
-                setIsSubscribeExpanded(true);
-              }
-            }}
-            onMouseLeave={() => setIsSubscribeExpanded(false)} // Optional: collapse on mouse leave
-            className={cn("subscribe-btn-animated", isSubscribeExpanded && "expanded")}
-            aria-label="Subscribe to Pro"
-          >
-            <Image src="/l9rs/subs2.png" alt="Subscribe" width={140} height={50} className="subscribe-img-expanded" />
-            <Image src="/l9rs/subs1.png" alt="Subscribe Icon" width={50} height={50} className="subscribe-img-icon" />
-          </button>
-        )}
-         {!isDashboardPage && <UserNav />}
+        {!isDashboardPage && <UserNav size="default" />}
       </div>
   );
 
   const mobileCta = (
     <div className="flex items-center gap-2">
-      {user && !user.is_admin && !isSubscribed && (
-         <button onClick={handleSubscribeClick} className="p-0 bg-transparent border-none">
-            <Image src="/l9rs/subs1.png" alt="Subscribe Icon" width={40} height={40} />
-         </button>
-      )}
-      <UserNav />
+      <UserNav size="default" />
     </div>
   );
 
