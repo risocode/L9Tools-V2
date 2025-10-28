@@ -45,8 +45,6 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-const INACTIVITY_TIMEOUT_HOURS = 12;
-
 async function updateUserWithProfile(
   sessionUser: SupabaseUser | null
 ): Promise<User | null> {
@@ -60,7 +58,6 @@ async function updateUserWithProfile(
   
   if (updateError) {
       console.error("Error updating last_sign_in_at on profile fetch:", updateError.message);
-      // Continue even if this fails, but the profile data will be fresh
   }
 
   // Then, fetch the complete profile data.
@@ -72,7 +69,6 @@ async function updateUserWithProfile(
 
   if (error) {
     console.error("Error fetching profile after sign-in update:", error.message);
-    // Return the session user and a potentially stale profile from before the update
     return { ...sessionUser, ...(profile || {}) };
   }
   
@@ -100,7 +96,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         if (reason === 'inactive') {
             title = "Session Expired";
-            description = `You have been logged out due to ${INACTIVITY_TIMEOUT_HOURS} hours of inactivity.`;
+            description = `You have been logged out due to inactivity.`;
         }
 
         toast({ title, description });
@@ -112,7 +108,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const refreshUser = useCallback(async () => {
     const { data: { user: sessionUser } } = await supabase.auth.getUser();
     if (sessionUser) {
-      // When manually refreshing, we are just fetching the latest state, not necessarily "signing in"
       const { data: profile, error } = await supabase.from('profiles').select('*').eq('id', sessionUser.id).single();
       if (error) {
         console.error("Error fetching profile on manual refresh:", error.message);
@@ -132,21 +127,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       
       if (isMounted) {
         if (session?.user) {
-          // On initial load, just get the profile without forcing a timestamp update
           const { data: profile, error } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
           const fullUser = { ...session.user, ...(profile || {}) };
-
-          if (fullUser?.last_sign_in_at) {
-              const lastSeen = new Date(fullUser.last_sign_in_at);
-              const now = new Date();
-              const hoursSinceLastSeen = (now.getTime() - lastSeen.getTime()) / (1000 * 60 * 60);
-
-              if (hoursSinceLastSeen > INACTIVITY_TIMEOUT_HOURS) {
-                  logout({ reason: 'inactive' });
-                  setIsInitialLoading(false);
-                  return; // Don't set user, logout will handle it
-              }
-          }
           setUser(fullUser as User);
         }
         setIsInitialLoading(false);
@@ -165,7 +147,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
             setUser(null);
           } else if (event === "TOKEN_REFRESHED" || event === "USER_UPDATED") {
             if(session?.user) {
-               // On background refresh, just get latest data without forcing timestamp update
                const { data: profile, error } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
                if (!error) {
                   setUser({ ...session.user, ...profile });
