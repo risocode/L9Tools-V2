@@ -244,7 +244,7 @@ export function L9ToolsLayout({
     icon: typeof headerIcon !== 'string' ? headerIcon : undefined,
     cta: desktopCta,
     mobileCta: mobileCta,
-    isDashboardPage,
+    isDashboardPage: isDashboardPage,
   };
 
   const footer = (
