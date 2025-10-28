@@ -234,7 +234,7 @@ export function L9ToolsLayout({
             <Image src="/l9rs/subs1.png" alt="Subscribe Icon" width={40} height={40} />
          </button>
       )}
-      {!isDashboardPage && <UserNav />}
+      <UserNav />
     </div>
   );
 
@@ -268,9 +268,13 @@ export function L9ToolsLayout({
     </footer>
   );
   
-  const content = React.Children.map(children, child =>
-    React.isValidElement(child) ? React.cloneElement(child, { ...headerProps } as any) : child
+  const content = (
+    <div className="h-full flex-1 flex flex-col">
+        {!hideHeader && <ViewHeader {...headerProps} />}
+        {children}
+    </div>
   );
+
 
   return (
     <AdProvider>
@@ -402,9 +406,7 @@ export function L9ToolsLayout({
                             transition={{ ease: "easeInOut", duration: 0.5 }}
                             className="h-full flex flex-col"
                         >
-                          <div className="h-full flex-1 flex flex-col">
                             {hideHeader ? children : content}
-                          </div>
                         </motion.div>
                     )}
                 </main>

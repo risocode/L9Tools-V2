@@ -27,16 +27,15 @@ import { useRouter } from 'next/navigation';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '../ui/button';
-import { ViewHeader, ViewHeaderProps } from './view-header';
-import { UserNav } from '../layout/user-nav';
+import { ViewHeaderProps } from './view-header';
 import { useAd } from '@/context/ad-context';
 import { useBossNotifications } from '@/hooks/use-boss-notifications';
 
-interface BossHuntViewProps extends ViewHeaderProps {
+interface BossHuntViewProps {
   initialBosses: Boss[];
 }
 
-export function BossHuntView({ initialBosses, ...headerProps }: BossHuntViewProps) {
+export function BossHuntView({ initialBosses }: BossHuntViewProps) {
   const { user } = useAuth();
   const isMobile = useIsMobile();
   const router = useRouter();
@@ -140,7 +139,6 @@ export function BossHuntView({ initialBosses, ...headerProps }: BossHuntViewProp
   
   return (
       <div className="relative flex-1 flex flex-col min-h-0">
-          <ViewHeader {...headerProps} />
         <ScrollArea 
           className="h-full rounded-b-lg"
           onScroll={handleScroll}
@@ -212,7 +210,7 @@ export function BossHuntView({ initialBosses, ...headerProps }: BossHuntViewProp
 
         <TimePickerDialog 
           isOpen={isTimePickerDialog}
-          onClose={setIsTimePickerDialog}
+          onClose={() => setIsTimePickerDialog(false)}
           boss={timeDialogBoss}
           isSubmitting={isSubmittingTime}
           onConfirm={handleConfirmSetTime}
