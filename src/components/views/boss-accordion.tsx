@@ -39,7 +39,7 @@ export const BossAccordion = React.memo(function BossAccordion({
 
   return (
     <ScrollArea className={cn("h-full", className)}>
-      <Accordion type="multiple" className="w-full">
+      <Accordion type="single" collapsible className="w-full">
         {bosses.map((boss) => (
           <AccordionItem key={boss.id} value={boss.id} className="border-b-white/5">
             <AccordionTrigger className="hover:no-underline hover:bg-white/5 px-2 py-2">
