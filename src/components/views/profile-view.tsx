@@ -6,20 +6,59 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Crown, Star, User, Hash, Calendar, Gem } from "lucide-react";
+import { Crown, Star, User, Hash, Calendar, Gem, Bell } from "lucide-react";
 import Loader from "@/components/ui/loader";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { AccessDenied } from "./access-denied";
+import { Switch } from "../ui/switch";
+import { Label } from "../ui/label";
+import { supabase } from "@/lib/supabase-client";
+import { useToast } from "@/hooks/use-toast";
 
 export function ProfileView() {
-    const { user, isInitialLoading } = useAuth();
+    const { user, isInitialLoading, refreshUser } = useAuth();
     const [hasMounted, setHasMounted] = useState(false);
+    const [isSaving, startTransition] = useTransition();
+    const [notificationPref, setNotificationPref] = useState(user?.notifications_enabled ?? false);
+    const { toast } = useToast();
 
     useEffect(() => {
         setHasMounted(true);
-    }, []);
+        if (user) {
+            setNotificationPref(user.notifications_enabled ?? false);
+        }
+    }, [user]);
+    
+    const handleNotificationChange = async (enabled: boolean) => {
+        if (!user) return;
+
+        setNotificationPref(enabled); // Optimistic UI update
+        
+        startTransition(async () => {
+            const { error } = await supabase
+                .from('profiles')
+                .update({ notifications_enabled: enabled, updated_at: new Date().toISOString() })
+                .eq('id', user.id);
+
+            if (error) {
+                setNotificationPref(!enabled); // Revert on error
+                toast({
+                    variant: 'destructive',
+                    title: 'Error updating preferences',
+                    description: error.message,
+                });
+            } else {
+                toast({
+                    variant: 'success',
+                    title: 'Preferences Saved',
+                    description: `Notifications have been ${enabled ? 'enabled' : 'disabled'}.`
+                });
+                await refreshUser(); // Refresh user context to get the latest profile data
+            }
+        });
+    };
 
     if (!hasMounted || isInitialLoading) {
         return <div className="flex justify-center items-center h-full"><Loader className="h-12 w-12 text-cyan-300" /></div>;
@@ -119,6 +158,25 @@ export function ProfileView() {
                         </div>
                      </div>
                 </div>
+
+                <Separator className="profile-divider my-4" />
+
+                 <div className="px-4 py-2 space-y-4">
+                    <h3 className="profile-section-title"><Bell className="mr-3 text-cyan-300" /> Notifications</h3>
+                    <div className="flex items-center justify-between rounded-lg p-4 bg-black/30">
+                        <div>
+                            <Label htmlFor="notifications-switch" className="font-semibold text-base text-white">Boss Spawn Alerts</Label>
+                            <p className="text-sm text-muted-foreground">Receive browser notifications 5 minutes before a boss spawns and when it becomes active.</p>
+                        </div>
+                        <Switch
+                            id="notifications-switch"
+                            checked={notificationPref}
+                            onCheckedChange={handleNotificationChange}
+                            disabled={isSaving}
+                        />
+                    </div>
+                </div>
+
 
                 <div className="flex justify-center pt-6 pb-4">
                     <Button className="profile-update-button" disabled>Update Profile</Button>

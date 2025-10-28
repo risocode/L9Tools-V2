@@ -29,6 +29,7 @@ import { buttonVariants } from '../ui/button';
 import { ViewHeader } from './view-header';
 import { UserNav } from '../layout/user-nav';
 import { useAd } from '@/context/ad-context';
+import { useBossNotifications } from '@/hooks/use-boss-notifications';
 
 interface BossHuntViewProps {
   initialBosses: Boss[];
@@ -60,15 +61,18 @@ export function BossHuntView({ initialBosses }: BossHuntViewProps) {
   const [isProDialogOpen, setIsProDialogOpen] = useState(false);
   const scrollViewportRef = useRef<HTMLDivElement>(null);
 
+  const {
+    processedBosses,
+  } = useProcessedBosses(bossesWithTimers, filterType, searchQuery, user);
+
+  // Initialize notification hook
+  useBossNotifications(processedBosses, user?.notifications_enabled ?? false);
+
   useEffect(() => {
     if (isFirstTime) {
       setIsWelcomeOpen(true);
     }
   }, [isFirstTime]);
-
-  const {
-    processedBosses,
-  } = useProcessedBosses(bossesWithTimers, filterType, searchQuery, user);
 
   const {
     isReportDialogOpen,

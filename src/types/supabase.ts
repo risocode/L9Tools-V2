@@ -162,6 +162,7 @@ export type Database = {
           id: string
           is_admin: boolean
           last_sign_in_at: string | null
+          notifications_enabled: boolean | null
           online_status: string | null
           short_id: string | null
           subscription_expires_at: string | null
@@ -179,6 +180,7 @@ export type Database = {
           id: string
           is_admin?: boolean
           last_sign_in_at?: string | null
+          notifications_enabled?: boolean | null
           online_status?: string | null
           short_id?: string | null
           subscription_expires_at?: string | null
@@ -196,6 +198,7 @@ export type Database = {
           id?: string
           is_admin?: boolean
           last_sign_in_at?: string | null
+          notifications_enabled?: boolean | null
           online_status?: string | null
           short_id?: string | null
           subscription_expires_at?: string | null
