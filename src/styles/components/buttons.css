@@ -17,46 +17,6 @@
   box-shadow: 0 0 15px 3px var(--color-purple);
 }
 
-/* Animated Subscribe Button */
-.subscribe-btn-animated {
-  @apply relative flex items-center justify-end p-0 bg-transparent border-none cursor-pointer;
-  width: 50px;
-  height: 50px;
-  transition: width 0.4s ease-in-out;
-}
-
-.subscribe-btn-animated.expanded {
-  width: 140px;
-}
-
-.subscribe-btn-animated .subscribe-img-icon,
-.subscribe-btn-animated .subscribe-img-expanded {
-  @apply absolute top-0 right-0 object-contain transition-opacity duration-300 ease-in-out;
-}
-
-.subscribe-btn-animated .subscribe-img-icon {
-  width: 50px;
-  height: 50px;
-  opacity: 1;
-}
-
-.subscribe-btn-animated.expanded .subscribe-img-icon {
-  opacity: 0;
-}
-
-.subscribe-btn-animated .subscribe-img-expanded {
-  width: 140px;
-  height: 50px;
-  opacity: 0;
-  pointer-events: none; /* Initially not clickable */
-}
-
-.subscribe-btn-animated.expanded .subscribe-img-expanded {
-  opacity: 1;
-  pointer-events: auto; /* Becomes clickable when expanded */
-}
-
-
 /* Admin Space Button Styles */
 .button-container {
   position: relative;
@@ -349,63 +309,6 @@
   opacity: 0.7;
 }
 
-/* Runic Donation Button */
-.runic-donate-btn {
-  --glow-color-1: #E94560;
-  --glow-color-2: #FFD369;
-  --glow-color-3: #6C63FF;
-  position: relative;
-  padding: 0.75rem 2rem;
-  border-radius: 0.75rem;
-  background: #0D0F18;
-  color: white;
-  font-family: 'Cinzel', serif;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  border: none;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.runic-donate-btn::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 0.85rem;
-  background: conic-gradient(from var(--angle), var(--glow-color-1), var(--glow-color-2), var(--glow-color-3), var(--glow-color-2), var(--glow-color-1));
-  z-index: 0;
-  animation: rotate-glow 6s linear infinite;
-  filter: blur(8px);
-}
-
-.runic-donate-btn-content {
-  position: relative;
-  z-index: 1;
-  color: #FFD369;
-  text-shadow: 0 0 5px #FFD369, 0 0 10px #FFD36_9, 0 0 15px #FFD369;
-  transition: all 0.3s ease;
-}
-
-.runic-donate-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(255, 211, 105, 0.4);
-}
-
-.runic-donate-btn:hover .runic-donate-btn-content {
-  text-shadow: 0 0 8px #fff, 0 0 15px #FFD369;
-}
-
-.runic-donate-btn:active {
-  transform: scale(1);
-  box-shadow: 0 0 10px rgba(255, 211, 105, 0.3);
-}
-
-.runic-donate-btn:active::before {
-  animation-duration: 2s;
-}
-
 /* Stone Button */
 .stone-button {
     @apply inline-flex items-center justify-center px-6 py-2 rounded-md;
@@ -491,5 +394,3 @@
 .image-login-btn:active {
   transform: scale(1);
 }
-
-    

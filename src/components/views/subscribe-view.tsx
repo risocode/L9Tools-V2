@@ -14,7 +14,6 @@ const proPerks = [
     "Save your boss timers across all devices",
     "Send unlimited boss reports to Discord",
     "Completely Ad-Free experience",
-    "Upload a custom logo to display on the sidebar",
     "Access to future Pro features and priority support"
 ];
 
