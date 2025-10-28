@@ -214,13 +214,13 @@ export function L9ToolsLayout({
 
   const desktopCta = (
       <div className="flex flex-col items-end gap-4">
-        {!isDashboardPage && <UserNav size="default" />}
+        {!isDashboardPage && <UserNav size="small" />}
       </div>
   );
 
   const mobileCta = (
     <div className="flex items-center gap-2">
-      <UserNav size="default" />
+      <UserNav size="small" />
     </div>
   );
 
@@ -238,17 +238,17 @@ export function L9ToolsLayout({
         <div className="relative z-10 text-center text-xs text-foreground/50 p-2">
             <p className="mb-2">© 2025 L9 Tools. All rights reserved.</p>
             <div className="flex items-center justify-center gap-1.5 flex-wrap">
-                <button onClick={() => setIsAboutOpen(true)} className="hover:underline">About Us</button>
+                <Button variant="link" size="sm" onClick={() => setIsAboutOpen(true)} className="text-muted-foreground hover:text-primary">About Us</Button>
                 <span className="text-foreground/30">&bull;</span>
-                <button onClick={() => setIsContactOpen(true)} className="hover:underline">Contact</button>
+                <Button variant="link" size="sm" onClick={() => setIsContactOpen(true)} className="text-muted-foreground hover:text-primary">Contact</Button>
                 <span className="text-foreground/30">&bull;</span>
-                <button onClick={() => openLegalDialog('terms')} className="hover:underline">Terms</button>
+                <Button variant="link" size="sm" onClick={() => openLegalDialog('terms')} className="text-muted-foreground hover:text-primary">Terms</Button>
                 <span className="text-foreground/30">&bull;</span>
-                <button onClick={() => openLegalDialog('privacy')} className="hover:underline">Privacy</button>
+                <Button variant="link" size="sm" onClick={() => openLegalDialog('privacy')} className="text-muted-foreground hover:text-primary">Privacy</Button>
                 <span className="text-foreground/30">&bull;</span>
-                <button onClick={() => openLegalDialog('disclaimer')} className="hover:underline">Disclaimer</button>
+                <Button variant="link" size="sm" onClick={() => openLegalDialog('disclaimer')} className="text-muted-foreground hover:text-primary">Disclaimer</Button>
                 <span className="text-foreground/30">&bull;</span>
-                <button onClick={() => openLegalDialog('cookie')} className="hover:underline">Cookies</button>
+                <Button variant="link" size="sm" onClick={() => openLegalDialog('cookie')} className="text-muted-foreground hover:text-primary">Cookies</Button>
             </div>
         </div>
     </footer>
