@@ -196,13 +196,7 @@ export function L9ToolsLayout({
   }
 
   const handleSubscribeClick = () => {
-    if (isSubscribeExpanded) {
-      if (pathname !== '/subscribe') {
-        showLoader(() => router.push('/subscribe'));
-      }
-    } else {
-      setIsSubscribeExpanded(true);
-    }
+    showLoader(() => router.push('/subscribe'));
   };
 
 
@@ -214,7 +208,13 @@ export function L9ToolsLayout({
       <div className="flex flex-col items-end gap-4">
         {user && !user.is_admin && !isSubscribed && (
           <button
-            onClick={handleSubscribeClick}
+            onClick={() => {
+              if (isSubscribeExpanded) {
+                handleSubscribeClick();
+              } else {
+                setIsSubscribeExpanded(true);
+              }
+            }}
             onMouseLeave={() => setIsSubscribeExpanded(false)} // Optional: collapse on mouse leave
             className={cn("subscribe-btn-animated", isSubscribeExpanded && "expanded")}
             aria-label="Subscribe to Pro"
@@ -230,7 +230,7 @@ export function L9ToolsLayout({
   const mobileCta = (
     <div className="flex items-center gap-2">
       {user && !user.is_admin && !isSubscribed && (
-         <button onClick={() => showLoader(() => router.push('/subscribe'))} className="p-0 bg-transparent border-none">
+         <button onClick={handleSubscribeClick} className="p-0 bg-transparent border-none">
             <Image src="/l9rs/subs1.png" alt="Subscribe Icon" width={40} height={40} />
          </button>
       )}
