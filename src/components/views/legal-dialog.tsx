@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "../ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 interface LegalDialogProps {
   isOpen: boolean;
@@ -139,21 +140,30 @@ export function LegalDialog({ isOpen, onClose, type }: LegalDialogProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg grid-rows-[auto_1fr_auto] max-h-[80vh]">
-        <DialogHeader>
-          <DialogTitle className="text-2xl">{title}</DialogTitle>
-          <DialogDescription>
-            {description}
-          </DialogDescription>
-        </DialogHeader>
-        <ScrollArea className="h-96 pr-6">
-          <div className="text-sm text-muted-foreground space-y-2">
-            {content}
+      <DialogContent 
+        className={cn(
+          "glowing-card sm:max-w-2xl bg-transparent border-0 shadow-none p-0 grid-rows-[auto_1fr_auto] max-h-[90vh]",
+          "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-90 data-[state=open]:slide-in-from-bottom-24"
+        )}
+      >
+        <div className="bg-[#181818] m-1 rounded-[28px] p-6 relative z-10 flex flex-col max-h-[calc(90vh-1rem)]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-cinzel text-purple-400">{title}</DialogTitle>
+            <DialogDescription>
+              {description}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex-1 overflow-hidden my-4">
+            <ScrollArea className="h-full pr-6">
+              <div className="text-sm text-muted-foreground space-y-2">
+                {content}
+              </div>
+            </ScrollArea>
           </div>
-        </ScrollArea>
-        <DialogFooter>
-          <Button onClick={onClose}>Close</Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button onClick={onClose} variant="secondary">Close</Button>
+          </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );

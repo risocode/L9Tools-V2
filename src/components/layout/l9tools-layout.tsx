@@ -37,8 +37,10 @@ import { cn } from '@/lib/utils';
 import { LegalDialog } from '../views/legal-dialog';
 import { DonationDialog } from '../views/donation-dialog';
 import { AdDialog } from '../views/ad-dialog';
-import { AdProvider } from '@/context/ad-context';
 import { useLoading } from '@/context/loading-context';
+import { AboutDialog } from '../views/about-dialog';
+import { ContactDialog } from '../views/contact-dialog';
+
 
 const donateButtonImages = ['/l9rs/donate1.png', '/l9rs/donate2.png'];
 
@@ -71,6 +73,8 @@ export function L9ToolsLayout({
   const { showLoader, isLoading } = useLoading();
   const [isLegalOpen, setIsLegalOpen] = useState(false);
   const [isDonationOpen, setIsDonationOpen] = useState(false);
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [isContactOpen, setIsContactOpen] = useState(false);
   const [legalType, setLegalType] = useState<'terms' | 'privacy' | 'disclaimer' | 'cookie'>('terms');
   const [donateButtonImage, setDonateButtonImage] = useState(donateButtonImages[0]);
   
@@ -82,8 +86,15 @@ export function L9ToolsLayout({
   // Open legal dialog if query param exists
   useEffect(() => {
     const action = searchParams.get('action');
-    if (action === 'terms' || action === 'privacy' || action === 'disclaimer' || action === 'cookie') {
-        openLegalDialog(action);
+    const validActions = ['terms', 'privacy', 'disclaimer', 'cookie', 'about', 'contact'];
+    if (action && validActions.includes(action)) {
+        if (action === 'about') {
+            setIsAboutOpen(true);
+        } else if (action === 'contact') {
+            setIsContactOpen(true);
+        } else {
+            openLegalDialog(action as 'terms' | 'privacy' | 'disclaimer' | 'cookie');
+        }
         // Clean up URL
         router.replace(pathname, undefined);
     }
@@ -183,14 +194,6 @@ export function L9ToolsLayout({
     currentTitle = 'Admin Panel';
     description = 'Manage users and application settings.';
     headerIcon = Shield;
-  } else if (pathname.startsWith('/about')) {
-    currentTitle = 'About Us';
-    description = 'Learn about our mission and project.';
-    headerIcon = Info;
-  } else if (pathname.startsWith('/contact')) {
-    currentTitle = 'Contact Us';
-    description = 'Get in touch with the L9 Tools team.';
-    headerIcon = MessageSquare;
   }
 
 
@@ -234,9 +237,9 @@ export function L9ToolsLayout({
         <div className="relative z-10 text-center text-xs text-foreground/50 p-2">
             <p className="mb-2">© 2025 L9 Tools. All rights reserved.</p>
             <div className="flex items-center justify-center gap-1.5 flex-wrap">
-                <Link href="/about" onClick={(e) => handleNavClick(e, '/about')} className="hover:underline">About Us</Link>
+                <button onClick={() => setIsAboutOpen(true)} className="hover:underline">About Us</button>
                 <span className="text-foreground/30">&bull;</span>
-                <Link href="/contact" onClick={(e) => handleNavClick(e, '/contact')} className="hover:underline">Contact</Link>
+                <button onClick={() => setIsContactOpen(true)} className="hover:underline">Contact</button>
                 <span className="text-foreground/30">&bull;</span>
                 <button onClick={() => openLegalDialog('terms')} className="hover:underline">Terms</button>
                 <span className="text-foreground/30">&bull;</span>
@@ -398,6 +401,8 @@ export function L9ToolsLayout({
           </div>
         </div>
         <AuthDialog />
+        <AboutDialog isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
+        <ContactDialog isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
         <LegalDialog isOpen={isLegalOpen} onClose={() => setIsLegalOpen(false)} type={legalType} />
         <DonationDialog isOpen={isDonationOpen} onClose={() => setIsDonationOpen(false)} />
         <AdDialog />
