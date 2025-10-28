@@ -73,7 +73,7 @@ async function updateUserWithProfile(
   if (error) {
     console.error("Error fetching profile after sign-in update:", error.message);
     // Return the session user and a potentially stale profile from before the update
-    return { ...sessionUser, ...profile };
+    return { ...sessionUser, ...(profile || {}) };
   }
   
   return { ...sessionUser, ...profile };
@@ -134,7 +134,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         if (session?.user) {
           // On initial load, just get the profile without forcing a timestamp update
           const { data: profile, error } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
-          const fullUser = { ...session.user, ...profile };
+          const fullUser = { ...session.user, ...(profile || {}) };
 
           if (fullUser?.last_sign_in_at) {
               const lastSeen = new Date(fullUser.last_sign_in_at);
