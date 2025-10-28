@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -15,9 +14,10 @@ export interface ViewHeaderProps {
     cta?: React.ReactNode;
     mobileCta?: React.ReactNode;
     controls?: React.ReactNode;
+    isDashboardPage?: boolean;
 }
 
-export function ViewHeader({ title, description, icon: Icon, cta, mobileCta, controls }: ViewHeaderProps) {
+export function ViewHeader({ title, description, icon: Icon, cta, mobileCta, controls, isDashboardPage }: ViewHeaderProps) {
     return (
         <div className="relative overflow-hidden z-20">
             <div className="absolute inset-0 bg-transparent" />
