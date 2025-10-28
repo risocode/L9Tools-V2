@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import Link from 'next/link';
 import { ArrowLeft, Heart } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface PaymentLayoutProps {
   children: React.ReactNode;
@@ -17,9 +18,9 @@ interface PaymentLayoutProps {
 
 function PaymentLayout({ children, backHref, backText, title, description, titleIcon }: PaymentLayoutProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
-      <div className="absolute top-4 left-4">
-        <Button asChild variant="outline">
+    <div className="flex flex-col items-center justify-start min-h-screen bg-background p-4 pt-20 sm:pt-24 sm:p-6">
+      <div className="absolute top-4 left-4 z-20">
+        <Button asChild variant="ghost" className="text-silver hover:bg-primary/10 hover:text-white">
           <Link href={backHref}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             {backText}
@@ -30,7 +31,12 @@ function PaymentLayout({ children, backHref, backText, title, description, title
         <CardHeader className="text-center">
             <div className="flex flex-col items-center gap-2">
               {titleIcon === 'heart' && <Heart className="h-10 w-10 text-crimson" />}
-              <CardTitle className={`text-3xl ${titleIcon === 'heart' ? 'text-crimson' : 'text-yellow-400'}`}>{title}</CardTitle>
+              <CardTitle className={cn(
+                "font-cinzel text-3xl",
+                 titleIcon === 'heart' ? 'text-crimson' : 'text-purple-400'
+              )}>
+                {title}
+              </CardTitle>
             </div>
           <CardDescription className="text-lg font-sans">
             {description}
