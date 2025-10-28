@@ -21,9 +21,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
-interface UserNavProps {}
+interface UserNavProps {
+  size?: 'default' | 'large';
+}
 
-export function UserNav({}: UserNavProps) {
+export function UserNav({ size = 'default' }: UserNavProps) {
   const { user, openAuthDialog, logout, isInitialLoading, refreshUser } = useAuth();
   const { toast } = useToast();
   const [hasMounted, setHasMounted] = useState(false);
@@ -68,7 +70,13 @@ export function UserNav({}: UserNavProps) {
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="profile-avatar bg-transparent border-none rounded-full" aria-label="Open user menu">
+            <button 
+              className={cn(
+                "bg-transparent border-none rounded-full",
+                size === 'large' ? "profile-avatar" : "h-10 w-10 md:h-12 md:w-12"
+              )} 
+              aria-label="Open user menu"
+            >
               <Avatar className={cn("h-full w-full border-2", getAvatarBorderClass(user.subscription_tier, user.is_admin))}>
                 {user.user_photo_url && <AvatarImage src={user.user_photo_url} alt={user.display_name || 'User'} />}
                 <AvatarFallback>{fallback}</AvatarFallback>

@@ -84,7 +84,7 @@ const FeatureButton = ({ title, href, disabled, imageSrc }: FeatureButtonProps) 
 export default function DashboardPage() {
 
   return (
-    <L9ToolsLayout hideHeader={true}>
+    <L9ToolsLayout>
       <div className="relative h-full">
         <ScrollArea className="h-full">
           <div className="space-y-8 p-4 md:p-8 pt-6 md:pt-8 pb-12">
@@ -95,7 +95,7 @@ export default function DashboardPage() {
                             <h1 className="banner-title">Welcome to the Player Hall</h1>
                             <p className="banner-subtitle">Select a tool to begin your journey.</p>
                              <div className="flex justify-center mt-6">
-                                <UserNav />
+                                <UserNav size="large" />
                             </div>
                         </div>
                   </div>
