@@ -1,4 +1,3 @@
-
 "use client";
 
 import {
@@ -37,19 +36,23 @@ export function PaymentMethodDialog({ isOpen, onClose, onSelectMethod }: Payment
             <div className="flex flex-col space-y-4 pt-6">
               <Button
                 variant="outline"
-                className="justify-start items-center h-16 text-lg border-primary/20 hover:bg-primary/10 hover:text-white flex gap-4"
+                className="justify-start h-16 text-lg border-primary/20 hover:bg-primary/10 hover:text-white"
                 onClick={() => onSelectMethod('gcash')}
               >
-                <Image src="/wallet/gcash.png" alt="GCash" width={40} height={40} className="rounded-full"/>
-                <span>Pay with GCash</span>
+                <div className="flex items-center gap-4">
+                  <Image src="/wallet/gcash.png" alt="GCash" width={40} height={40} className="rounded-full"/>
+                  <span>Pay with GCash</span>
+                </div>
               </Button>
               <Button
                 variant="outline"
-                className="justify-start items-center h-16 text-lg border-primary/20 hover:bg-primary/10 hover:text-white flex gap-4"
+                className="justify-start h-16 text-lg border-primary/20 hover:bg-primary/10 hover:text-white"
                 onClick={() => onSelectMethod('usdt')}
               >
-                 <Image src="/wallet/usdt.png" alt="USDT" width={40} height={40} className="rounded-full"/>
-                <span>Pay with USDT</span>
+                 <div className="flex items-center gap-4">
+                  <Image src="/wallet/usdt.png" alt="USDT" width={40} height={40} className="rounded-full"/>
+                  <span>Pay with USDT</span>
+                </div>
               </Button>
             </div>
         </div>
