@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useAuth } from "@/context/auth-context";
@@ -11,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Copy, LogOut, User as UserIcon, Repeat } from "lucide-react";
+import { Copy, LogOut, User as UserIcon, Repeat, Crown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import Image from "next/image";
@@ -60,6 +61,7 @@ export function UserNav({}: UserNavProps) {
       const fallback = user.display_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || '?';
       const isPro = user.subscription_tier === 'pro';
       const isLifetime = user.subscription_tier === 'lifetime';
+      const isFree = !isPro && !isLifetime && !user.is_admin;
       const canRenew = isPro && !isLifetime && !user.is_admin;
 
 
@@ -94,6 +96,14 @@ export function UserNav({}: UserNavProps) {
                       <span>My Profile</span>
                   </Link>
               </DropdownMenuItem>
+              {isFree && (
+                <DropdownMenuItem asChild>
+                  <Link href="/subscribe">
+                    <Crown className="mr-2 h-4 w-4 text-yellow-400" />
+                    <span className="text-yellow-400">Upgrade to Pro</span>
+                  </Link>
+                </DropdownMenuItem>
+              )}
                {canRenew && (
                 <DropdownMenuItem asChild>
                   <Link href="/subscribe">

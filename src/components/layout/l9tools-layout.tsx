@@ -388,7 +388,9 @@ export function L9ToolsLayout({
                     <SidebarTrigger />
                   </div>
                 )}
-                {!hideHeader && <ViewHeader {...headerProps} />}
+                {!hideHeader && React.Children.map(children, child =>
+                    React.isValidElement(child) ? React.cloneElement(child, { ...headerProps } as any) : child
+                )}
                 <main className="flex-1 flex flex-col min-h-0 z-10">
                     {!isLoading && (
                         <motion.div
@@ -399,7 +401,7 @@ export function L9ToolsLayout({
                             className="h-full flex flex-col"
                         >
                           <div className="h-full flex-1 flex flex-col">
-                            {children}
+                            {hideHeader ? children : React.Children.map(children, child => child)}
                           </div>
                         </motion.div>
                     )}

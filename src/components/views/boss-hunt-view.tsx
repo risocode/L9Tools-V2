@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -26,16 +27,16 @@ import { useRouter } from 'next/navigation';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '../ui/button';
-import { ViewHeader } from './view-header';
+import { ViewHeader, ViewHeaderProps } from './view-header';
 import { UserNav } from '../layout/user-nav';
 import { useAd } from '@/context/ad-context';
 import { useBossNotifications } from '@/hooks/use-boss-notifications';
 
-interface BossHuntViewProps {
+interface BossHuntViewProps extends ViewHeaderProps {
   initialBosses: Boss[];
 }
 
-export function BossHuntView({ initialBosses }: BossHuntViewProps) {
+export function BossHuntView({ initialBosses, ...headerProps }: BossHuntViewProps) {
   const { user } = useAuth();
   const isMobile = useIsMobile();
   const router = useRouter();
@@ -139,7 +140,7 @@ export function BossHuntView({ initialBosses }: BossHuntViewProps) {
   
   return (
       <div className="relative flex-1 flex flex-col min-h-0">
-          {/* Main content with sticky header and scrollable area */}
+          <ViewHeader {...headerProps} />
         <ScrollArea 
           className="h-full rounded-b-lg"
           onScroll={handleScroll}
