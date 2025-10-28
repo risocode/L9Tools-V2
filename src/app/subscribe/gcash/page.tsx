@@ -57,13 +57,15 @@ function GCashPaymentContent() {
           <div className="rounded-lg border-2 border-primary/20 bg-black/30 p-6 text-center space-y-4">
               <p className="font-cinzel font-bold text-xl text-primary">Step 2: Manual Verification</p>
               <p className="text-muted-foreground">
-                  After payment, please send a screenshot of your proof of payment along with your User ID to our payment email. Your User ID can be found in the profile menu (top-right corner).
+                  After payment, please join our Discord and submit a screenshot of your proof of payment in the <a href="https://discord.gg/PKw3zBsU2Q" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">#proof-of-payment</a> channel, along with your User ID. Your User ID can be found in the profile menu.
               </p>
               <div className="flex items-center justify-center gap-2 pt-2">
+                   <p className="text-xs text-muted-foreground">Alternatively, you can email it to:</p>
+              </div>
+               <div className="flex items-center justify-center gap-2">
                   <Mail className="h-4 w-4 text-muted-foreground" />
                   <Link href="mailto:payment@l9tools.online" className="text-sm text-primary hover:underline">payment@l9tools.online</Link>
               </div>
-              <p className="text-xs text-muted-foreground pt-2">Alternatively, you can join our Discord and submit in the <a href="https://discord.gg/PKw3zBsU2Q" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">#proof-of-payment</a> channel.</p>
           </div>
           
           {!isDonation && (
