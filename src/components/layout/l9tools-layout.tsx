@@ -210,11 +210,7 @@ export function L9ToolsLayout({
   const logoSrc = "/l9logo.png";
 
 
-  const headerProps: ViewHeaderProps = { 
-    title: currentTitle,
-    description: description,
-    icon: typeof headerIcon !== 'string' ? headerIcon : undefined,
-    cta: (
+  const desktopCta = (
       <div className="flex flex-col items-end gap-4">
         {user && !user.is_admin && !isSubscribed && (
           <button
@@ -229,7 +225,25 @@ export function L9ToolsLayout({
         )}
          {!isDashboardPage && <UserNav />}
       </div>
-    )
+  );
+
+  const mobileCta = (
+    <div className="flex items-center gap-2">
+      {user && !user.is_admin && !isSubscribed && (
+         <button onClick={() => showLoader(() => router.push('/subscribe'))} className="p-0 bg-transparent border-none">
+            <Image src="/l9rs/subs1.png" alt="Subscribe Icon" width={40} height={40} />
+         </button>
+      )}
+      {!isDashboardPage && <UserNav />}
+    </div>
+  );
+
+  const headerProps: ViewHeaderProps = { 
+    title: currentTitle,
+    description: description,
+    icon: typeof headerIcon !== 'string' ? headerIcon : undefined,
+    cta: desktopCta,
+    mobileCta: mobileCta,
   };
 
   const footer = (

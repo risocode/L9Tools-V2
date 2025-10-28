@@ -13,10 +13,11 @@ export interface ViewHeaderProps {
     description: string;
     icon?: LucideIcon | "skull";
     cta?: React.ReactNode;
+    mobileCta?: React.ReactNode;
     controls?: React.ReactNode;
 }
 
-export function ViewHeader({ title, description, icon: Icon, cta, controls }: ViewHeaderProps) {
+export function ViewHeader({ title, description, icon: Icon, cta, mobileCta, controls }: ViewHeaderProps) {
     return (
         <div className="relative overflow-hidden z-20">
             <div className="absolute inset-0 bg-transparent" />
@@ -35,8 +36,9 @@ export function ViewHeader({ title, description, icon: Icon, cta, controls }: Vi
                         </div>
                     </div>
                      <div className="hidden md:block">{cta}</div>
+                     <div className="md:hidden">{mobileCta}</div>
                 </div>
-                 {cta && <div className="block md:hidden w-full">{cta}</div>}
+                 {isDashboardPage && <div className="block md:hidden w-full flex justify-center">{cta}</div>}
                 {controls && <div className="w-full">{controls}</div>}
             </CardHeader>
         </div>
