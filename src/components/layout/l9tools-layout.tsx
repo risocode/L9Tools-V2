@@ -268,7 +268,7 @@ export function L9ToolsLayout({
     </footer>
   );
   
-  const content = hideHeader ? children : React.Children.map(children, child =>
+  const content = React.Children.map(children, child =>
     React.isValidElement(child) ? React.cloneElement(child, { ...headerProps } as any) : child
   );
 
@@ -403,7 +403,7 @@ export function L9ToolsLayout({
                             className="h-full flex flex-col"
                         >
                           <div className="h-full flex-1 flex flex-col">
-                            {content}
+                            {hideHeader ? children : content}
                           </div>
                         </motion.div>
                     )}

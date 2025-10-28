@@ -61,7 +61,7 @@ export function UserNav({}: UserNavProps) {
       const fallback = user.display_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || '?';
       const isPro = user.subscription_tier === 'pro';
       const isLifetime = user.subscription_tier === 'lifetime';
-      const isFree = !isPro && !isLifetime && !user.is_admin;
+      const isSubscribed = isPro || isLifetime || user.is_admin;
       const canRenew = isPro && !isLifetime && !user.is_admin;
 
 
@@ -96,7 +96,7 @@ export function UserNav({}: UserNavProps) {
                       <span>My Profile</span>
                   </Link>
               </DropdownMenuItem>
-              {isFree && (
+              {!isSubscribed && (
                 <DropdownMenuItem asChild>
                   <Link href="/subscribe">
                     <Crown className="mr-2 h-4 w-4 text-yellow-400" />
