@@ -21,13 +21,13 @@ export function ProfileView() {
     const { user, isInitialLoading, refreshUser } = useAuth();
     const [hasMounted, setHasMounted] = useState(false);
     const [isSaving, startTransition] = useTransition();
-    const [notificationPref, setNotificationPref] = useState(user?.notifications_enabled ?? false);
+    const [notificationPref, setNotificationPref] = useState(user?.notifications_enabled ?? true);
     const { toast } = useToast();
 
     useEffect(() => {
         setHasMounted(true);
         if (user) {
-            setNotificationPref(user.notifications_enabled ?? false);
+            setNotificationPref(user.notifications_enabled ?? true);
         }
     }, [user]);
     

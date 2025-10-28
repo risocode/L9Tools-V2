@@ -66,7 +66,7 @@ export function BossHuntView({ initialBosses }: BossHuntViewProps) {
   } = useProcessedBosses(bossesWithTimers, filterType, searchQuery, user);
 
   // Initialize notification hook
-  useBossNotifications(processedBosses, user?.notifications_enabled ?? false);
+  useBossNotifications(processedBosses, user?.notifications_enabled ?? true);
 
   useEffect(() => {
     if (isFirstTime) {
