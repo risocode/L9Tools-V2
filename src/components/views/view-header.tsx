@@ -28,7 +28,7 @@ export function ViewHeader({ title, description, icon: Icon, cta, isDashboardPag
             <CardHeader className="p-4 md:p-6 pb-4 md:pb-6 w-full flex-col items-start gap-4">
                 <div className="w-full flex flex-row items-center justify-between">
                     <div className="flex items-center gap-4">
-                        {isMobile && !isDashboardPage && <SidebarTrigger />}
+                        {isMobile && <SidebarTrigger />}
                         <div className="flex flex-col">
                             {shouldShowTitleAndDesc && (
                                 <CardTitle className="text-3xl md:text-4xl flex items-center gap-3">
