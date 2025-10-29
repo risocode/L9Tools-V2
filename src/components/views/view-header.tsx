@@ -7,18 +7,18 @@ import { CardDescription, CardHeader, CardTitle } from "../ui/card";
 import React from "react";
 import { UserNav } from "../layout/user-nav";
 import { useIsMobile } from "@/hooks/use-is-mobile";
+import { cn } from "@/lib/utils";
 
 export interface ViewHeaderProps {
     title: string;
     description: string;
     icon?: LucideIcon | "skull";
     cta?: React.ReactNode;
-    mobileCta?: React.ReactNode;
     controls?: React.ReactNode;
     isDashboardPage?: boolean;
 }
 
-export function ViewHeader({ title, description, icon: Icon, cta, mobileCta, controls, isDashboardPage }: ViewHeaderProps) {
+export function ViewHeader({ title, description, icon: Icon, cta, controls, isDashboardPage }: ViewHeaderProps) {
     const isMobile = useIsMobile();
     
     return (
@@ -30,7 +30,8 @@ export function ViewHeader({ title, description, icon: Icon, cta, mobileCta, con
                         
                         <div className="flex flex-col">
                             <CardTitle className="text-3xl md:text-4xl flex items-center gap-3">
-                            {Icon && Icon !== 'skull' && <Icon className="h-7 w-7 md:h-8 md:w-8" />}
+                            {isMobile && <SidebarTrigger className="md:hidden" />}
+                            {Icon && Icon !== 'skull' && <Icon className={cn("hidden md:block", "h-7 w-7 md:h-8 md:w-8")} />}
                             {title}
                             </CardTitle>
                             <CardDescription className="text-base md:text-lg mt-2 font-sans text-foreground/80">
@@ -38,8 +39,8 @@ export function ViewHeader({ title, description, icon: Icon, cta, mobileCta, con
                             </CardDescription>
                         </div>
                     </div>
-                     <div className="hidden md:block">{cta}</div>
-                     <div className="md:hidden">{mobileCta}</div>
+                     <div className={cn("hidden", !isMobile && "md:block")}>{cta}</div>
+                     <div className={cn(isMobile ? "block" : "hidden")}><UserNav size="small" /></div>
                 </div>
                  {isDashboardPage && <div className="block md:hidden w-full flex justify-center"><UserNav size="large" /></div>}
                 {controls && <div className="w-full">{controls}</div>}

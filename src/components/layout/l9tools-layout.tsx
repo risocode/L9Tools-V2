@@ -204,19 +204,11 @@ export function L9ToolsLayout({
       </div>
   );
 
-  const mobileCta = (
-    <div className="flex w-full justify-between items-center">
-      <SidebarTrigger />
-      <UserNav size="small" />
-    </div>
-  );
-
   const headerProps: ViewHeaderProps = { 
     title: currentTitle,
     description: description,
     icon: typeof headerIcon !== 'string' ? headerIcon : undefined,
     cta: desktopCta,
-    mobileCta: mobileCta,
     isDashboardPage: isDashboardPage,
   };
 
