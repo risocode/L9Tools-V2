@@ -64,27 +64,32 @@ const ExpiresCell = ({ profile }: { profile: Profile }) => {
 };
 
 const UserStatusCell = ({ profile }: { profile: Profile }) => {
+    if (profile.online_status === 'online') {
+        return (
+            <div className="flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+                <span className="text-xs text-green-400">Online</span>
+            </div>
+        );
+    }
+
     if (!profile.last_sign_in_at) {
         return <span className="text-muted-foreground text-xs">Never</span>;
     }
+    
     const lastSeenDate = new Date(profile.last_sign_in_at);
-    const isOnline = (new Date().getTime() - lastSeenDate.getTime()) < 15 * 60 * 1000;
     
     return (
         <TooltipProvider>
             <Tooltip>
                 <TooltipTrigger>
                     <div className="flex items-center gap-2">
-                        {isOnline ? (
-                            <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                            </span>
-                        ) : (
-                            <span className="relative flex h-2 w-2">
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-gray-500"></span>
-                            </span>
-                        )}
+                         <span className="relative flex h-2 w-2">
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-gray-500"></span>
+                        </span>
                         <span className="text-xs text-muted-foreground">{formatDistanceToNow(lastSeenDate, { addSuffix: true })}</span>
                     </div>
                 </TooltipTrigger>
@@ -288,5 +293,3 @@ export function UserTable({ profiles, isLoading, onSubscriptionUpdate, currentPa
     </>
   );
 }
-
-    

@@ -15,6 +15,7 @@ import type {
   AuthChangeEvent,
   Session,
   User as SupabaseUser,
+  RealtimeChannel,
 } from "@supabase/supabase-js";
 import type { Profile } from "@/types";
 import { signInWithGoogle } from "@/app/actions/auth";
@@ -50,17 +51,6 @@ async function updateUserWithProfile(
 ): Promise<User | null> {
   if (!sessionUser) return null;
 
-  // First, update the last_sign_in_at timestamp.
-  const { error: updateError } = await supabase
-    .from('profiles')
-    .update({ last_sign_in_at: new Date().toISOString() })
-    .eq('id', sessionUser.id);
-  
-  if (updateError) {
-      console.error("Error updating last_sign_in_at on profile fetch:", updateError.message);
-  }
-
-  // Then, fetch the complete profile data.
   const { data: profile, error } = await supabase
     .from("profiles")
     .select("*")
@@ -68,8 +58,9 @@ async function updateUserWithProfile(
     .single();
 
   if (error) {
-    console.error("Error fetching profile after sign-in update:", error.message);
-    return { ...sessionUser, ...(profile || {}) };
+    console.error("Error fetching profile:", error.message);
+    // Return the session user even if profile fetch fails
+    return sessionUser as User;
   }
   
   return { ...sessionUser, ...profile };
@@ -80,6 +71,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
+  const [channel, setChannel] = useState<RealtimeChannel | null>(null);
   const { toast } = useToast();
   const router = useRouter();
   const { showLoader } = useLoading();
@@ -88,6 +80,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const { reason = 'user_initiated', redirectPath = '/' } = options;
 
     showLoader(async () => {
+        if (channel) {
+            await supabase.removeChannel(channel);
+            setChannel(null);
+        }
         await supabase.auth.signOut();
         setUser(null);
 
@@ -103,7 +99,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         router.replace(redirectPath);
         router.refresh();
     });
-  }, [showLoader, router, toast]);
+  }, [showLoader, router, toast, channel]);
 
   const refreshUser = useCallback(async () => {
     const { data: { user: sessionUser } } = await supabase.auth.getUser();
@@ -118,53 +114,92 @@ export function AuthProvider({ children }: AuthProviderProps) {
       router.refresh(); 
     }
   }, [router]);
+  
+  const updatePresence = async (status: 'online' | 'offline', userId: string) => {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ 
+            online_status: status,
+            last_sign_in_at: new Date().toISOString() 
+        })
+        .eq('id', userId);
+        
+      if (error) {
+          console.error(`Error updating presence to ${status}:`, error.message);
+      }
+  };
+
 
   useEffect(() => {
-    let isMounted = true;
+    const setupPresence = (currentUser: User) => {
+        const presenceChannel = supabase.channel(`presence:${currentUser.id}`);
 
-    async function getInitialSession() {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (isMounted) {
-        if (session?.user) {
-          const { data: profile, error } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
-          const fullUser = { ...session.user, ...(profile || {}) };
-          setUser(fullUser as User);
-        }
-        setIsInitialLoading(false);
-      }
+        presenceChannel.on('presence', { event: 'sync' }, () => {
+            presenceChannel.track({ online_at: new Date().toISOString() });
+        });
 
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        async (event: AuthChangeEvent, session: Session | null) => {
-          if (!isMounted) return;
-
-          if (event === "SIGNED_IN") {
-            const fullUser = await updateUserWithProfile(session?.user ?? null);
-            setUser(fullUser);
-            closeAuthDialog();
-            router.refresh();
-          } else if (event === "SIGNED_OUT") {
-            setUser(null);
-          } else if (event === "TOKEN_REFRESHED" || event === "USER_UPDATED") {
-            if(session?.user) {
-               const { data: profile, error } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
-               if (!error) {
-                  setUser({ ...session.user, ...profile });
-               }
+        presenceChannel.subscribe(async (status) => {
+            if (status !== 'SUBSCRIBED') {
+                return;
             }
-          }
+            await updatePresence('online', currentUser.id);
+            await presenceChannel.track({ online_at: new Date().toISOString() });
+        });
+
+        setChannel(presenceChannel);
+
+        return presenceChannel;
+    };
+
+    const handleVisibilityChange = () => {
+        if (document.visibilityState === 'hidden' && user) {
+            updatePresence('offline', user.id);
+        } else if (document.visibilityState === 'visible' && user) {
+            updatePresence('online', user.id);
         }
-      );
+    };
 
-      return () => {
-        isMounted = false;
-        subscription.unsubscribe();
-      };
-    }
+    const handleBeforeUnload = () => {
+        if (user) {
+            updatePresence('offline', user.id);
+        }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('beforeunload', handleBeforeUnload);
 
-    getInitialSession();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        async (event: AuthChangeEvent, session: Session | null) => {
+          
+            if (session?.user && (!user || session.user.id !== user.id)) {
+                 const fullUser = await updateUserWithProfile(session.user);
+                 if (fullUser) {
+                    setUser(fullUser);
+                    setupPresence(fullUser);
+                    if (event === "SIGNED_IN") closeAuthDialog();
+                 }
+            } else if (!session?.user) {
+                if (channel) {
+                    supabase.removeChannel(channel);
+                    setChannel(null);
+                }
+                setUser(null);
+            }
+            setIsInitialLoading(false);
+        }
+    );
 
-  }, [router, logout]);
+    return () => {
+      if (channel) {
+          supabase.removeChannel(channel);
+      }
+      subscription.unsubscribe();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
 
   const openAuthDialog = () => setIsAuthDialogOpen(true);
   const closeAuthDialog = () => setIsAuthDialogOpen(false);
