@@ -5,8 +5,7 @@ import * as React from 'react';
 import type { ReactNode, ElementType, MouseEvent } from 'react';
 import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   SidebarProvider,
@@ -16,23 +15,17 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarFooter,
-  SidebarTrigger,
 } from '@/components/ui/sidebar';
 import {
   Shield,
   User,
   Crown,
   LayoutGrid,
-  Info,
-  MessageSquare,
-  HelpCircle,
 } from 'lucide-react';
 import { ViewHeader, ViewHeaderProps } from '@/components/views/view-header';
 import { UserNav } from './user-nav';
 import { AuthDialog } from '../views/auth-dialog';
 import { useAuth } from '@/context/auth-context';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { Button } from '../ui/button';
 import { cn } from '@/lib/utils';
 import { LegalDialog } from '../views/legal-dialog';
 import { DonationDialog } from '../views/donation-dialog';
@@ -41,6 +34,7 @@ import { useLoading } from '@/context/loading-context';
 import { AboutDialog } from '../views/about-dialog';
 import { ContactDialog } from '../views/contact-dialog';
 import { AdProvider } from '@/context/ad-context';
+import { Button } from '../ui/button';
 
 
 const donateButtonImages = ['/l9rs/donate1.png', '/l9rs/donate2.png'];
@@ -70,7 +64,6 @@ export function L9ToolsLayout({
   const searchParams = useSearchParams();
   const router = useRouter();
   const { user } = useAuth();
-  const isMobile = useIsMobile();
   const { showLoader, isLoading } = useLoading();
   const [isLegalOpen, setIsLegalOpen] = useState(false);
   const [isDonationOpen, setIsDonationOpen] = useState(false);
@@ -171,8 +164,6 @@ export function L9ToolsLayout({
   let description = '';
   let headerIcon: any = 'skull';
   
-  const currentRoute = navItems.find(item => pathname.startsWith(item.href));
-
   if (pathname.startsWith('/boss-hunt')) {
     description = '';
   } else if (isDashboardPage) {
@@ -203,12 +194,6 @@ export function L9ToolsLayout({
     setIsLegalOpen(true);
   }
 
-  const handleSubscribeClick = () => {
-    showLoader(() => router.push('/subscribe'));
-  };
-
-
-  const isSubscribed = user?.subscription_tier === 'pro' || user?.subscription_tier === 'lifetime';
   const logoSrc = "/l9logo.png";
 
 
@@ -378,12 +363,6 @@ export function L9ToolsLayout({
           >
             <div className="absolute inset-0 z-0 bg-black/60" />
             <div className="relative flex-1 flex flex-col min-h-0">
-                {hideHeader && (
-                  <div className="absolute top-4 left-4 z-20 md:hidden">
-                    <SidebarTrigger />
-                  </div>
-                )}
-                
                 <main className="flex-1 flex flex-col min-h-0 z-10">
                     {!isLoading && (
                         <motion.div

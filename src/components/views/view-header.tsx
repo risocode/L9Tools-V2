@@ -5,7 +5,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import type { LucideIcon } from "lucide-react";
 import { CardDescription, CardHeader, CardTitle } from "../ui/card";
 import React from "react";
-import Image from "next/image";
+import { UserNav } from "../layout/user-nav";
 
 export interface ViewHeaderProps {
     title: string;
@@ -38,7 +38,7 @@ export function ViewHeader({ title, description, icon: Icon, cta, mobileCta, con
                      <div className="hidden md:block">{cta}</div>
                      <div className="md:hidden">{mobileCta}</div>
                 </div>
-                 {isDashboardPage && <div className="block md:hidden w-full flex justify-center">{cta}</div>}
+                 {isDashboardPage && <div className="block md:hidden w-full flex justify-center"><UserNav size="large" /></div>}
                 {controls && <div className="w-full">{controls}</div>}
             </CardHeader>
         </div>
