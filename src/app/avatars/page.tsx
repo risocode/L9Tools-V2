@@ -1,10 +1,16 @@
 
+"use client";
+
 import { L9ToolsLayout } from '@/components/layout/l9tools-layout';
 import { AvatarView } from '@/components/views/avatar-view';
 import mainAvatarData from '@/lib/avatar-data.json';
 import rareAvatarData from '@/lib/rare-avatar-data.json';
 import type { AvatarData } from '@/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useIsMobile } from '@/hooks/use-is-mobile';
+import { SidebarTrigger } from '@/components/ui/sidebar';
+import { UserNav } from '@/components/layout/user-nav';
+import { useState, useEffect } from 'react';
 
 // This function simulates fetching initial data on the server.
 async function getInitialAvatars(): Promise<{ avatars: AvatarData[]; error: string | null; }> {
@@ -18,9 +24,22 @@ async function getInitialAvatars(): Promise<{ avatars: AvatarData[]; error: stri
   }
 }
 
-export default async function AvatarsPage() {
-  
-  const { avatars: initialAvatars, error } = await getInitialAvatars();
+export default function AvatarsPage() {
+  const isMobile = useIsMobile();
+  const [initialAvatars, setInitialAvatars] = useState<AvatarData[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadData() {
+      const { avatars, error: fetchError } = await getInitialAvatars();
+      if (fetchError) {
+        console.error("Failed to fetch initial avatars:", fetchError);
+        setError("Failed to load avatar data.");
+      }
+      setInitialAvatars(avatars || []);
+    }
+    loadData();
+  }, []);
 
   if (error) {
     console.error("Failed to fetch initial avatars:", error);
@@ -37,11 +56,20 @@ export default async function AvatarsPage() {
   }
 
   return (
-    <L9ToolsLayout>
-        <div className="relative h-full">
-            <ScrollArea className="h-full">
-                <AvatarView initialAvatars={initialAvatars || []} />
-            </ScrollArea>
+    <L9ToolsLayout hideHeader={isMobile}>
+        <div className="relative h-full flex flex-col">
+            {isMobile && (
+              <div className="flex items-center justify-between p-4 flex-shrink-0 bg-background/80 backdrop-blur-sm z-20 border-b border-white/10">
+                <SidebarTrigger />
+                <h2 className="font-cinzel text-xl font-bold text-white">Avatars</h2>
+                <UserNav />
+              </div>
+            )}
+            <div className="flex-1 min-h-0">
+                <ScrollArea className="h-full">
+                    <AvatarView initialAvatars={initialAvatars || []} />
+                </ScrollArea>
+            </div>
         </div>
     </L9ToolsLayout>
   );

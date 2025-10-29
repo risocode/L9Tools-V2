@@ -28,10 +28,10 @@ export function ViewHeader({ title, description, icon: Icon, cta, isDashboardPag
             <CardHeader className="p-4 md:p-6 pb-4 md:pb-6 w-full flex-col items-start gap-4">
                 <div className="w-full flex flex-row items-center justify-between">
                     <div className="flex items-center gap-4">
-                        {isMobile && <SidebarTrigger />}
                         <div className="flex flex-col">
                             {shouldShowTitleAndDesc && (
                                 <CardTitle className="text-3xl md:text-4xl flex items-center gap-3">
+                                    {isMobile && !isDashboardPage && <SidebarTrigger />}
                                     {Icon && Icon !== 'skull' && <Icon className={cn("hidden md:block", "h-7 w-7 md:h-8 md:w-8")} />}
                                     {title}
                                 </CardTitle>
@@ -44,7 +44,7 @@ export function ViewHeader({ title, description, icon: Icon, cta, isDashboardPag
                         </div>
                     </div>
                      <div className={cn("hidden", !isMobile && "md:block")}>{cta}</div>
-                     <div className={cn(isMobile ? "block" : "hidden")}><UserNav /></div>
+                     <div className={cn(isMobile && !isDashboardPage ? "block" : "hidden")}><UserNav /></div>
                 </div>
             </CardHeader>
         </div>
