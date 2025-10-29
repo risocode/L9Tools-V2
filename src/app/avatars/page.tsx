@@ -8,6 +8,8 @@ import rareAvatarData from '@/lib/rare-avatar-data.json';
 import type { AvatarData } from '@/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useState, useEffect } from 'react';
+import { useIsMobile } from '@/hooks/use-is-mobile';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
 // This function simulates fetching initial data on the server.
 async function getInitialAvatars(): Promise<{ avatars: AvatarData[]; error: string | null; }> {
@@ -24,6 +26,7 @@ async function getInitialAvatars(): Promise<{ avatars: AvatarData[]; error: stri
 export default function AvatarsPage() {
   const [initialAvatars, setInitialAvatars] = useState<AvatarData[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     async function loadData() {
@@ -56,6 +59,11 @@ export default function AvatarsPage() {
   return (
     <L9ToolsLayout hideHeader={true}>
         <div className="relative h-full flex flex-col">
+            {isMobile && (
+              <div className="absolute top-4 left-4 z-20">
+                <SidebarTrigger />
+              </div>
+            )}
             <div className="flex-1 min-h-0">
                 <ScrollArea className="h-full">
                     <AvatarView initialAvatars={initialAvatars || []} />
