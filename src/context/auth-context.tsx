@@ -20,7 +20,6 @@ import type {
 import type { Profile } from "@/types";
 import { signInWithGoogle } from "@/app/actions/auth";
 import { useRouter } from "next/navigation";
-import { useLoading } from "./loading-context";
 
 type User = SupabaseUser & Partial<Profile>;
 
@@ -32,6 +31,7 @@ interface LogoutOptions {
 interface AuthContextState {
   user: User | null;
   isInitialLoading: boolean;
+  isAuthenticating: boolean; // New state for login/logout process
   isAuthDialogOpen: boolean;
   openAuthDialog: () => void;
   closeAuthDialog: () => void;
@@ -59,47 +59,47 @@ async function updateUserWithProfile(
 
   if (error) {
     console.error("Error fetching profile:", error.message);
-    // Return the session user even if profile fetch fails
     return sessionUser as User;
   }
   
   return { ...sessionUser, ...profile };
 }
 
-
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
   const [channel, setChannel] = useState<RealtimeChannel | null>(null);
   const { toast } = useToast();
   const router = useRouter();
-  const { showLoader } = useLoading();
-
+  
   const logout = useCallback(async (options: LogoutOptions = {}) => {
     const { reason = 'user_initiated', redirectPath = '/' } = options;
+    
+    setIsAuthenticating(true);
+    
+    if (channel) {
+        await supabase.removeChannel(channel);
+        setChannel(null);
+    }
+    await supabase.auth.signOut();
+    setUser(null);
 
-    showLoader(async () => {
-        if (channel) {
-            await supabase.removeChannel(channel);
-            setChannel(null);
-        }
-        await supabase.auth.signOut();
-        setUser(null);
+    let title = "Logged Out";
+    let description = "You have been successfully logged out.";
 
-        let title = "Logged Out";
-        let description = "You have been successfully logged out.";
+    if (reason === 'inactive') {
+        title = "Session Expired";
+        description = `You have been logged out due to inactivity.`;
+    }
 
-        if (reason === 'inactive') {
-            title = "Session Expired";
-            description = `You have been logged out due to inactivity.`;
-        }
+    toast({ title, description });
+    router.replace(redirectPath);
+    router.refresh();
+    setIsAuthenticating(false);
+  }, [router, toast, channel]);
 
-        toast({ title, description });
-        router.replace(redirectPath);
-        router.refresh();
-    });
-  }, [showLoader, router, toast, channel]);
 
   const refreshUser = useCallback(async () => {
     const { data: { user: sessionUser } } = await supabase.auth.getUser();
@@ -128,7 +128,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
           console.error(`Error updating presence to ${status}:`, error.message);
       }
   };
-
 
   useEffect(() => {
     const setupPresence = (currentUser: User) => {
@@ -190,24 +189,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
     );
 
     return () => {
-      if (channel) {
-          supabase.removeChannel(channel);
-      }
       subscription.unsubscribe();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
-
+  }, [user, refreshUser, logout]);
 
   const openAuthDialog = () => setIsAuthDialogOpen(true);
   const closeAuthDialog = () => setIsAuthDialogOpen(false);
 
   const login = async () => {
-    showLoader(() => {}); 
+    setIsAuthenticating(true);
     try {
       await signInWithGoogle();
+      // Redirection is handled by the action, no need to set isAuthenticating to false here
     } catch (error) {
       console.error("Sign in failed:", error);
       toast({
@@ -215,12 +210,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
         title: "Sign In Failed",
         description: "Could not start the sign-in process.",
       });
+      setIsAuthenticating(false); // Set to false on error
     }
   };
 
   const value: AuthContextState = {
     user,
     isInitialLoading,
+    isAuthenticating,
     isAuthDialogOpen,
     openAuthDialog,
     closeAuthDialog,

@@ -4,10 +4,14 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLoading } from "@/context/loading-context";
+import { useAuth } from "@/context/auth-context";
 import PageLoader from "@/components/ui/page-loader";
 
 export default function PageLoaderWrapper() {
-  const { isLoading } = useLoading();
+  const { isLoading: isPageLoading } = useLoading();
+  const { isAuthenticating } = useAuth();
+
+  const isLoading = isPageLoading || isAuthenticating;
 
   return (
     <AnimatePresence>
@@ -26,5 +30,3 @@ export default function PageLoaderWrapper() {
     </AnimatePresence>
   );
 }
-
-    
