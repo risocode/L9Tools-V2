@@ -14,11 +14,10 @@ export interface ViewHeaderProps {
     description: string;
     icon?: LucideIcon | "skull";
     cta?: React.ReactNode;
-    controls?: React.ReactNode;
     isDashboardPage?: boolean;
 }
 
-export function ViewHeader({ title, description, icon: Icon, cta, controls, isDashboardPage }: ViewHeaderProps) {
+export function ViewHeader({ title, description, icon: Icon, cta, isDashboardPage }: ViewHeaderProps) {
     const isMobile = useIsMobile();
     
     return (
@@ -40,10 +39,9 @@ export function ViewHeader({ title, description, icon: Icon, cta, controls, isDa
                         </div>
                     </div>
                      <div className={cn("hidden", !isMobile && "md:block")}>{cta}</div>
-                     <div className={cn(isMobile ? "block" : "hidden")}><UserNav size="small" /></div>
+                     <div className={cn(isMobile ? "block" : "hidden")}><UserNav /></div>
                 </div>
-                 {isDashboardPage && <div className="block md:hidden w-full flex justify-center"><UserNav size="large" /></div>}
-                {controls && <div className="w-full">{controls}</div>}
+                 {isDashboardPage && isMobile && <div className="block md:hidden w-full flex justify-center"><UserNav size="large" /></div>}
             </CardHeader>
         </div>
     )

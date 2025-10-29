@@ -15,7 +15,6 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarFooter,
-  SidebarTrigger,
 } from '@/components/ui/sidebar';
 import {
   Shield,
@@ -200,7 +199,7 @@ export function L9ToolsLayout({
 
   const desktopCta = (
       <div className="flex flex-col items-end gap-4">
-        {!isDashboardPage && <UserNav size="small" />}
+        {!isDashboardPage && <UserNav />}
       </div>
   );
 
