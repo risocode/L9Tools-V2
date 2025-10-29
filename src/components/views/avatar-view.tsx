@@ -4,7 +4,7 @@
 
 import { useState, useMemo } from 'react';
 import type { AvatarData } from '@/types';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-is-mobile';
 import { useProcessedAvatars, AvatarFilterType } from '@/hooks/use-processed-avatars';
 import { Card, CardContent } from "@/components/ui/card";
 import { HolographicInput } from '@/components/ui/holographic-input';
