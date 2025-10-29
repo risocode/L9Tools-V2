@@ -19,6 +19,8 @@ export interface ViewHeaderProps {
 
 export function ViewHeader({ title, description, icon: Icon, cta, isDashboardPage }: ViewHeaderProps) {
     const isMobile = useIsMobile();
+
+    const shouldShowTitleAndDesc = !(isMobile && isDashboardPage);
     
     return (
         <div className="relative overflow-hidden z-20">
@@ -31,11 +33,13 @@ export function ViewHeader({ title, description, icon: Icon, cta, isDashboardPag
                             <CardTitle className="text-3xl md:text-4xl flex items-center gap-3">
                             {isMobile && <SidebarTrigger className="md:hidden" />}
                             {Icon && Icon !== 'skull' && <Icon className={cn("hidden md:block", "h-7 w-7 md:h-8 md:w-8")} />}
-                            {title}
+                            {shouldShowTitleAndDesc && title}
                             </CardTitle>
-                            <CardDescription className="text-base md:text-lg mt-2 font-sans text-foreground/80">
-                                {description}
-                            </CardDescription>
+                            {shouldShowTitleAndDesc && (
+                                <CardDescription className="text-base md:text-lg mt-2 font-sans text-foreground/80">
+                                    {description}
+                                </CardDescription>
+                            )}
                         </div>
                     </div>
                      <div className={cn("hidden", !isMobile && "md:block")}>{cta}</div>
