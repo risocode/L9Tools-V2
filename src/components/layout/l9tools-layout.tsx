@@ -372,7 +372,7 @@ export function L9ToolsLayout({
                         </motion.div>
                     )}
                 </main>
-                {!hideHeader && footer}
+                {!isDashboardPage && !hideHeader && footer}
             </div>
           </div>
         </div>
@@ -386,5 +386,3 @@ export function L9ToolsLayout({
     </AdProvider>
   );
 }
-
-    
