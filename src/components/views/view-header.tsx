@@ -41,7 +41,11 @@ export function ViewHeader({ title, description, icon: Icon, cta, isDashboardPag
                      <div className={cn("hidden", !isMobile && "md:block")}>{cta}</div>
                      <div className={cn(isMobile ? "block" : "hidden")}><UserNav /></div>
                 </div>
-                 {isDashboardPage && isMobile && <div className="block md:hidden w-full flex justify-center"><UserNav size="large" /></div>}
+                 {isDashboardPage && isMobile && (
+                    <div className="block md:hidden w-full flex justify-center">
+                        <UserNav size="large" />
+                    </div>
+                )}
             </CardHeader>
         </div>
     )

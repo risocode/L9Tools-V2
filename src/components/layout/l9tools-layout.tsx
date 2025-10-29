@@ -35,6 +35,8 @@ import { AboutDialog } from '../views/about-dialog';
 import { ContactDialog } from '../views/contact-dialog';
 import { AdProvider } from '@/context/ad-context';
 import { Button } from '../ui/button';
+import { SidebarTrigger } from '../ui/sidebar/core';
+import { useIsMobile } from '@/hooks/use-is-mobile';
 
 
 const donateButtonImages = ['/l9rs/donate1.png', '/l9rs/donate2.png'];
@@ -71,6 +73,7 @@ export function L9ToolsLayout({
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [legalType, setLegalType] = useState<'terms' | 'privacy' | 'disclaimer' | 'cookie'>('terms');
   const [donateButtonImage, setDonateButtonImage] = useState(donateButtonImages[0]);
+  const isMobile = useIsMobile();
   
   const isAdminPage = pathname.startsWith('/admin');
   const isProfilePage = pathname === '/profile';
