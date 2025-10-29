@@ -6,6 +6,7 @@ import type { LucideIcon } from "lucide-react";
 import { CardDescription, CardHeader, CardTitle } from "../ui/card";
 import React from "react";
 import { UserNav } from "../layout/user-nav";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 export interface ViewHeaderProps {
     title: string;
@@ -18,13 +19,15 @@ export interface ViewHeaderProps {
 }
 
 export function ViewHeader({ title, description, icon: Icon, cta, mobileCta, controls, isDashboardPage }: ViewHeaderProps) {
+    const isMobile = useIsMobile();
+    
     return (
         <div className="relative overflow-hidden z-20">
             <div className="absolute inset-0 bg-transparent" />
             <CardHeader className="p-4 md:p-6 pb-4 md:pb-6 w-full flex-col items-start gap-4">
                 <div className="w-full flex flex-row items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <SidebarTrigger className="md:hidden" />
+                        {isMobile && <SidebarTrigger />}
                         <div className="flex flex-col">
                             <CardTitle className="text-3xl md:text-4xl flex items-center gap-3">
                             {Icon && Icon !== 'skull' && <Icon className="h-7 w-7 md:h-8 md:w-8" />}
