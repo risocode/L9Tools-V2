@@ -11,6 +11,7 @@ import Image from 'next/image';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { UserNav } from '@/components/layout/user-nav';
 import { useIsMobile } from '@/hooks/use-is-mobile';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
 interface FeatureButtonProps {
   title: string;
@@ -88,6 +89,11 @@ export default function DashboardPage() {
   return (
     <L9ToolsLayout hideHeader={true}>
       <div className="relative h-full">
+        {isMobile && (
+          <div className="absolute top-4 left-4 z-20">
+            <SidebarTrigger />
+          </div>
+        )}
         <ScrollArea className="h-full">
           <div className="space-y-8 p-4 md:p-8 pt-6 md:pt-8 pb-12">
               <div className="welcome-banner">
