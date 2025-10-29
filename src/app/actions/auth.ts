@@ -1,4 +1,3 @@
-
 'use server';
 
 import { createSupabaseServerClient } from '@/lib/supabase-server';
@@ -11,6 +10,10 @@ export async function signInWithGoogle() {
     provider: 'google',
     options: {
       redirectTo: 'https://www.l9tools.online/auth/callback',
+      // Force the account selection prompt every time
+      queryParams: {
+        prompt: 'select_account',
+      }
     },
   });
 

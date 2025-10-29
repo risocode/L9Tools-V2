@@ -1,8 +1,7 @@
-
 "use client"
 
 import * as React from "react"
-import { useIsMobile } from "@/hooks/use-mobile"
+import { useIsMobile } from "@/hooks/use-is-mobile"
 import {
   Drawer,
   DrawerContent,

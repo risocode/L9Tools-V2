@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -16,8 +15,10 @@ export default function PageLoaderWrapper() {
     setHasMounted(true);
   }, []);
 
+  // Determine the overall loading state.
   const isLoading = isPageLoading || isAuthenticating || isInitialLoading;
 
+  // Don't render anything on the server or initial client render to avoid hydration errors.
   if (!hasMounted) {
     return null;
   }

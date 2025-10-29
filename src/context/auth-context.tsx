@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, {
@@ -192,7 +191,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [user, refreshUser, logout]);
+  }, [user, refreshUser, logout, channel]);
 
   const openAuthDialog = () => setIsAuthDialogOpen(true);
   const closeAuthDialog = () => setIsAuthDialogOpen(false);
