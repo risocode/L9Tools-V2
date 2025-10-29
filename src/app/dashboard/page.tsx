@@ -88,9 +88,6 @@ export default function DashboardPage() {
   return (
     <L9ToolsLayout hideHeader={true}>
       <div className="relative h-full">
-        <div className="absolute top-4 right-4 z-20">
-          <UserNav />
-        </div>
         <ScrollArea className="h-full">
           <div className="space-y-8 p-4 md:p-8 pt-6 md:pt-8 pb-12">
               <div className="welcome-banner">
@@ -99,6 +96,9 @@ export default function DashboardPage() {
                         <div className="text-center">
                             <h1 className="banner-title">Welcome to the Player Hall</h1>
                             <p className="banner-subtitle">Select a tool to begin your journey.</p>
+                            <div className="mt-6 flex justify-center">
+                                <UserNav size="large" />
+                            </div>
                         </div>
                   </div>
                   <div className="banner-glow-right" />
