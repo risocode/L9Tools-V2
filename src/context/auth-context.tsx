@@ -31,7 +31,7 @@ interface LogoutOptions {
 interface AuthContextState {
   user: User | null;
   isInitialLoading: boolean;
-  isAuthenticating: boolean; // New state for login/logout process
+  isAuthenticating: boolean;
   isAuthDialogOpen: boolean;
   openAuthDialog: () => void;
   closeAuthDialog: () => void;
@@ -78,7 +78,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const { reason = 'user_initiated', redirectPath = '/' } = options;
     
     setIsAuthenticating(true);
-    
     if (channel) {
         await supabase.removeChannel(channel);
         setChannel(null);
@@ -96,8 +95,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     toast({ title, description });
     router.replace(redirectPath);
-    router.refresh();
     setIsAuthenticating(false);
+    router.refresh();
   }, [router, toast, channel]);
 
 
@@ -201,16 +200,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const login = async () => {
     setIsAuthenticating(true);
     try {
-      await signInWithGoogle();
-      // Redirection is handled by the action, no need to set isAuthenticating to false here
+        await signInWithGoogle();
+        // The redirection will happen, and on return, onAuthStateChange will handle the rest.
+        // We might not even need to set isAuthenticating to false here if redirection is guaranteed.
     } catch (error) {
-      console.error("Sign in failed:", error);
-      toast({
-        variant: "destructive",
-        title: "Sign In Failed",
-        description: "Could not start the sign-in process.",
-      });
-      setIsAuthenticating(false); // Set to false on error
+        console.error("Sign in failed:", error);
+        toast({
+            variant: "destructive",
+            title: "Sign In Failed",
+            description: "Could not start the sign-in process.",
+        });
+        setIsAuthenticating(false);
     }
   };
 

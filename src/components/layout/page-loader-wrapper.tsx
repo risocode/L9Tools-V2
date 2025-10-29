@@ -9,9 +9,9 @@ import PageLoader from "@/components/ui/page-loader";
 
 export default function PageLoaderWrapper() {
   const { isLoading: isPageLoading } = useLoading();
-  const { isAuthenticating } = useAuth();
+  const { isAuthenticating, isInitialLoading } = useAuth();
 
-  const isLoading = isPageLoading || isAuthenticating;
+  const isLoading = isPageLoading || isAuthenticating || isInitialLoading;
 
   return (
     <AnimatePresence>
