@@ -10,8 +10,17 @@ import PageLoader from "@/components/ui/page-loader";
 export default function PageLoaderWrapper() {
   const { isLoading: isPageLoading } = useLoading();
   const { isAuthenticating, isInitialLoading } = useAuth();
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   const isLoading = isPageLoading || isAuthenticating || isInitialLoading;
+
+  if (!hasMounted) {
+    return null;
+  }
 
   return (
     <AnimatePresence>
