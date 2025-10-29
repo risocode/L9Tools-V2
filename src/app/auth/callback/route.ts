@@ -8,13 +8,13 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get('code')
   
   // This is the URL that the user should be redirected to after a successful login.
-  const redirectTo = 'https://www.l9tools.online/dashboard';
+  const redirectTo = 'https://www.l9tools.online/boss-hunt';
 
   if (code) {
     const supabase = await createSupabaseServerClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      // On successful login, redirect to the main dashboard.
+      // On successful login, redirect to the boss hunt page.
       return NextResponse.redirect(redirectTo)
     }
     console.error('Error exchanging code for session:', error.message);
