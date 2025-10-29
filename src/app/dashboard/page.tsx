@@ -10,6 +10,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import Image from 'next/image';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { UserNav } from '@/components/layout/user-nav';
+import { useIsMobile } from '@/hooks/use-is-mobile';
 
 interface FeatureButtonProps {
   title: string;
@@ -82,6 +83,7 @@ const FeatureButton = ({ title, href, disabled, imageSrc }: FeatureButtonProps) 
 
 
 export default function DashboardPage() {
+  const isMobile = useIsMobile();
 
   return (
     <L9ToolsLayout>
@@ -95,7 +97,7 @@ export default function DashboardPage() {
                             <h1 className="banner-title">Welcome to the Player Hall</h1>
                             <p className="banner-subtitle">Select a tool to begin your journey.</p>
                              <div className="flex justify-center mt-6">
-                                <UserNav size="large" />
+                                <UserNav size={isMobile ? "large" : "default"} />
                             </div>
                         </div>
                   </div>
