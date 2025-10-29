@@ -56,7 +56,7 @@ export default function AvatarsPage() {
   }
 
   return (
-    <L9ToolsLayout hideHeader={isMobile}>
+    <L9ToolsLayout hideHeader={true}>
         <div className="relative h-full flex flex-col">
             {isMobile && (
               <div className="flex items-center justify-between p-4 flex-shrink-0 bg-background/80 backdrop-blur-sm z-20 border-b border-white/10">
