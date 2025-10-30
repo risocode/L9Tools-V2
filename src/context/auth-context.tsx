@@ -62,12 +62,21 @@ async function updateUserWithProfile(
     return sessionUser as User;
   }
   
-  // The profile object's email (string | null) can conflict with SupabaseUser's email (string | undefined).
-  // By spreading profile first, we ensure sessionUser's more restrictive type takes precedence, satisfying TypeScript.
-  return { 
-    ...profile,
+  // Explicitly construct the User object to satisfy TypeScript's strict checks.
+  // This resolves the conflict between `string | null` (from profile) and `string | undefined` (from sessionUser).
+  const mergedUser: User = {
+    // Start with all properties from the authoritative session user
     ...sessionUser,
+    // Add all properties from the profile, which might be null
+    ...profile,
+    // Re-assert the authoritative, non-null properties from the session user
+    id: sessionUser.id,
+    email: sessionUser.email,
+    created_at: sessionUser.created_at,
+    last_sign_in_at: sessionUser.last_sign_in_at,
   };
+
+  return mergedUser;
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -166,7 +175,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
         async (event: AuthChangeEvent, session: Session | null) => {
             const sessionUser = session?.user ?? null;
-            setIsInitialLoading(false);
             
             if (sessionUser) {
               const fullUser = await updateUserWithProfile(sessionUser);
@@ -181,6 +189,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
                   setChannel(null);
               }
             }
+
+            // This ensures the main loading state is only removed once, after the first auth check.
+            if (isInitialLoading) {
+              setIsInitialLoading(false);
+            }
             
             if (event === "SIGNED_IN") {
                 closeAuthDialog();
@@ -193,7 +206,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [user, channel]);
+  }, [user, channel, isInitialLoading]);
 
   const openAuthDialog = () => setIsAuthDialogOpen(true);
   const closeAuthDialog = () => setIsAuthDialogOpen(false);
