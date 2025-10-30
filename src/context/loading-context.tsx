@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, {
@@ -6,13 +7,11 @@ import React, {
   useState,
   ReactNode,
   useCallback,
-  useEffect,
 } from "react";
-import { usePathname } from "next/navigation";
 
 interface LoadingContextState {
   isLoading: boolean;
-  showLoader: (callback: () => void | Promise<void>) => void;
+  showLoader: (callback: () => void | Promise<void>) => Promise<void>;
   runAction: <T>(action: () => Promise<T>) => Promise<T>;
 }
 
@@ -21,26 +20,20 @@ const LoadingContext = createContext<LoadingContextState | undefined>(undefined)
 export function LoadingProvider({ children }: { children: ReactNode }) {
   const [navigationCount, setNavigationCount] = useState(0);
   const [actionCount, setActionCount] = useState(0);
-  const pathname = usePathname();
 
-  // Reset navigation loader whenever the route changes
-  useEffect(() => {
-    if (navigationCount > 0) {
-      setNavigationCount(0);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
-
-  const showLoader = useCallback((navigationCallback: () => void | Promise<void>) => {
+  const showLoader = useCallback(async (navigationCallback: () => void | Promise<void>) => {
     setNavigationCount((prev) => prev + 1);
-
-    // This immediately calls the navigation, which will trigger the
-    // useEffect above to reset the counter upon path change.
-    Promise.resolve(navigationCallback()).catch(err => {
+    try {
+      await Promise.resolve(navigationCallback());
+    } catch (err) {
       console.error("Navigation callback failed:", err);
-      // Ensure loader gets turned off even if navigation fails
-      setNavigationCount(prev => Math.max(0, prev - 1));
-    });
+    } finally {
+      // Use a timeout to ensure the UI has time to update before turning off the loader,
+      // especially for very fast navigations.
+      setTimeout(() => {
+        setNavigationCount((prev) => Math.max(0, prev - 1));
+      }, 50); 
+    }
   }, []);
 
   const runAction = useCallback(
