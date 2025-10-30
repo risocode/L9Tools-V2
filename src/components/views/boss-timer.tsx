@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
@@ -52,7 +51,7 @@ const ActiveCountdown = ({ spawnTime }: { spawnTime: Date }) => {
                             <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent side="top">
-                            <p className="max-w-xs">If the timer is not updated within 1 hour of spawning, the status will reset to 'Unknown'.</p>
+                            <p className="max-w-xs">If the timer is not updated within 1 hour of spawning, the status will reset to &apos;Unknown&apos;.</p>
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
