@@ -69,7 +69,7 @@ async function updateUserWithProfile(
     ...sessionUser,
     // Add all properties from the profile, which might be null
     ...profile,
-    // Re-assert the authoritative, non-null properties from the session user
+    // Re-assert the authoritative, non-null properties from the session user to fix type conflicts
     id: sessionUser.id,
     email: sessionUser.email,
     created_at: sessionUser.created_at,
