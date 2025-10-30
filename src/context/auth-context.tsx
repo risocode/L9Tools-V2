@@ -62,7 +62,9 @@ async function updateUserWithProfile(
     return sessionUser as User;
   }
   
-  return { ...sessionUser, ...profile };
+  // The profile object's email (string | null) can conflict with SupabaseUser's email (string | undefined).
+  // By spreading profile first, we ensure sessionUser's more restrictive type takes precedence, satisfying TypeScript.
+  return { ...profile, ...sessionUser };
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -105,7 +107,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         console.error("Error fetching profile on manual refresh:", error.message);
         setUser(sessionUser as User);
       } else {
-        setUser({ ...sessionUser, ...profile });
+        setUser({ ...profile, ...sessionUser });
       }
       router.refresh(); 
     }
@@ -167,24 +169,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
         async (event: AuthChangeEvent, session: Session | null) => {
             const sessionUser = session?.user ?? null;
             // First, set the basic user data and finish the initial loading state.
-            setUser(sessionUser as User);
+            if (sessionUser) {
+              const fullUser = await updateUserWithProfile(sessionUser);
+              setUser(fullUser);
+              if (!channel) {
+                  setupPresence(fullUser!);
+              }
+            } else {
+              setUser(null);
+              if (channel) {
+                  supabase.removeChannel(channel);
+                  setChannel(null);
+              }
+            }
+            
             setIsInitialLoading(false);
 
-            // Then, in the background, fetch the full profile if a user exists.
-            if (sessionUser) {
-                const fullUser = await updateUserWithProfile(sessionUser);
-                setUser(fullUser);
-                if (!channel) {
-                    setupPresence(fullUser!);
-                }
-                if (event === "SIGNED_IN") {
-                    closeAuthDialog();
-                }
-            } else {
-                 if (channel) {
-                    supabase.removeChannel(channel);
-                    setChannel(null);
-                }
+            if (event === "SIGNED_IN") {
+                closeAuthDialog();
             }
         }
     );
@@ -194,7 +196,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, []);
+  }, [user, channel]);
 
   const openAuthDialog = () => setIsAuthDialogOpen(true);
   const closeAuthDialog = () => setIsAuthDialogOpen(false);
