@@ -2,11 +2,13 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { intervalToDuration } from 'date-fns';
+import { intervalToDuration, addHours } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import type { Boss } from '@/types';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '../ui/skeleton';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { HelpCircle } from 'lucide-react';
 
 export type ProcessedBoss = Boss & {
     respawnTime: Date | null;
@@ -17,8 +19,51 @@ interface BossTimerProps {
     boss: ProcessedBoss;
 }
 
+const ActiveCountdown = ({ spawnTime }: { spawnTime: Date }) => {
+    const [now, setNow] = useState<Date | null>(null);
+    const expiryTime = useMemo(() => addHours(spawnTime, 1), [spawnTime]);
+
+    useEffect(() => {
+        setNow(new Date());
+        const timer = setInterval(() => setNow(new Date()), 1000);
+        return () => clearInterval(timer);
+    }, []);
+
+    if (!now || now > expiryTime) {
+        // This case should ideally not be hit if the parent component's logic is correct,
+        // but it's a safe fallback.
+        return <div className="text-lg font-bold text-muted-foreground">Unknown</div>;
+    }
+    
+    const duration = intervalToDuration({ start: now, end: expiryTime });
+
+    const minutes = String(duration.minutes ?? 0).padStart(2, '0');
+    const seconds = String(duration.seconds ?? 0).padStart(2, '0');
+
+    return (
+        <div className="flex flex-col items-center">
+            <span className="font-bold text-green-400 animate-pulse text-lg">Active</span>
+            <div className="flex items-center gap-1 text-xs">
+                <span className="text-muted-foreground">{`Resets in: ${minutes}:${seconds}`}</span>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger>
+                            <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent side="top">
+                            <p className="max-w-xs">If the timer is not updated within 1 hour of spawning, the status will reset to 'Unknown'.</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            </div>
+        </div>
+    );
+};
+
+
 const TimerDisplay = ({ endDate, isFixedSpawn }: { endDate: Date, isFixedSpawn: boolean }) => {
     const [now, setNow] = useState<Date | null>(null);
+    const oneHourInMillis = 3600 * 1000;
 
     useEffect(() => {
         // Set the initial time on the client after mounting to avoid hydration mismatch.
@@ -39,6 +84,11 @@ const TimerDisplay = ({ endDate, isFixedSpawn }: { endDate: Date, isFixedSpawn: 
     }
 
     if (now > endDate) {
+        // If it's a variable spawn and has been active for less than an hour, show the countdown.
+        if (!isFixedSpawn && now.getTime() - endDate.getTime() < oneHourInMillis) {
+            return <ActiveCountdown spawnTime={endDate} />;
+        }
+        // Otherwise (fixed spawn or expired variable spawn), just show 'Active'.
         return <div className="flex flex-col items-center"><span className="font-bold text-green-400 animate-pulse text-lg">Active</span></div>;
     }
 
