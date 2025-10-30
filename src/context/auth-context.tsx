@@ -67,7 +67,6 @@ async function updateUserWithProfile(
   return { 
     ...profile,
     ...sessionUser,
-    email: sessionUser.email, // Explicitly set email to satisfy TypeScript
   };
 }
 
@@ -167,6 +166,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
         async (event: AuthChangeEvent, session: Session | null) => {
             const sessionUser = session?.user ?? null;
+            setIsInitialLoading(false);
             
             if (sessionUser) {
               const fullUser = await updateUserWithProfile(sessionUser);
@@ -182,8 +182,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
               }
             }
             
-            setIsInitialLoading(false);
-
             if (event === "SIGNED_IN") {
                 closeAuthDialog();
             }
