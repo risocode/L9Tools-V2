@@ -20,6 +20,7 @@ import type {
 import type { Profile } from "@/types";
 import { signInWithGoogle } from "@/app/actions/auth";
 import { useRouter } from "next/navigation";
+import PageLoader from "@/components/ui/page-loader";
 
 type User = SupabaseUser & Partial<Profile>;
 
@@ -31,7 +32,6 @@ interface LogoutOptions {
 interface AuthContextState {
   user: User | null;
   isInitialLoading: boolean;
-  isAuthenticating: boolean;
   isAuthDialogOpen: boolean;
   openAuthDialog: () => void;
   closeAuthDialog: () => void;
@@ -68,7 +68,6 @@ async function updateUserWithProfile(
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
   const [channel, setChannel] = useState<RealtimeChannel | null>(null);
   const { toast } = useToast();
@@ -77,7 +76,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const logout = useCallback(async (options: LogoutOptions = {}) => {
     const { reason = 'user_initiated', redirectPath = '/' } = options;
     
-    setIsAuthenticating(true);
     if (channel) {
         await supabase.removeChannel(channel);
         setChannel(null);
@@ -95,7 +93,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     toast({ title, description });
     router.replace(redirectPath);
-    setIsAuthenticating(false);
     router.refresh();
   }, [router, toast, channel]);
 
@@ -185,7 +182,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 }
                 setUser(null);
             }
-            setIsInitialLoading(false); // This ensures the loading state is always turned off.
+            setIsInitialLoading(false);
         }
     );
 
@@ -200,11 +197,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const closeAuthDialog = () => setIsAuthDialogOpen(false);
 
   const login = async () => {
-    setIsAuthenticating(true);
     try {
         await signInWithGoogle();
-        // The redirection will happen, and on return, onAuthStateChange will handle the rest.
-        // We might not even need to set isAuthenticating to false here if redirection is guaranteed.
     } catch (error) {
         console.error("Sign in failed:", error);
         toast({
@@ -212,14 +206,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
             title: "Sign In Failed",
             description: "Could not start the sign-in process.",
         });
-        setIsAuthenticating(false);
     }
   };
 
   const value: AuthContextState = {
     user,
     isInitialLoading,
-    isAuthenticating,
     isAuthDialogOpen,
     openAuthDialog,
     closeAuthDialog,
@@ -227,6 +219,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
     logout,
     refreshUser,
   };
+  
+  // Render a full-page loader during the initial auth check
+  if (isInitialLoading) {
+    return (
+        <div className="page-loader-overlay">
+            <PageLoader />
+        </div>
+    );
+  }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
