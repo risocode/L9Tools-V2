@@ -63,12 +63,15 @@ async function updateUserWithProfile(
   }
   
   // Explicitly construct the User object to satisfy TypeScript's strict checks.
-  // This resolves the conflict between `string | null` (from profile) and `string | undefined` (from sessionUser).
+  // This resolves the conflict between `string | null` (from profile) and `string | undefined` (from sessionUser)
+  // for multiple properties like `email`, `last_sign_in_at`, and `updated_at`.
   const mergedUser: User = {
-    // Start with all properties from the authoritative session user
-    ...sessionUser,
-    // Add all properties from the profile, which might be null
+    // Start with all properties from the profile, which might have nullable fields.
     ...profile,
+    // Overwrite with all properties from the authoritative session user. This ensures
+    // that properties like id, email, created_at, and last_sign_in_at use the
+    // stricter, non-null types from the SupabaseUser where applicable.
+    ...sessionUser,
     // Re-assert the authoritative, non-null properties from the session user to fix type conflicts
     id: sessionUser.id,
     email: sessionUser.email,
