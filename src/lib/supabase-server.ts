@@ -3,6 +3,7 @@
 
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import type { Database } from '@/types/supabase';
 
 export async function createSupabaseServerClient() {
   const cookieStore = await cookies()
@@ -14,7 +15,7 @@ export async function createSupabaseServerClient() {
     throw new Error('Server: Missing Supabase URL or anonymous key.');
   }
 
-  return createServerClient(
+  return createServerClient<Database>(
     supabaseUrl,
     supabaseAnonKey,
     {

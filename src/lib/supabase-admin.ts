@@ -1,9 +1,11 @@
 import { createClient, type User, type SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '@/types/supabase';
+
 
 // This file is intended for server-side use only.
 // The environment variables are loaded automatically by Next.js.
 
-let supabaseAdmin: SupabaseClient | null = null;
+let supabaseAdmin: SupabaseClient<Database> | null = null;
 
 /**
  * Lazily initializes and returns a Supabase client with admin privileges.
@@ -11,7 +13,7 @@ let supabaseAdmin: SupabaseClient | null = null;
  * It uses the service_role_key, which must be kept secret.
  * @returns A SupabaseClient instance or null if config is missing.
  */
-export function getSupabaseAdmin(): SupabaseClient | null {
+export function getSupabaseAdmin(): SupabaseClient<Database> | null {
   if (supabaseAdmin) {
     return supabaseAdmin;
   }
@@ -24,7 +26,7 @@ export function getSupabaseAdmin(): SupabaseClient | null {
     return null;
   }
 
-  supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+  supabaseAdmin = createClient<Database>(supabaseUrl, supabaseServiceKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
