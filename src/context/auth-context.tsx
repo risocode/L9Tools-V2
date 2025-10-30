@@ -165,24 +165,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
         async (event: AuthChangeEvent, session: Session | null) => {
-          
-            if (session?.user) {
-                 const fullUser = await updateUserWithProfile(session.user);
-                 if (fullUser) {
-                    setUser(fullUser);
-                    if (!channel) {
-                      setupPresence(fullUser);
-                    }
-                    if (event === "SIGNED_IN") closeAuthDialog();
-                 }
+            const sessionUser = session?.user ?? null;
+            // First, set the basic user data and finish the initial loading state.
+            setUser(sessionUser as User);
+            setIsInitialLoading(false);
+
+            // Then, in the background, fetch the full profile if a user exists.
+            if (sessionUser) {
+                const fullUser = await updateUserWithProfile(sessionUser);
+                setUser(fullUser);
+                if (!channel) {
+                    setupPresence(fullUser!);
+                }
+                if (event === "SIGNED_IN") {
+                    closeAuthDialog();
+                }
             } else {
-                if (channel) {
+                 if (channel) {
                     supabase.removeChannel(channel);
                     setChannel(null);
                 }
-                setUser(null);
             }
-            setIsInitialLoading(false);
         }
     );
 
@@ -191,7 +194,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [user, refreshUser, logout, channel]);
+  }, []);
 
   const openAuthDialog = () => setIsAuthDialogOpen(true);
   const closeAuthDialog = () => setIsAuthDialogOpen(false);
