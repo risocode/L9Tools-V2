@@ -64,7 +64,11 @@ async function updateUserWithProfile(
   
   // The profile object's email (string | null) can conflict with SupabaseUser's email (string | undefined).
   // By spreading profile first, we ensure sessionUser's more restrictive type takes precedence, satisfying TypeScript.
-  return { ...profile, ...sessionUser };
+  return { 
+    ...profile,
+    ...sessionUser,
+    email: sessionUser.email, // Explicitly set email to satisfy TypeScript
+  };
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -102,13 +106,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const refreshUser = useCallback(async () => {
     const { data: { user: sessionUser } } = await supabase.auth.getUser();
     if (sessionUser) {
-      const { data: profile, error } = await supabase.from('profiles').select('*').eq('id', sessionUser.id).single();
-      if (error) {
-        console.error("Error fetching profile on manual refresh:", error.message);
-        setUser(sessionUser as User);
-      } else {
-        setUser({ ...profile, ...sessionUser });
-      }
+      const fullUser = await updateUserWithProfile(sessionUser);
+      setUser(fullUser);
       router.refresh(); 
     }
   }, [router]);
@@ -168,12 +167,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
         async (event: AuthChangeEvent, session: Session | null) => {
             const sessionUser = session?.user ?? null;
-            // First, set the basic user data and finish the initial loading state.
+            
             if (sessionUser) {
               const fullUser = await updateUserWithProfile(sessionUser);
               setUser(fullUser);
-              if (!channel) {
-                  setupPresence(fullUser!);
+              if (!channel && fullUser) {
+                  setupPresence(fullUser);
               }
             } else {
               setUser(null);
