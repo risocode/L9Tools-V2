@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, {
@@ -168,21 +169,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
         async (event: AuthChangeEvent, session: Session | null) => {
           
-            if (session?.user && (!user || session.user.id !== user.id)) {
+            if (session?.user) {
                  const fullUser = await updateUserWithProfile(session.user);
                  if (fullUser) {
                     setUser(fullUser);
-                    setupPresence(fullUser);
+                    if (!channel) {
+                      setupPresence(fullUser);
+                    }
                     if (event === "SIGNED_IN") closeAuthDialog();
                  }
-            } else if (!session?.user) {
+            } else {
                 if (channel) {
                     supabase.removeChannel(channel);
                     setChannel(null);
                 }
                 setUser(null);
             }
-            setIsInitialLoading(false);
+            setIsInitialLoading(false); // This ensures the loading state is always turned off.
         }
     );
 
