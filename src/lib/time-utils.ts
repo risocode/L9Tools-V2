@@ -1,4 +1,5 @@
 
+
 import { add, getDay, isAfter, set, addDays, startOfWeek } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 import type { Boss } from '@/types';
@@ -38,10 +39,10 @@ export const getRespawnDate = (boss: Boss): Date | null => {
 const dayNameToIndex: { [key: string]: number } = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
 
 // Calculate the next upcoming fixed spawn time
-export const getNextFixedSpawn = (spawnTime: string): Date | null => {
+export const getNextFixedSpawn = (spawnTime: string, referenceDate: Date = new Date()): Date | null => {
     const timeZone = 'Asia/Manila';
-    const now = toZonedTime(new Date(), timeZone);
-    const currentDayOfWeek = getDay(now);
+    const zonedReference = toZonedTime(referenceDate, timeZone);
+    const currentDayOfWeek = getDay(zonedReference);
 
     const rules = spawnTime.split(' & ');
 
@@ -60,10 +61,10 @@ export const getNextFixedSpawn = (spawnTime: string): Date | null => {
         
         let dayDiff = targetDay - currentDayOfWeek;
         
-        let spawnCandidate = addDays(now, dayDiff);
+        let spawnCandidate = addDays(zonedReference, dayDiff);
         spawnCandidate = set(spawnCandidate, { hours: hour, minutes: minute, seconds: 0, milliseconds: 0 });
 
-        if (isAfter(now, spawnCandidate)) {
+        if (isAfter(zonedReference, spawnCandidate)) {
             spawnCandidate = addDays(spawnCandidate, 7);
         }
         

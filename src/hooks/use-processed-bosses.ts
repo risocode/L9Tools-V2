@@ -29,12 +29,24 @@ export function useProcessedBosses(
     
     const processed = bosses
       .map(b => {
-        let respawnDate = b.isFixedSpawn ? getNextFixedSpawn(b.spawnTime) : getRespawnDate(b);
+        let respawnDate: Date | null;
+        if (b.isFixedSpawn) {
+            respawnDate = getNextFixedSpawn(b.spawnTime, now); // Pass current time for accurate calculation
+        } else {
+            respawnDate = getRespawnDate(b);
+        }
         
         // This logic remains important for live updates
         if (respawnDate && now.getTime() > respawnDate.getTime()) {
-            if (!b.isFixedSpawn && (now.getTime() - respawnDate.getTime() > oneHourInMillis)) {
-                respawnDate = null; // If a variable boss spawned over an hour ago, hide timer
+             // If a variable or fixed spawn has been active for over an hour, reset its timer
+            if (now.getTime() - respawnDate.getTime() > oneHourInMillis) {
+                if (b.isFixedSpawn) {
+                    // For fixed spawns, recalculate the next spawn time from *after* the expired window
+                    const nextCheckTime = new Date(respawnDate.getTime() + oneHourInMillis);
+                    respawnDate = getNextFixedSpawn(b.spawnTime, nextCheckTime);
+                } else {
+                    respawnDate = null; // For variable spawns, reset to Unknown
+                }
             }
         }
         
@@ -89,5 +101,6 @@ export function useProcessedBosses(
 
   return { processedBosses };
 }
+
 
 

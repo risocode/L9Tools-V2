@@ -1,7 +1,8 @@
 
+
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { intervalToDuration, addHours } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import type { Boss } from '@/types';
@@ -84,11 +85,11 @@ const TimerDisplay = ({ endDate, isFixedSpawn }: { endDate: Date, isFixedSpawn: 
     }
 
     if (now > endDate) {
-        // If it's a variable spawn and has been active for less than an hour, show the countdown.
-        if (!isFixedSpawn && now.getTime() - endDate.getTime() < oneHourInMillis) {
+        // If the boss has been active for less than an hour, show the countdown.
+        if (now.getTime() - endDate.getTime() < oneHourInMillis) {
             return <ActiveCountdown spawnTime={endDate} />;
         }
-        // Otherwise (fixed spawn or expired variable spawn), just show 'Active'.
+        // This case should be rare, as useProcessedBosses should reset the timer.
         return <div className="flex flex-col items-center"><span className="font-bold text-green-400 animate-pulse text-lg">Active</span></div>;
     }
 
