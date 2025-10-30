@@ -7,15 +7,16 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')
   
-  // This is the URL that the user should be redirected to after a successful login.
-  const redirectTo = 'https://www.l9tools.online/boss-hunt';
+  // The base URL of the request.
+  const next = searchParams.get('next') ?? '/boss-hunt';
 
   if (code) {
     const supabase = await createSupabaseServerClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
       // On successful login, redirect to the boss hunt page.
-      return NextResponse.redirect(redirectTo)
+      // Using a relative path works for both local and production.
+      return NextResponse.redirect(new URL(next, request.url));
     }
     console.error('Error exchanging code for session:', error.message);
   } else {
@@ -23,5 +24,7 @@ export async function GET(request: NextRequest) {
   }
 
   // If there's an error or no code, redirect to an error page.
-  return NextResponse.redirect('https://www.l9tools.online/auth/auth-code-error')
+  // Using a relative path is safer here too.
+  const errorUrl = new URL('/auth/auth-code-error', request.url);
+  return NextResponse.redirect(errorUrl);
 }
