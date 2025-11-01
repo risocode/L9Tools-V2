@@ -3,7 +3,6 @@
 
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { redirect } from 'next/navigation';
-import { headers } from 'next/headers';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
 
 // This function now also ensures the profile creation trigger and function exist.
@@ -83,11 +82,14 @@ export async function signInWithGoogle() {
   await ensureProfileTriggerExists();
   
   const supabase = await createSupabaseServerClient();
-  const origin = (await headers()).get('origin');
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  if (!siteUrl) {
+    console.error("Missing NEXT_PUBLIC_SITE_URL environment variable.");
+    // Optionally, handle this error more gracefully
+    return;
+  }
   
-  // Use a dynamic redirect URL based on the request's origin.
-  // This is more reliable than using environment variables.
-  const redirectTo = origin ? `${origin}/auth/callback` : '/auth/callback';
+  const redirectTo = `${siteUrl}/auth/callback`;
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
