@@ -86,7 +86,7 @@ async function updateUserWithProfile(
 
   // Merge Supabase user + profile safely
   // Spread the profile first, then the session user to ensure session data takes precedence,
-  // then explicitly set properties to satisfy the final User type.
+  // then explicitly set properties to ensure the final object matches the `User` type.
   const mergedUser: User = {
     ...profile,
     ...sessionUser,
