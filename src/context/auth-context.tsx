@@ -62,6 +62,13 @@ async function updateUserWithProfile(
     console.error("Error fetching profile or profile not found:", error?.message);
     // Return the session user as a base object if the profile is missing.
     // The DB trigger should have created it, but this is a fallback.
+     const user = {
+      id: sessionUser.id ?? "",
+      email: sessionUser.email ?? "",
+      created_at: sessionUser.created_at ?? "",
+      last_sign_in_at: sessionUser.last_sign_in_at ?? "",
+      updated_at: sessionUser.updated_at ?? "",
+    };
     return sessionUser as User;
   }
   
@@ -77,8 +84,8 @@ async function updateUserWithProfile(
     id: sessionUser.id,
     email: sessionUser.email ?? "",
     created_at: sessionUser.created_at,
-    last_sign_in_at: sessionUser.last_sign_in_at,
-    updated_at: sessionUser.updated_at,
+    last_sign_in_at: sessionUser.last_sign_in_at ?? null,
+    updated_at: sessionUser.updated_at ?? null,
   };
   
   return mergedUser;
