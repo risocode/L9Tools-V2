@@ -12,8 +12,6 @@ import React, {
 import { supabase } from "@/lib/supabase-client";
 import { useToast } from "@/hooks/use-toast";
 import type {
-  AuthChangeEvent,
-  Session,
   User as SupabaseUser,
   RealtimeChannel,
 } from "@supabase/supabase-js";
@@ -26,7 +24,7 @@ import PageLoader from "@/components/ui/page-loader";
 export type User = SupabaseUser & Profile;
 
 interface LogoutOptions {
-  reason?: 'inactive' | 'user_initiated';
+  reason?: "inactive" | "user_initiated";
   redirectPath?: string;
 }
 
@@ -47,6 +45,9 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+/**
+ * Combines Supabase session user and the matching profile row.
+ */
 async function updateUserWithProfile(
   sessionUser: SupabaseUser | null
 ): Promise<User | null> {
@@ -60,9 +61,9 @@ async function updateUserWithProfile(
 
   if (error || !profile) {
     console.error("Error fetching profile or profile not found:", error?.message);
-    // Return the session user as a base object if the profile is missing.
-    // The DB trigger should have created it, but this is a fallback.
-     const user: User = {
+
+    // Fallback user if no profile exists (trigger should usually create one)
+    const fallbackUser: User = {
       ...sessionUser,
       id: sessionUser.id ?? "",
       email: sessionUser.email ?? "",
@@ -79,27 +80,22 @@ async function updateUserWithProfile(
       subscription_expires_at: null,
       subscription_tier: "free",
       user_photo_url: null,
-      username: null
+      username: null,
     };
-    return user;
+    return fallbackUser;
   }
-  
-  // Explicitly construct the User object to satisfy TypeScript's strict checks.
-  // This resolves the conflict between `string | null` (from profile) and `string | undefined` (from sessionUser).
+
+  // Merge Supabase user + profile safely
   const mergedUser: User = {
-    // Start with all properties from the profile
-    ...profile,
-    // Add all properties from the authoritative session user
     ...sessionUser,
-    // Re-assert the properties from sessionUser that have conflicting types
-    // to ensure the final object matches the `User` type.
+    ...profile,
     id: sessionUser.id,
     email: sessionUser.email ?? "",
-    created_at: sessionUser.created_at,
-    last_sign_in_at: sessionUser.last_sign_in_at ?? null,
-    updated_at: sessionUser.updated_at ?? null,
+    created_at: sessionUser.created_at ?? "",
+    last_sign_in_at: sessionUser.last_sign_in_at ?? profile.last_sign_in_at,
+    updated_at: sessionUser.updated_at ?? profile.updated_at,
   };
-  
+
   return mergedUser;
 }
 
@@ -111,32 +107,34 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const { toast } = useToast();
   const router = useRouter();
 
-  const logout = useCallback(async (options: LogoutOptions = {}) => {
-    const { reason = 'user_initiated', redirectPath = '/' } = options;
-    
-    if (channel) {
+  const logout = useCallback(
+    async (options: LogoutOptions = {}) => {
+      const { reason = "user_initiated", redirectPath = "/" } = options;
+
+      if (channel) {
         await supabase.removeChannel(channel);
         setChannel(null);
-    }
-    await supabase.auth.signOut();
-    setUser(null);
+      }
 
-    let title = "Logged Out";
-    let description = "You have been successfully logged out.";
+      await supabase.auth.signOut();
+      setUser(null);
 
-    if (reason === 'inactive') {
-        title = "Session Expired";
-        description = `You have been logged out due to inactivity.`;
-    }
+      const title = reason === "inactive" ? "Session Expired" : "Logged Out";
+      const description =
+        reason === "inactive"
+          ? "You have been logged out due to inactivity."
+          : "You have been successfully logged out.";
 
-    toast({ title, description });
-    router.replace(redirectPath);
-    router.refresh();
-  }, [router, toast, channel]);
-
+      toast({ title, description });
+      router.replace(redirectPath);
+      router.refresh();
+    },
+    [router, toast, channel]
+  );
 
   const refreshUser = useCallback(async () => {
-    const { data: { user: sessionUser } } = await supabase.auth.getUser();
+    const { data } = await supabase.auth.getUser();
+    const sessionUser = data.user;
     if (sessionUser) {
       const fullUser = await updateUserWithProfile(sessionUser);
       setUser(fullUser);
@@ -144,60 +142,61 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(null);
     }
   }, []);
-  
-  const updatePresence = async (status: 'online' | 'offline', userId: string) => {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ 
-            online_status: status,
-            last_sign_in_at: new Date().toISOString() 
-        })
-        .eq('id', userId);
-        
-      if (error) {
-          console.error(`Error updating presence to ${status}:`, error.message);
-      }
+
+  const updatePresence = async (status: "online" | "offline", userId: string) => {
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        online_status: status,
+        last_sign_in_at: new Date().toISOString(),
+      })
+      .eq("id", userId);
+
+    if (error) {
+      console.error(`Error updating presence to ${status}:`, error.message);
+    }
   };
 
   useEffect(() => {
     const setupPresence = (currentUser: User) => {
-        if (channel) return channel; // Avoid creating duplicate channels
-        const presenceChannel = supabase.channel(`presence:${currentUser.id}`);
+      if (channel) return channel; // Avoid duplicates
+      const presenceChannel = supabase.channel(`presence:${currentUser.id}`);
 
-        presenceChannel.on('presence', { event: 'sync' }, () => {
-            presenceChannel.track({ online_at: new Date().toISOString() });
-        });
+      presenceChannel.on("presence", { event: "sync" }, () => {
+        presenceChannel.track({ online_at: new Date().toISOString() });
+      });
 
-        presenceChannel.subscribe(async (status) => {
-            if (status !== 'SUBSCRIBED') {
-                return;
-            }
-            await updatePresence('online', currentUser.id);
-            await presenceChannel.track({ online_at: new Date().toISOString() });
-        });
+      presenceChannel.subscribe(async (status) => {
+        if (status !== "SUBSCRIBED") return;
+        await updatePresence("online", currentUser.id);
+        await presenceChannel.track({ online_at: new Date().toISOString() });
+      });
 
-        setChannel(presenceChannel);
-        return presenceChannel;
+      setChannel(presenceChannel);
+      return presenceChannel;
     };
 
     const handleVisibilityChange = () => {
-        if (user) {
-            updatePresence(document.visibilityState === 'hidden' ? 'offline' : 'online', user.id);
-        }
+      if (user) {
+        updatePresence(
+          document.visibilityState === "hidden" ? "offline" : "online",
+          user.id
+        );
+      }
     };
 
-    window.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('beforeunload', () => user && updatePresence('offline', user.id));
-    
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    const beforeUnloadHandler = () => {
+      if (user) updatePresence("offline", user.id);
+    };
+
+    window.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("beforeunload", beforeUnloadHandler);
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         const sessionUser = session?.user ?? null;
-        
-        // This is the crucial fix: End the initial loading state as soon as
-        // the first auth check is complete, before any async profile fetching.
-        if (isInitialLoading) {
-            setIsInitialLoading(false);
-        }
+
+        if (isInitialLoading) setIsInitialLoading(false);
 
         const fullUser = await updateUserWithProfile(sessionUser);
         setUser(fullUser);
@@ -216,12 +215,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     );
 
     return () => {
-      subscription.unsubscribe();
-      window.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('beforeunload', () => user && updatePresence('offline', user.id));
-      if (channel) {
-        supabase.removeChannel(channel);
-      }
+      listener.subscription.unsubscribe();
+      window.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("beforeunload", beforeUnloadHandler);
+      if (channel) supabase.removeChannel(channel);
     };
   }, [isInitialLoading, channel, router, user]);
 
@@ -230,14 +227,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = async () => {
     try {
-        await signInWithGoogle();
+      await signInWithGoogle();
     } catch (error) {
-        console.error("Sign in failed:", error);
-        toast({
-            variant: "destructive",
-            title: "Sign In Failed",
-            description: "Could not start the sign-in process.",
-        });
+      console.error("Sign in failed:", error);
+      toast({
+        variant: "destructive",
+        title: "Sign In Failed",
+        description: "Could not start the sign-in process.",
+      });
     }
   };
 
@@ -251,12 +248,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     logout,
     refreshUser,
   };
-  
+
   if (isInitialLoading) {
     return (
-        <div className="page-loader-overlay">
-            <PageLoader />
-        </div>
+      <div className="page-loader-overlay">
+        <PageLoader />
+      </div>
     );
   }
 
@@ -265,7 +262,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
