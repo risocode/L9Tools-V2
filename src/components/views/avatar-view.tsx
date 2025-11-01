@@ -13,7 +13,7 @@ import { AvatarTable } from './avatar-table';
 import { AvatarAccordion } from './avatar-accordion';
 import { extractUniqueStats } from '@/lib/utils';
 import { Button } from '../ui/button';
-import { X, Check, Filter } from 'lucide-react';
+import { X, Check, Filter, User } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { cn } from '@/lib/utils';
 import { ResponsiveDrawer } from '@/components/ui/responsive-drawer';
