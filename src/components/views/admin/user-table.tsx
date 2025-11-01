@@ -202,15 +202,19 @@ export function UserTable({ profiles, isLoading, onSubscriptionUpdate, currentPa
     }
 
     if (profiles.length === 0) {
-        return (
-            <TableRow>
-              <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
-                No profiles found.
-              </TableCell>
-            </TableRow>
+      return (
+        isMobile ? (
+          <div className="h-24 text-center text-muted-foreground flex items-center justify-center">No profiles found.</div>
+        ) : (
+          <TableRow>
+            <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+              No profiles found.
+            </TableCell>
+          </TableRow>
         )
+      );
     }
-
+    
     if (isMobile) {
       return (
         <div className="block md:hidden space-y-4 p-2">
@@ -279,7 +283,7 @@ export function UserTable({ profiles, isLoading, onSubscriptionUpdate, currentPa
         <div className={cn("relative flex-1 flex flex-col admin-table-container", isLoading && "overflow-hidden")}>
              <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} isLoading={isLoading} />
              <ScrollArea className="flex-1">
-                {isMobile ? renderContent() : <Table>{renderContent()}</Table>}
+                {renderContent()}
             </ScrollArea>
             <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} isLoading={isLoading} />
         </div>
@@ -293,3 +297,5 @@ export function UserTable({ profiles, isLoading, onSubscriptionUpdate, currentPa
     </>
   );
 }
+
+    

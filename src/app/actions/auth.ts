@@ -14,26 +14,60 @@ async function ensureProfileTriggerExists() {
     console.error("Failed to get admin client to ensure profile trigger exists.");
     return;
   }
-  
-  // Check if the function already exists
-  const { data: functions, error: functionCheckError } = await supabaseAdmin.rpc('list_functions');
 
-  if (functionCheckError) {
-      console.error("Error checking for existing functions:", functionCheckError);
-      // Decide if you want to proceed or return
+  // Check if the function already exists by trying to fetch its definition.
+  // This is a more reliable way than listing all functions.
+  const { data: existingFunction, error: functionCheckError } = await supabaseAdmin
+    .from('pg_proc')
+    .select('proname')
+    .eq('proname', 'handle_new_user_session')
+    .maybeSingle();
+
+  if (functionCheckError && !functionCheckError.message.includes('relation "pg_proc" does not exist')) {
+    console.error("Error checking for existing function:", functionCheckError);
+    // Don't proceed if we can't check, to avoid creating duplicates.
+    return;
   }
-  
-  const functionExists = functions && functions.some((fn: any) => fn.name === 'handle_new_user');
 
-  if (!functionExists) {
+  if (!existingFunction) {
     console.log("Profile trigger function not found, creating it...");
-    const { error: fnError } = await supabaseAdmin.rpc('create_new_user_handler_function');
-     if (fnError) {
-      console.error('Error creating handle_new_user function:', fnError);
+
+    // The function now correctly extracts user metadata for name and photo.
+    const { error: fnError } = await supabaseAdmin.rpc('execute_sql' as any, {
+      sql: `
+        create or replace function public.handle_new_user_session()
+        returns trigger
+        language plpgsql
+        security definer set search_path = public
+        as $$
+        begin
+          insert into public.profiles (id, email, display_name, user_photo_url)
+          values (
+            new.id,
+            new.email,
+            new.raw_user_meta_data->>'full_name',
+            new.raw_user_meta_data->>'avatar_url'
+          );
+          return new;
+        end;
+        $$;
+      `,
+    });
+
+    if (fnError) {
+      console.error('Error creating handle_new_user_session function:', fnError);
       return;
     }
 
-    const { error: triggerError } = await supabaseAdmin.rpc('create_new_user_trigger');
+    // Now create the trigger that uses the function
+    const { error: triggerError } = await supabaseAdmin.rpc('execute_sql' as any, {
+      sql: `
+        create or replace trigger on_auth_user_created
+          after insert on auth.users
+          for each row execute procedure public.handle_new_user_session();
+      `,
+    });
+
     if (triggerError) {
         console.error('Error creating auth trigger:', triggerError);
     } else {
@@ -49,7 +83,9 @@ export async function signInWithGoogle() {
   const supabase = await createSupabaseServerClient();
   const origin = headers().get('origin');
   
-  const redirectTo = `${origin}/auth/callback`;
+  // Use a dynamic redirect URL based on the request's origin.
+  // This is more reliable than using environment variables.
+  const redirectTo = origin ? `${origin}/auth/callback` : '/auth/callback';
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
@@ -68,3 +104,5 @@ export async function signInWithGoogle() {
 
   return redirect(data.url);
 }
+
+    
