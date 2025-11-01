@@ -68,10 +68,10 @@ async function updateUserWithProfile(
   // Explicitly construct the User object to satisfy TypeScript's strict checks.
   // This resolves the conflict between `string | null` (from profile) and `string | undefined` (from sessionUser).
   const mergedUser: User = {
-    // Start with all properties from the authoritative session user
-    ...sessionUser,
-    // Add all properties from the profile, which might be null
+    // Start with all properties from the profile
     ...profile,
+    // Add all properties from the authoritative session user
+    ...sessionUser,
     // Re-assert the properties from sessionUser that have conflicting types
     // to ensure the final object matches the `User` type.
     id: sessionUser.id,
@@ -204,9 +204,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         supabase.removeChannel(channel);
       }
     };
-    // The dependency array is intentionally kept minimal to only run this setup once.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isInitialLoading, channel, router, user]);
 
   const openAuthDialog = () => setIsAuthDialogOpen(true);
   const closeAuthDialog = () => setIsAuthDialogOpen(false);
