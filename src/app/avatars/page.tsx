@@ -1,15 +1,53 @@
 
 import { L9ToolsLayout } from '@/components/layout/l9tools-layout';
 import { AvatarView } from '@/components/views/avatar-view';
-import type { AvatarData } from '@/types';
-import mainAvatarData from '@/lib/avatar-data.json';
-import rareAvatarData from '@/lib/rare-avatar-data.json';
+import { createSupabaseServerClient } from '@/lib/supabase-server';
+import type { AvatarData, Grade } from '@/types';
 
-// This function simulates fetching initial data on the server.
+// This function now fetches data from Supabase on the server.
 async function getInitialAvatars(): Promise<{ avatars: AvatarData[]; error: string | null; }> {
   try {
-    // In a real app, this could be a database call. Here, we just type-cast the JSON.
-    const allAvatars: AvatarData[] = [...(mainAvatarData as AvatarData[]), ...(rareAvatarData as AvatarData[])];
+    const supabase = await createSupabaseServerClient();
+    const { data: avatarsData, error } = await supabase
+      .from('avatars')
+      .select(`
+        id,
+        name,
+        grade,
+        image_url,
+        avatar_stats (
+          attribute,
+          value,
+          icon
+        ),
+        avatar_fated_relationships (
+          name,
+          description
+        )
+      `)
+      .order('id', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching avatars from Supabase:', error.message);
+      throw new Error('Failed to fetch avatar data from the database.');
+    }
+    
+    const allAvatars: AvatarData[] = avatarsData.map((avatar: any) => ({
+      id: avatar.id,
+      name: avatar.name,
+      grade: avatar.grade as Grade,
+      image: avatar.image_url || '/l9rs/avatar.png',
+      stats: avatar.avatar_stats.map((stat: any) => ({
+        attribute: stat.attribute,
+        value: stat.value,
+        icon: stat.icon,
+      })),
+      fatedRelationship: {
+        name: avatar.avatar_fated_relationships?.name || 'N/A',
+        description: avatar.avatar_fated_relationships?.description || '',
+      }
+    }));
+    
     return { avatars: allAvatars, error: null };
   } catch (err: any) {
     console.error('An exception occurred while loading avatar data:', err.message);
