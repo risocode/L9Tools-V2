@@ -61,14 +61,15 @@ async function updateUserWithProfile(
   if (error || !profile) {
     console.error("Error fetching profile or profile not found:", error?.message);
 
-    // Fallback user if no profile exists (trigger should usually create one)
+    // Fallback user if no profile exists
     const fallbackUser: User = {
       ...sessionUser,
       id: sessionUser.id ?? "",
       email: sessionUser.email ?? "",
-      created_at: sessionUser.created_at ?? "",
-      last_sign_in_at: sessionUser.last_sign_in_at ?? null,
-      updated_at: sessionUser.updated_at ?? null,
+      created_at: sessionUser.created_at ?? new Date().toISOString(),
+      // Use empty string instead of null to satisfy strict string type
+      last_sign_in_at: sessionUser.last_sign_in_at ?? "",
+      updated_at: sessionUser.updated_at ?? "",
       custom_logo_url: null,
       discord_webhook_url: null,
       display_name: null,
@@ -84,21 +85,20 @@ async function updateUserWithProfile(
     return fallbackUser;
   }
 
-  // Merge Supabase user + profile safely
-  // Spread the profile first, then the session user to ensure session data takes precedence,
-  // then explicitly set properties to ensure the final object matches the `User` type.
+  // Merge Supabase user and profile safely
   const mergedUser: User = {
     ...profile,
     ...sessionUser,
     id: sessionUser.id,
     email: sessionUser.email ?? "",
-    created_at: sessionUser.created_at,
-    last_sign_in_at: sessionUser.last_sign_in_at ?? profile.last_sign_in_at,
-    updated_at: sessionUser.updated_at ?? profile.updated_at,
+    created_at: sessionUser.created_at ?? new Date().toISOString(),
+    last_sign_in_at: sessionUser.last_sign_in_at ?? profile.last_sign_in_at ?? "",
+    updated_at: sessionUser.updated_at ?? profile.updated_at ?? "",
   };
 
   return mergedUser;
 }
+
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
