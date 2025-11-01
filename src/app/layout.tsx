@@ -101,15 +101,15 @@ export default function RootLayout({
       </head>
       <body className="font-roboto h-full flex flex-col bg-background">
         <AdProvider>
-          <AuthProvider>
-            <LoadingProvider>
+          <LoadingProvider>
+            <AuthProvider>
               <Suspense>
                 {children}
               </Suspense>
               <Toaster />
               <PageLoaderWrapper />
-            </LoadingProvider>
-          </AuthProvider>
+            </AuthProvider>
+          </LoadingProvider>
         </AdProvider>
       </body>
     </html>
