@@ -44,5 +44,3 @@ export function useAd() {
   }
   return context;
 }
-
-    

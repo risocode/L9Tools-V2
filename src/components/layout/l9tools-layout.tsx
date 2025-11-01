@@ -33,9 +33,7 @@ import { AdDialog } from '../views/ad-dialog';
 import { useLoading } from '@/context/loading-context';
 import { AboutDialog } from '../views/about-dialog';
 import { ContactDialog } from '../views/contact-dialog';
-import { AdProvider } from '@/context/ad-context';
 import { Button } from '../ui/button';
-import { SidebarTrigger } from '../ui/sidebar/core';
 import { useIsMobile } from '@/hooks/use-is-mobile';
 
 
@@ -104,12 +102,9 @@ export function L9ToolsLayout({
   }, []);
 
   const handleNavClick = (e: MouseEvent, href: string) => {
-    // This check prevents the handler from interfering with other buttons in the sidebar
-    if (e.currentTarget.closest('[data-sidebar="menu"]')) {
-      e.preventDefault();
-      if (pathname !== href) {
-          showLoader(() => router.push(href));
-      }
+    e.preventDefault();
+    if (pathname !== href) {
+        showLoader(() => router.push(href));
     }
   }
 
@@ -245,144 +240,141 @@ export function L9ToolsLayout({
 
   return (
     <SidebarProvider>
-      <AdProvider>
-        <div className="flex h-full w-full">
-          <Sidebar>
-            <div className="absolute inset-0 overflow-hidden z-0">
-              <Image
-                src="/l9rs/bg_sidebar.jpg"
-                alt="Sidebar background"
+      <div className="flex h-full w-full">
+        <Sidebar>
+          <div className="absolute inset-0 overflow-hidden z-0">
+            <Image
+              src="/l9rs/bg_sidebar.jpg"
+              alt="Sidebar background"
+              fill
+              sizes="18rem"
+              className="object-cover"
+              data-ai-hint="mystical ancient artifact"
+              priority
+            />
+          </div>
+          <div className="absolute inset-0 bg-background/50 z-0" />
+          <SidebarHeader className="p-0 relative z-10 bg-transparent">
+            <a href="/boss-hunt" onClick={(e) => handleNavClick(e, '/boss-hunt')} className="relative aspect-square flex items-center justify-center cursor-pointer group" aria-label="Home">
+              <Image 
+                src={logoSrc}
+                alt="L9 Tools Logo" 
                 fill
                 sizes="18rem"
-                className="object-cover"
-                data-ai-hint="mystical ancient artifact"
-                priority
+                className="z-10 object-contain p-4"
+                priority={true}
               />
-            </div>
-            <div className="absolute inset-0 bg-background/50 z-0" />
-            <SidebarHeader className="p-0 relative z-10 bg-transparent">
-              <a href="/boss-hunt" onClick={(e) => handleNavClick(e, '/boss-hunt')} className="relative aspect-square flex items-center justify-center cursor-pointer group" aria-label="Home">
-                <Image 
-                  src={logoSrc}
-                  alt="L9 Tools Logo" 
-                  fill
-                  sizes="18rem"
-                  className="z-10 object-contain p-4"
-                  priority={true}
-                />
-              </a>
-            </SidebarHeader>
-            <SidebarContent className="relative z-10 bg-transparent p-0">
-              <SidebarMenu data-sidebar="menu" className="py-2">
-                {navItems.map((item) => {
-                  const Icon = item.icon as ElementType;
-                  const isLink = item.href && item.href !== '#';
+            </a>
+          </SidebarHeader>
+          <SidebarContent className="relative z-10 bg-transparent p-0">
+            <SidebarMenu data-sidebar="menu" className="py-2">
+              {navItems.map((item) => {
+                const Icon = item.icon as ElementType;
+                
+                if (item.isImageButton) {
+                    const linkProps = item.disabled
+                      ? { href: '#', onClick: handleDisabledClick, 'aria-disabled': true }
+                      : { href: item.href, onClick: (e: MouseEvent) => handleNavClick(e, item.href) };
 
-                  if (item.isImageButton) {
-                      const linkProps = item.disabled
-                        ? { href: '#', onClick: handleDisabledClick, 'aria-disabled': true }
-                        : { href: item.href, onClick: (e: MouseEvent) => isLink && handleNavClick(e, item.href) };
-
-                      return (
-                        <SidebarMenuItem key={item.id} className="flex justify-center p-2">
-                            <a {...linkProps} className={cn("relative inline-block group/autobuild", item.imageClassName, item.disabled && "cursor-pointer")} aria-label={item.ariaLabel}>
-                                <Image
-                                    src={item.imageSrc!}
-                                    alt={item.label}
-                                    width={180}
-                                    height={60}
-                                    className={cn("transition-all duration-300", item.disabled && "grayscale group-hover/autobuild:grayscale-0")}
-                                />
-                                {item.disabled && (
-                                    <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-md opacity-0 group-hover/autobuild:opacity-100 transition-opacity duration-300">
-                                      <span className="text-white font-bold text-lg px-4 py-1 rounded-md">Coming Soon</span>
-                                    </div>
-                                )}
+                    return (
+                      <SidebarMenuItem key={item.id} className="flex justify-center p-2">
+                          <a {...linkProps} className={cn("relative inline-block group/autobuild", item.imageClassName, item.disabled && "cursor-pointer")} aria-label={item.ariaLabel}>
+                              <Image
+                                  src={item.imageSrc!}
+                                  alt={item.label}
+                                  width={180}
+                                  height={60}
+                                  className={cn("transition-all duration-300", item.disabled && "grayscale group-hover/autobuild:grayscale-0")}
+                              />
+                              {item.disabled && (
+                                  <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-md opacity-0 group-hover/autobuild:opacity-100 transition-opacity duration-300">
+                                    <span className="text-white font-bold text-lg px-4 py-1 rounded-md">Coming Soon</span>
+                                  </div>
+                              )}
+                          </a>
+                      </SidebarMenuItem>
+                    );
+                }
+                if (item.isSpaceButton) {
+                    return (
+                        <SidebarMenuItem key={item.id} className="p-0 mt-2 flex justify-center">
+                          <a href={item.href} onClick={(e) => handleNavClick(e, item.href)} className="button-container" aria-label={item.ariaLabel}>
+                                <div className="space-button">
+                                    <div className="bright-particles"></div>
+                                    <span>{item.label}</span>
+                                </div>
                             </a>
                         </SidebarMenuItem>
-                      );
-                  }
-                  if (item.isSpaceButton) {
-                      return (
-                          <SidebarMenuItem key={item.id} className="p-0 mt-2 flex justify-center">
-                            <a href={item.href} onClick={(e) => isLink && handleNavClick(e, item.href)} className="button-container" aria-label={item.ariaLabel}>
-                                  <div className="space-button">
-                                      <div className="bright-particles"></div>
-                                      <span>{item.label}</span>
-                                  </div>
-                              </a>
-                          </SidebarMenuItem>
-                      );
-                  }
-                  return (
-                    <SidebarMenuItem key={item.id}>
-                      <Button
-                        asChild
-                        variant="ghost"
-                        className={cn(
-                          'w-full justify-start text-lg h-14',
-                          pathname.startsWith(item.href) && 'bg-primary/20'
-                        )}
+                    );
+                }
+                return (
+                  <SidebarMenuItem key={item.id}>
+                    <Button
+                      asChild
+                      variant="ghost"
+                      className={cn(
+                        'w-full justify-start text-lg h-14',
+                        pathname.startsWith(item.href) && 'bg-primary/20'
+                      )}
+                    >
+                      <a href={item.href} onClick={(e) => handleNavClick(e, item.href)} aria-label={item.ariaLabel}>
+                        <Icon className="mr-2 h-5 w-5" />
+                        {item.label}
+                      </a>
+                    </Button>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarContent>
+          <SidebarFooter className="relative z-10 mt-auto bg-transparent p-4 flex items-center justify-center">
+                <button
+                    onClick={() => setIsDonationOpen(true)}
+                    className="image-donate-btn"
+                    aria-label="Open donation dialog"
+                >
+                    <Image
+                        src={donateButtonImage}
+                        alt="Donate"
+                        width={180}
+                        height={60}
+                    />
+                </button>
+            </SidebarFooter>
+        </Sidebar>
+        <div 
+          className="relative flex-1 flex flex-col min-h-0"
+          style={{
+            backgroundImage: `url(${isAdminPage ? '/l9rs/admin_bg.jpg' : '/l9rs/bg_page.jpg'})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        >
+          <div className="absolute inset-0 z-0 bg-black/60" />
+          <div className="relative flex-1 flex flex-col min-h-0">
+              <main className="flex-1 flex flex-col min-h-0 z-10">
+                  {!isLoading && (
+                      <motion.div
+                          key={pathname}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ ease: "easeInOut", duration: 0.5 }}
+                          className="h-full flex flex-col"
                       >
-                        <a href={item.href} onClick={(e) => isLink && handleNavClick(e, item.href)} aria-label={item.ariaLabel}>
-                          <Icon className="mr-2 h-5 w-5" />
-                          {item.label}
-                        </a>
-                      </Button>
-                    </SidebarMenuItem>
-                  );
-                })}
-              </SidebarMenu>
-            </SidebarContent>
-            <SidebarFooter className="relative z-10 mt-auto bg-transparent p-4 flex items-center justify-center">
-                  <button
-                      onClick={() => setIsDonationOpen(true)}
-                      className="image-donate-btn"
-                      aria-label="Open donation dialog"
-                  >
-                      <Image
-                          src={donateButtonImage}
-                          alt="Donate"
-                          width={180}
-                          height={60}
-                      />
-                  </button>
-              </SidebarFooter>
-          </Sidebar>
-          <div 
-            className="relative flex-1 flex flex-col min-h-0"
-            style={{
-              backgroundImage: `url(${isAdminPage ? '/l9rs/admin_bg.jpg' : '/l9rs/bg_page.jpg'})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
-          >
-            <div className="absolute inset-0 z-0 bg-black/60" />
-            <div className="relative flex-1 flex flex-col min-h-0">
-                <main className="flex-1 flex flex-col min-h-0 z-10">
-                    {!isLoading && (
-                        <motion.div
-                            key={pathname}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ ease: "easeInOut", duration: 0.5 }}
-                            className="h-full flex flex-col"
-                        >
-                            {content}
-                        </motion.div>
-                    )}
-                </main>
-                {!isDashboardPage && !hideHeader && footer}
-            </div>
+                          {content}
+                      </motion.div>
+                  )}
+              </main>
+              {!isDashboardPage && !hideHeader && footer}
           </div>
         </div>
-        <AuthDialog />
-        <AboutDialog isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
-        <ContactDialog isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
-        <LegalDialog isOpen={isLegalOpen} onClose={() => setIsLegalOpen(false)} type={legalType} />
-        <DonationDialog isOpen={isDonationOpen} onClose={() => setIsDonationOpen(false)} />
-        <AdDialog />
-      </AdProvider>
+      </div>
+      <AuthDialog />
+      <AboutDialog isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
+      <ContactDialog isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
+      <LegalDialog isOpen={isLegalOpen} onClose={() => setIsLegalOpen(false)} type={legalType} />
+      <DonationDialog isOpen={isDonationOpen} onClose={() => setIsDonationOpen(false)} />
+      <AdDialog />
     </SidebarProvider>
   );
 }

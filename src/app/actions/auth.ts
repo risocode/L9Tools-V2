@@ -3,15 +3,15 @@
 
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
 
 export async function signInWithGoogle() {
   const supabase = await createSupabaseServerClient();
-
-  // Determine the redirect URL based on the environment
-  const redirectTo = process.env.NODE_ENV === 'development'
-    ? 'http://localhost:9002/auth/callback'
-    : 'https://www.l9tools.online/auth/callback';
-
+  const origin = headers().get('origin');
+  
+  // Dynamically construct the redirect URL based on the request's origin.
+  // This is more robust than relying on NODE_ENV.
+  const redirectTo = `${origin}/auth/callback`;
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
@@ -25,6 +25,7 @@ export async function signInWithGoogle() {
   });
 
   if (error) {
+    console.error("Error initiating Google sign-in:", error.message);
     return redirect('/auth/auth-code-error');
   }
 

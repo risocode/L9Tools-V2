@@ -13,7 +13,6 @@ import React, {
 interface LoadingContextState {
   isLoading: boolean;
   showLoader: (navigationCallback: () => void | Promise<void>) => void;
-  runAction: <T>(action: () => Promise<T>) => Promise<T>;
 }
 
 const LoadingContext = createContext<LoadingContextState | undefined>(undefined);
@@ -34,25 +33,11 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-
-  const runAction = useCallback(
-    async <T,>(action: () => Promise<T>): Promise<T> => {
-      setIsLoading(true);
-      try {
-        return await action();
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    []
-  );
-
   const finalIsLoading = isLoading || isPending;
 
   const value: LoadingContextState = {
     isLoading: finalIsLoading,
     showLoader,
-    runAction,
   };
 
   return (

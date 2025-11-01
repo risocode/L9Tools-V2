@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useState, useMemo } from 'react';
@@ -18,6 +17,7 @@ import { X, Check, Filter } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { cn } from '@/lib/utils';
 import { ResponsiveDrawer } from '@/components/ui/responsive-drawer';
+import { ViewHeader } from './view-header';
 
 interface AvatarViewProps {
   initialAvatars: AvatarData[];
@@ -96,6 +96,15 @@ export function AvatarView({ initialAvatars }: AvatarViewProps) {
   
   return (
     <div className="w-full h-full flex flex-col">
+      {/* Hide the standard ViewHeader on mobile since controls are integrated differently */}
+      {!isMobile && (
+        <ViewHeader 
+          title="Avatars" 
+          description="Browse and filter all available avatars." 
+          icon={User} 
+        />
+      )}
+      
       <Card className="bg-transparent border-0 shadow-none w-full">
         <CardContent className="p-4 w-full">
           {/* Controls: Search and Filter */}
@@ -166,27 +175,26 @@ export function AvatarView({ initialAvatars }: AvatarViewProps) {
 
       <div className="relative flex-1 min-h-0">
         <ScrollArea className="h-full rounded-b-lg bg-black/60">
-          {processedAvatars.length === 0 && (
+          {processedAvatars.length === 0 ? (
               <div className="flex items-center justify-center h-full text-center text-muted-foreground p-8">
                 No avatars match the current filters.
               </div>
+            ) : isMobile ? (
+              <AvatarAccordion 
+                avatars={processedAvatars} 
+                onFatedChange={handleFatedChange} 
+                highlightStats={selectedStats}
+                className="px-4" 
+              />
+            ) : (
+              <AvatarTable 
+                avatars={processedAvatars} 
+                onFatedChange={handleFatedChange} 
+                highlightStats={selectedStats}
+                className="px-4"
+              />
             )
           }
-          {isMobile ? (
-            <AvatarAccordion 
-              avatars={processedAvatars} 
-              onFatedChange={handleFatedChange} 
-              highlightStats={selectedStats}
-              className="px-4" 
-            />
-          ) : (
-            <AvatarTable 
-              avatars={processedAvatars} 
-              onFatedChange={handleFatedChange} 
-              highlightStats={selectedStats}
-              className="px-4"
-            />
-          )}
         </ScrollArea>
       </div>
     </div>

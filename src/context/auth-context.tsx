@@ -22,7 +22,8 @@ import { signInWithGoogle } from "@/app/actions/auth";
 import { useRouter } from "next/navigation";
 import PageLoader from "@/components/ui/page-loader";
 
-type User = SupabaseUser & Partial<Profile>;
+// The final User object is a combination of Supabase's User and our Profile table.
+type User = SupabaseUser & Profile;
 
 interface LogoutOptions {
   reason?: 'inactive' | 'user_initiated';
@@ -59,18 +60,20 @@ async function updateUserWithProfile(
 
   if (error) {
     console.error("Error fetching profile:", error.message);
+    // If the profile doesn't exist, we still return the sessionUser
+    // as the base user object. The profile might be created by a trigger shortly.
     return sessionUser as User;
   }
   
   // Explicitly construct the User object to satisfy TypeScript's strict checks.
   // This resolves the conflict between `string | null` (from profile) and `string | undefined` (from sessionUser).
   const mergedUser: User = {
-    // Start with all properties from the profile, which might be null
+    // Start with all properties from the database profile
     ...profile,
     // Overwrite with all properties from the authoritative session user
     ...sessionUser,
   };
-
+  
   return mergedUser;
 }
 
@@ -79,8 +82,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
   const [channel, setChannel] = useState<RealtimeChannel | null>(null);
+  const [hasMounted, setHasMounted] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
   
   const logout = useCallback(async (options: LogoutOptions = {}) => {
     const { reason = 'user_initiated', redirectPath = '/' } = options;
@@ -147,7 +155,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         });
 
         setChannel(presenceChannel);
-
         return presenceChannel;
     };
 
@@ -171,22 +178,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
         async (event: AuthChangeEvent, session: Session | null) => {
             const sessionUser = session?.user ?? null;
-            if (sessionUser) {
-              const fullUser = await updateUserWithProfile(sessionUser);
-              setUser(fullUser);
-              if (!channel && fullUser) {
-                  setupPresence(fullUser);
-              }
-            } else {
-              setUser(null);
-              if (channel) {
-                  supabase.removeChannel(channel);
-                  setChannel(null);
-              }
-            }
+            const fullUser = await updateUserWithProfile(sessionUser);
+            setUser(fullUser);
+            setIsInitialLoading(false); // This is the key: always turn off loading after the first check.
 
-            // This ensures the main loading state is only removed once, after the first auth check.
-            setIsInitialLoading(false);
+            if (sessionUser && !channel) {
+                setupPresence(fullUser!);
+            } else if (!sessionUser && channel) {
+                supabase.removeChannel(channel);
+                setChannel(null);
+            }
             
             if (event === "SIGNED_IN") {
                 closeAuthDialog();
@@ -229,8 +230,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     refreshUser,
   };
   
-  // Render a full-page loader during the initial auth check
-  if (isInitialLoading) {
+  // Render a full-page loader only during the initial auth check.
+  // hasMounted ensures this doesn't flash on the server.
+  if (!hasMounted || isInitialLoading) {
     return (
         <div className="page-loader-overlay">
             <PageLoader />

@@ -1,3 +1,4 @@
+
 /*
  * =================================================================
  * ROOT LAYOUT & STYLESHEET IMPORTS
@@ -38,6 +39,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/context/auth-context";
 import PageLoaderWrapper from "@/components/layout/page-loader-wrapper";
 import { LoadingProvider } from "@/context/loading-context";
+import { AdProvider } from "@/context/ad-context";
+
 
 const cinzel = Cinzel({ subsets: ["latin"], variable: "--font-cinzel" });
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -99,11 +102,13 @@ export default function RootLayout({
       <body className="font-roboto h-full flex flex-col bg-background">
         <AuthProvider>
           <LoadingProvider>
-            <Suspense>
-              {children}
-            </Suspense>
-            <Toaster />
-            <PageLoaderWrapper />
+            <AdProvider>
+              <Suspense>
+                {children}
+              </Suspense>
+              <Toaster />
+              <PageLoaderWrapper />
+            </AdProvider>
           </LoadingProvider>
         </AuthProvider>
       </body>
