@@ -15,21 +15,23 @@ async function ensureProfileTriggerExists() {
     return;
   }
 
-  // Check if the function already exists by trying to fetch its definition.
-  // This is a more reliable way than listing all functions.
-  const { data: existingFunction, error: functionCheckError } = await supabaseAdmin
-    .from('pg_proc')
-    .select('proname')
-    .eq('proname', 'handle_new_user_session')
-    .maybeSingle();
+  // Check if the function already exists by querying the pg_proc catalog via RPC
+  // This is more reliable than listing all functions and avoids type errors.
+  const { data: existingFunction, error: functionCheckError } = await supabaseAdmin.rpc('execute_sql' as any, {
+      sql: `
+        SELECT proname FROM pg_proc WHERE proname = 'handle_new_user_session';
+      `,
+  });
 
-  if (functionCheckError && !functionCheckError.message.includes('relation "pg_proc" does not exist')) {
+
+  if (functionCheckError) {
     console.error("Error checking for existing function:", functionCheckError);
     // Don't proceed if we can't check, to avoid creating duplicates.
     return;
   }
-
-  if (!existingFunction) {
+  
+  // The RPC call returns an array, so we check the length.
+  if (!existingFunction || (Array.isArray(existingFunction) && existingFunction.length === 0)) {
     console.log("Profile trigger function not found, creating it...");
 
     // The function now correctly extracts user metadata for name and photo.
@@ -104,5 +106,3 @@ export async function signInWithGoogle() {
 
   return redirect(data.url);
 }
-
-    
