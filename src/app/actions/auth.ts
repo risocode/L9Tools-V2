@@ -83,7 +83,7 @@ export async function signInWithGoogle() {
   await ensureProfileTriggerExists();
   
   const supabase = await createSupabaseServerClient();
-  const origin = headers().get('origin');
+  const origin = (await headers()).get('origin');
   
   // Use a dynamic redirect URL based on the request's origin.
   // This is more reliable than using environment variables.
