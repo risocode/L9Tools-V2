@@ -66,8 +66,8 @@ async function updateUserWithProfile(
       id: sessionUser.id ?? "",
       email: sessionUser.email ?? "",
       created_at: sessionUser.created_at ?? "",
-      last_sign_in_at: sessionUser.last_sign_in_at ?? "",
-      updated_at: sessionUser.updated_at ?? "",
+      last_sign_in_at: sessionUser.last_sign_in_at ?? null,
+      updated_at: sessionUser.updated_at ?? null,
     };
     return sessionUser as User;
   }
@@ -82,7 +82,7 @@ async function updateUserWithProfile(
     // Re-assert the properties from sessionUser that have conflicting types
     // to ensure the final object matches the `User` type.
     id: sessionUser.id,
-    email: sessionUser.email ?? "",
+    email: sessionUser.email ?? null,
     created_at: sessionUser.created_at,
     last_sign_in_at: sessionUser.last_sign_in_at ?? null,
     updated_at: sessionUser.updated_at ?? null,
