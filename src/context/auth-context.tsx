@@ -85,7 +85,7 @@ async function updateUserWithProfile(
     return fallbackUser;
   }
 
-  // Merge Supabase user and profile safely
+  // Merge Supabase user + profile safely
   const mergedUser: User = {
     ...profile,
     ...sessionUser,
