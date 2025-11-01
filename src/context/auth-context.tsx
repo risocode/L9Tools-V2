@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, {
@@ -86,12 +85,14 @@ async function updateUserWithProfile(
   }
 
   // Merge Supabase user + profile safely
+  // Spread the profile first, then the session user to ensure session data takes precedence,
+  // then explicitly set properties to satisfy the final User type.
   const mergedUser: User = {
-    ...sessionUser,
     ...profile,
+    ...sessionUser,
     id: sessionUser.id,
     email: sessionUser.email ?? "",
-    created_at: sessionUser.created_at ?? "",
+    created_at: sessionUser.created_at,
     last_sign_in_at: sessionUser.last_sign_in_at ?? profile.last_sign_in_at,
     updated_at: sessionUser.updated_at ?? profile.updated_at,
   };
