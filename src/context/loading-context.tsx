@@ -7,52 +7,50 @@ import React, {
   useState,
   ReactNode,
   useCallback,
+  useTransition,
 } from "react";
 
 interface LoadingContextState {
   isLoading: boolean;
-  showLoader: (callback: () => void | Promise<void>) => Promise<void>;
+  showLoader: (navigationCallback: () => void | Promise<void>) => void;
   runAction: <T>(action: () => Promise<T>) => Promise<T>;
 }
 
 const LoadingContext = createContext<LoadingContextState | undefined>(undefined);
 
 export function LoadingProvider({ children }: { children: ReactNode }) {
-  const [navigationCount, setNavigationCount] = useState(0);
-  const [actionCount, setActionCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  const showLoader = useCallback(async (navigationCallback: () => void | Promise<void>) => {
-    setNavigationCount((prev) => prev + 1);
-    try {
-      await Promise.resolve(navigationCallback());
-    } catch (err) {
-      console.error("Navigation callback failed:", err);
-    } finally {
-      // Use a timeout to ensure the UI has time to update before turning off the loader,
-      // especially for very fast navigations.
-      setTimeout(() => {
-        setNavigationCount((prev) => Math.max(0, prev - 1));
-      }, 50); 
-    }
+  const showLoader = useCallback((navigationCallback: () => void | Promise<void>) => {
+    startTransition(async () => {
+      setIsLoading(true);
+      try {
+        await Promise.resolve(navigationCallback());
+      } finally {
+        // A small delay can help ensure the UI transition is smooth
+        setTimeout(() => setIsLoading(false), 50);
+      }
+    });
   }, []);
 
 
   const runAction = useCallback(
     async <T,>(action: () => Promise<T>): Promise<T> => {
-      setActionCount((prev) => prev + 1);
+      setIsLoading(true);
       try {
         return await action();
       } finally {
-        setActionCount((prev) => Math.max(0, prev - 1));
+        setIsLoading(false);
       }
     },
     []
   );
 
-  const isLoading = navigationCount > 0 || actionCount > 0;
+  const finalIsLoading = isLoading || isPending;
 
   const value: LoadingContextState = {
-    isLoading,
+    isLoading: finalIsLoading,
     showLoader,
     runAction,
   };

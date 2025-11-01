@@ -244,8 +244,8 @@ export function L9ToolsLayout({
 
 
   return (
-    <AdProvider>
-      <SidebarProvider>
+    <SidebarProvider>
+      <AdProvider>
         <div className="flex h-full w-full">
           <Sidebar>
             <div className="absolute inset-0 overflow-hidden z-0">
@@ -382,7 +382,7 @@ export function L9ToolsLayout({
         <LegalDialog isOpen={isLegalOpen} onClose={() => setIsLegalOpen(false)} type={legalType} />
         <DonationDialog isOpen={isDonationOpen} onClose={() => setIsDonationOpen(false)} />
         <AdDialog />
-      </SidebarProvider>
-    </AdProvider>
+      </AdProvider>
+    </SidebarProvider>
   );
 }

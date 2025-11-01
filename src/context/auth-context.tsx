@@ -63,20 +63,12 @@ async function updateUserWithProfile(
   }
   
   // Explicitly construct the User object to satisfy TypeScript's strict checks.
-  // This resolves the conflict between `string | null` (from profile) and `string | undefined` (from sessionUser)
-  // for multiple properties like `email`, `last_sign_in_at`, and `updated_at`.
+  // This resolves the conflict between `string | null` (from profile) and `string | undefined` (from sessionUser).
   const mergedUser: User = {
-    // Start with all properties from the profile, which might have nullable fields.
+    // Start with all properties from the profile, which might be null
     ...profile,
-    // Overwrite with all properties from the authoritative session user. This ensures
-    // that properties like id, email, created_at, and last_sign_in_at use the
-    // stricter, non-null types from the SupabaseUser where applicable.
+    // Overwrite with all properties from the authoritative session user
     ...sessionUser,
-    // Re-assert the authoritative, non-null properties from the session user to fix type conflicts
-    id: sessionUser.id,
-    email: sessionUser.email,
-    created_at: sessionUser.created_at,
-    last_sign_in_at: sessionUser.last_sign_in_at,
   };
 
   return mergedUser;
@@ -119,9 +111,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (sessionUser) {
       const fullUser = await updateUserWithProfile(sessionUser);
       setUser(fullUser);
-      router.refresh(); 
+    } else {
+      setUser(null);
     }
-  }, [router]);
+  }, []);
   
   const updatePresence = async (status: 'online' | 'offline', userId: string) => {
       const { error } = await supabase
@@ -178,7 +171,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
         async (event: AuthChangeEvent, session: Session | null) => {
             const sessionUser = session?.user ?? null;
-            
             if (sessionUser) {
               const fullUser = await updateUserWithProfile(sessionUser);
               setUser(fullUser);
@@ -194,12 +186,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
             }
 
             // This ensures the main loading state is only removed once, after the first auth check.
-            if (isInitialLoading) {
-              setIsInitialLoading(false);
-            }
+            setIsInitialLoading(false);
             
             if (event === "SIGNED_IN") {
                 closeAuthDialog();
+                router.refresh();
             }
         }
     );
@@ -209,7 +200,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [user, channel, isInitialLoading]);
+  }, [user, channel, router]);
 
   const openAuthDialog = () => setIsAuthDialogOpen(true);
   const closeAuthDialog = () => setIsAuthDialogOpen(false);
