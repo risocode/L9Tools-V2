@@ -62,14 +62,26 @@ async function updateUserWithProfile(
     console.error("Error fetching profile or profile not found:", error?.message);
     // Return the session user as a base object if the profile is missing.
     // The DB trigger should have created it, but this is a fallback.
-     const user = {
+     const user: User = {
+      ...sessionUser,
       id: sessionUser.id ?? "",
       email: sessionUser.email ?? "",
       created_at: sessionUser.created_at ?? "",
       last_sign_in_at: sessionUser.last_sign_in_at ?? null,
       updated_at: sessionUser.updated_at ?? null,
+      custom_logo_url: null,
+      discord_webhook_url: null,
+      display_name: null,
+      is_admin: false,
+      notifications_enabled: true,
+      online_status: null,
+      short_id: null,
+      subscription_expires_at: null,
+      subscription_tier: "free",
+      user_photo_url: null,
+      username: null
     };
-    return sessionUser as User;
+    return user;
   }
   
   // Explicitly construct the User object to satisfy TypeScript's strict checks.
@@ -82,7 +94,7 @@ async function updateUserWithProfile(
     // Re-assert the properties from sessionUser that have conflicting types
     // to ensure the final object matches the `User` type.
     id: sessionUser.id,
-    email: sessionUser.email ?? null,
+    email: sessionUser.email ?? "",
     created_at: sessionUser.created_at,
     last_sign_in_at: sessionUser.last_sign_in_at ?? null,
     updated_at: sessionUser.updated_at ?? null,
