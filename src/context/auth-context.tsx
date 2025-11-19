@@ -19,7 +19,6 @@ import type { Profile } from "@/types";
 import { signInWithGoogle } from "@/app/actions/auth";
 import { useRouter } from "next/navigation";
 import PageLoader from "@/components/ui/page-loader";
-import { useLoading } from "./loading-context";
 
 // The final User object is a combination of Supabase's User and our Profile table.
 export type User = SupabaseUser & Profile;
