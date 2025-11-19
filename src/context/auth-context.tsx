@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, {
@@ -18,6 +19,7 @@ import type { Profile } from "@/types";
 import { signInWithGoogle } from "@/app/actions/auth";
 import { useRouter } from "next/navigation";
 import PageLoader from "@/components/ui/page-loader";
+import { useLoading } from "./loading-context";
 
 // The final User object is a combination of Supabase's User and our Profile table.
 export type User = SupabaseUser & Profile;
@@ -86,10 +88,10 @@ async function updateUserWithProfile(
 
   // Merge Supabase user + profile safely
   const mergedUser: User = {
-    ...profile,
     ...sessionUser,
+    ...profile,
     id: sessionUser.id,
-    email: sessionUser.email ?? "",
+    email: sessionUser.email ?? profile.email ?? "",
     created_at: profile.created_at ?? sessionUser.created_at,
     last_sign_in_at: profile.last_sign_in_at ?? sessionUser.last_sign_in_at ?? null,
     updated_at: profile.updated_at ?? sessionUser.updated_at ?? null,
@@ -227,16 +229,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const login = async () => {
     try {
       await signInWithGoogle();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Sign in failed:", error);
       toast({
         variant: "destructive",
         title: "Sign In Failed",
-        description: "Could not start the sign-in process.",
+        description: error.message || "Could not start the sign-in process.",
       });
     }
   };
-
+  
   const value: AuthContextState = {
     user,
     isInitialLoading,

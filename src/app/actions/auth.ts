@@ -84,9 +84,10 @@ export async function signInWithGoogle() {
   const supabase = await createSupabaseServerClient();
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
   if (!siteUrl) {
-    console.error("Missing NEXT_PUBLIC_SITE_URL environment variable.");
-    // Optionally, handle this error more gracefully
-    return;
+    console.error("CRITICAL: Missing NEXT_PUBLIC_SITE_URL environment variable. OAuth will fail.");
+    // Optionally, handle this error more gracefully in production
+    // For now, we will let it fail loudly during development.
+    throw new Error("Missing NEXT_PUBLIC_SITE_URL environment variable.");
   }
   
   const redirectTo = `${siteUrl}/auth/callback`;
@@ -106,5 +107,10 @@ export async function signInWithGoogle() {
     return redirect('/auth/auth-code-error');
   }
 
-  return redirect(data.url);
+  if (data.url) {
+    return redirect(data.url);
+  }
+
+  // Fallback redirect if for some reason data.url is null
+  return redirect('/auth/auth-code-error');
 }
