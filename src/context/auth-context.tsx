@@ -18,7 +18,6 @@ import type { Profile } from "@/types";
 import { signInWithGoogle } from "@/app/actions/auth";
 import { useRouter } from "next/navigation";
 import PageLoader from "@/components/ui/page-loader";
-import { useLoading } from "./loading-context";
 
 // The final User object is a combination of Supabase's User and our Profile table.
 export type User = SupabaseUser & Profile;
@@ -62,7 +61,7 @@ async function updateUserWithProfile(
   if (error || !profile) {
     console.error("Error fetching profile or profile not found:", error?.message);
 
-    // Fallback user if no profile exists
+    // Fallback user if no profile exists (trigger should usually create one)
     const fallbackUser: User = {
       ...sessionUser,
       id: sessionUser.id ?? "",
@@ -91,9 +90,9 @@ async function updateUserWithProfile(
     ...sessionUser,
     id: sessionUser.id,
     email: sessionUser.email ?? "",
-    created_at: profile.created_at ?? sessionUser.created_at ?? "",
-    last_sign_in_at: sessionUser.last_sign_in_at ?? profile.last_sign_in_at ?? null,
-    updated_at: sessionUser.updated_at ?? profile.updated_at ?? null,
+    created_at: profile.created_at ?? sessionUser.created_at,
+    last_sign_in_at: profile.last_sign_in_at ?? sessionUser.last_sign_in_at ?? null,
+    updated_at: profile.updated_at ?? sessionUser.updated_at ?? null,
   };
 
   return mergedUser;
@@ -106,7 +105,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [channel, setChannel] = useState<RealtimeChannel | null>(null);
   const { toast } = useToast();
   const router = useRouter();
-  const { showLoader } = useLoading();
 
   const logout = useCallback(
     async (options: LogoutOptions = {}) => {
@@ -227,18 +225,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const closeAuthDialog = () => setIsAuthDialogOpen(false);
 
   const login = async () => {
-    showLoader(async () => {
-      try {
-        await signInWithGoogle();
-      } catch (error) {
-        console.error("Sign in failed:", error);
-        toast({
-          variant: "destructive",
-          title: "Sign In Failed",
-          description: "Could not start the sign-in process.",
-        });
-      }
-    });
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      console.error("Sign in failed:", error);
+      toast({
+        variant: "destructive",
+        title: "Sign In Failed",
+        description: "Could not start the sign-in process.",
+      });
+    }
   };
 
   const value: AuthContextState = {
