@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow public read access to the main boss data
+    match /bosses/{bossId} {
+      allow read: if true;
+      allow write: if false; // Nobody should write to the main boss document from the client
+
+      // Secure user-specific timer data
+      match /userTimers/{userId} {
+        // Allow users to read and write only their own timer documents
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // Secure user profile data
+    match /users/{userId} {
+      // Allow anyone to read user profiles for display names, but only the user can write.
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
