@@ -250,6 +250,10 @@ export function BossHuntView({ initialBosses }: BossHuntViewProps) {
   
   const handleOpenResetDialog = (boss: Boss) => {
     if (boss.isFixedSpawn || !boss.lastKilled) return;
+    // Show ad for guest or free users when they click reset
+    if (!user || user.subscription_tier === 'free') {
+      openAdDialog();
+    }
     setResettingBoss(boss);
     setIsResetConfirmationOpen(true);
   };
