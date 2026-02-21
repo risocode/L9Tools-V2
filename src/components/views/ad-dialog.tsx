@@ -18,8 +18,14 @@ import { useLoading } from "@/context/loading-context";
 import { useRouter } from "next/navigation";
 import { Star, CheckCircle } from "lucide-react";
 
-/** Monetag ad zone - shown first when free/guest users use Timer, Map, or Reset */
-const AD_ZONE_URL = "https://omg10.com/4/10637732";
+/** quge5 ad zone - loads via tag.min.js in layout, can render into #quge5-ad-container */
+const QUGE5_ZONE_ID = "213198";
+
+/** omg10 ad zones - shown when free/guest users use Timer, Map, or Reset */
+const AD_ZONE_URLS = [
+  "https://omg10.com/4/10637732",
+  "https://omg10.com/4/10637737",
+];
 
 const PRO_PERKS = [
   "Save your boss timers across all devices",
@@ -110,13 +116,21 @@ export function AdDialog() {
 
         {phase === "monetag" && (
           <div className="flex flex-col min-h-[320px]">
-            <div className="flex-1 min-h-[280px] w-full bg-black/80">
-              <iframe
-                src={AD_ZONE_URL}
-                title="Advertisement"
-                className="w-full h-full min-h-[280px] border-0"
-                sandbox="allow-scripts allow-same-origin allow-popups"
+            <div className="flex-1 min-h-[280px] w-full bg-black/80 flex flex-col gap-1 p-1 overflow-auto">
+              <div
+                id="quge5-ad-container"
+                data-zone={QUGE5_ZONE_ID}
+                className="w-full min-h-[140px] rounded overflow-hidden"
               />
+              {AD_ZONE_URLS.map((url, i) => (
+                <iframe
+                  key={i}
+                  src={url}
+                  title={`Advertisement ${i + 1}`}
+                  className="w-full min-h-[200px] flex-1 border-0 rounded"
+                  sandbox="allow-scripts allow-same-origin allow-popups"
+                />
+              ))}
             </div>
             <div className="p-4 border-t border-white/10 bg-slate-900/80 flex justify-center">
               <Button
