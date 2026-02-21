@@ -1,0 +1,119 @@
+
+import { createClient, type User, type SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '@/types/supabase';
+
+
+// This file is intended for server-side use only.
+// The environment variables are loaded automatically by Next.js.
+
+let supabaseAdmin: SupabaseClient<Database> | null = null;
+
+/**
+ * Lazily initializes and returns a Supabase client with admin privileges.
+ * This function should only be called from trusted server-side environments.
+ * It uses the service_role_key, which must be kept secret.
+ * @returns A SupabaseClient instance or null if config is missing.
+ */
+export function getSupabaseAdmin(): SupabaseClient<Database> | null {
+  if (supabaseAdmin) {
+    return supabaseAdmin;
+  }
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    console.error('CRITICAL ERROR: Missing Supabase URL or service role key for admin client. Please ensure Supabase environment variables are set.');
+    return null;
+  }
+
+  supabaseAdmin = createClient<Database>(supabaseUrl, supabaseServiceKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  });
+
+  return supabaseAdmin;
+}
+
+
+/**
+ * Verifies if a given user has admin privileges.
+ * This function should only be called from trusted server-side environments.
+ * @param user The Supabase user object to check.
+ * @returns A promise that resolves to true if the user is an admin, false otherwise.
+ */
+export async function verifyAdminStatus(user: User): Promise<boolean> {
+  // Input validation
+  if (!user || !user.id) {
+    console.warn('[Admin Check] Invalid user object provided');
+    return false;
+  }
+
+  const adminClient = getSupabaseAdmin();
+  if (!adminClient) {
+    console.error('[Admin Check] Failed to initialize admin client - missing environment variables');
+    return false;
+  }
+  
+  try {
+    const { data: adminProfile, error } = await adminClient
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', user.id)
+      .maybeSingle(); // Use maybeSingle instead of single to handle missing profiles gracefully
+
+    if (error) {
+      // Check for specific error codes
+      if (error.code === 'PGRST116') {
+        // No rows returned - user profile doesn't exist
+        console.warn(`[Admin Check] No profile found for user ${user.id}`);
+      } else {
+        console.error(`[Admin Check] Database error during admin check for user ${user.id}:`, {
+          message: error.message,
+          code: error.code,
+          details: error.details,
+          hint: error.hint,
+        });
+      }
+      return false;
+    }
+    
+    if (!adminProfile) {
+      console.warn(`[Admin Check] No profile data returned for user ${user.id}`);
+      return false;
+    }
+
+    // Explicit boolean check - ensure is_admin is truly a boolean
+    const isAdmin = Boolean(adminProfile.is_admin);
+    
+    if (isAdmin) {
+      // Log admin access for audit purposes (optional, can be removed in production)
+      // console.log(`[Admin Check] Admin access verified for user ${user.id} (${user.email})`);
+    }
+
+    return isAdmin;
+  } catch (err: any) {
+    console.error(`[Admin Check] Unexpected error during admin verification for user ${user.id}:`, {
+      message: err?.message,
+      stack: err?.stack,
+    });
+    return false;
+  }
+}
+
+/**
+ * Client-side helper to check if a user is an admin.
+ * Uses the user object from auth context (already includes profile data).
+ * @param user The user object from auth context
+ * @returns true if user is an admin, false otherwise
+ */
+export function isUserAdmin(user: { is_admin?: boolean } | null | undefined): boolean {
+  if (!user) {
+    return false;
+  }
+  
+  // Explicit boolean check to handle undefined/null
+  return Boolean(user.is_admin);
+}

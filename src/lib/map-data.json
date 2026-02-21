@@ -1,0 +1,208 @@
+
+{
+  "Corrupted River Stream": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Venatus": { "x": 400, "y": 300 }
+    }
+  },
+  "Gill Stream": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Viorent": { "x": 450, "y": 250 }
+    }
+  },
+  "Reclaimed Gathering Point": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Ego": { "x": 350, "y": 350 }
+    }
+  },
+  "White Witch's Cradle": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Clemantis": { "x": 500, "y": 400 }
+    }
+  },
+  "Black Storm Peninsula": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Livera": { "x": 300, "y": 200 }
+    }
+  },
+  "Lower Tomb of Tyriosa 1F": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Araneo": { "x": 600, "y": 450 }
+    }
+  },
+  "Test Subject Lab": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Undomiel": { "x": 250, "y": 500 }
+    }
+  },
+  "Moonlight Shackle": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Saphirus": { "x": 550, "y": 150 }
+    }
+  },
+  "Battlefield of Love and Hatred": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Neutro": { "x": 400, "y": 100 }
+    }
+  },
+  "Bloody Shadow": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Lady Dalia": { "x": 200, "y": 300 }
+    }
+  },
+  "Lower Tomb of Tyriosa 2F": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "General Aquleus": { "x": 650, "y": 350 }
+    }
+  },
+  "Mark of Rampage": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Thymele": { "x": 150, "y": 450 }
+    }
+  },
+  "Limestone Cape": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Amentis": { "x": 700, "y": 250 }
+    }
+  },
+  "Rosevine Bridge": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Baron Braudmore": { "x": 400, "y": 550 }
+    }
+  },
+  "Lower Tomb of Tyriosa 3F": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Milavy": { "x": 300, "y": 400 }
+    }
+  },
+  "Snare Swamp": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Wannitas": { "x": 500, "y": 200 }
+    }
+  },
+  "Follower's Field": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Metus": { "x": 250, "y": 250 }
+    }
+  },
+  "Open-Eyed Puppet's Throne": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Duplican": { "x": 600, "y": 150 }
+    }
+  },
+  "Masquerade of Hounds": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Shuliar": { "x": 350, "y": 150 }
+    }
+  },
+  "Torchlight Highway": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Ringor": { "x": 550, "y": 500 }
+    }
+  },
+  "Garbana Underground Waterway 1F": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Roderick": { "x": 400, "y": 400 }
+    }
+  },
+  "Deadman's Land District 1": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Gareth": { "x": 200, "y": 550 }
+    }
+  },
+  "Deadman's Land District 2": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Titore": { "x": 700, "y": 450 }
+    }
+  },
+  "Garbana Reclaimed Land": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Larba": { "x": 150, "y": 150 }
+    }
+  },
+  "Deadman's Land District 3": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Catena": { "x": 450, "y": 50 }
+    }
+  },
+  "Garbana Underground Waterway 2F": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Auraq": { "x": 650, "y": 550 }
+    }
+  },
+  "Kallion's Tomb": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Secreta": { "x": 250, "y": 450 },
+      "Chaiflock": { "x": 550, "y": 300 }
+    }
+  },
+  "Successor's Paradise": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Ordo": { "x": 400, "y": 200 }
+    }
+  },
+  "Goldblood Plain": {
+    "width": 800,
+    "height": 600,
+    "bosses": {
+      "Asta": { "x": 300, "y": 500 },
+      "Supore": { "x": 600, "y": 250 }
+    }
+  }
+}

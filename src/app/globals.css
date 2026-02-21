@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * =================================================================
+ * GLOBAL STYLESHEET (Entry Point)
+ * =================================================================
+ * This file is now the lean entry point for Tailwind's base styles.
+ *
+ * All modular CSS files (theme, components, etc.) are now imported
+ * directly into the root layout (`src/app/layout.tsx`). This is the
+ * modern and recommended approach for Next.js applications to ensure
+ * correct dependency order and avoid CSS `@import` performance issues.
+ * =================================================================
+ */

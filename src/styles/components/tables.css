@@ -1,0 +1,98 @@
+/*
+ * =================================================================
+ * TABLES
+ * =================================================================
+ * This file contains styles for custom table components,
+ * primarily for the admin dashboard.
+ * =================================================================
+ */
+
+/* Admin Panel Game UI Redesign - Tables */
+.admin-table-container {
+  @apply rounded-lg border border-[#00e5ff]/20 bg-[#0d1117]/70;
+}
+
+.admin-table-header {
+  @apply sticky top-0 z-10 bg-[#0d1117]/90 backdrop-blur-sm;
+}
+
+.admin-table-scroll-area {
+  @apply h-full;
+}
+
+.admin-table-row {
+  @apply border-b border-[#00e5ff]/20 transition-colors;
+}
+.admin-table-row:nth-child(even) {
+  @apply bg-[#0d1117]/[0.9];
+}
+.admin-table-row:nth-child(odd) {
+  @apply bg-[#0d1117]/[0.7];
+}
+
+.admin-table-row:hover {
+  @apply bg-[#15202b]/90 ring-1 ring-[#00e5ff];
+}
+
+.admin-table-username {
+  @apply font-bold text-white;
+  text-shadow: 0 0 3px #00e5ff66;
+}
+
+.admin-table-email {
+  @apply text-[#c0c0c0];
+}
+
+.admin-tier-pill {
+  @apply inline-block px-3 py-1 text-xs font-bold rounded-full border;
+}
+.admin-tier-free {
+  @apply bg-[#bfbfbf]/10 border-[#bfbfbf]/50 text-[#bfbfbf];
+  text-shadow: 0 0 4px #bfbfbf66;
+}
+.admin-tier-pro {
+  @apply bg-[#FFD700]/10 border-[#FFD700] text-[#FFD700];
+  box-shadow: 0 0 6px #FFD70066;
+}
+.admin-tier-trial {
+  @apply bg-pink-500/20 border-pink-500 text-pink-400;
+  box-shadow: 0 0 6px rgba(236, 72, 153, 0.4);
+}
+.admin-tier-lifetime {
+  @apply bg-[#ff4d4d]/10 border-[#ff4d4d] text-[#ff4d4d];
+  box-shadow: 0 0 6px #ff4d4d66;
+}
+.admin-tier-admin {
+  @apply bg-purple-500/20 border-purple-500 text-purple-400;
+  box-shadow: 0 0 8px #8B5CF699;
+}
+
+
+.admin-expires-active {
+  @apply text-[#00e5ff];
+}
+
+.admin-expires-expired {
+  @apply text-[#ff4d4d];
+}
+
+.admin-manage-button {
+  @apply bg-[#15202b] border border-[#00e5ff] rounded-md text-sm font-semibold text-white;
+  box-shadow: 0 0 8px #00e5ff66;
+  transition: all 0.3s;
+}
+
+.admin-manage-button:hover {
+  box-shadow: 0 0 15px #00e5ff;
+}
+
+.admin-filter-button-active {
+    background-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+    box-shadow: 0 0 10px hsl(var(--primary));
+}
+
+/* ShadCN Tabs Customization */
+.tab-glow {
+  box-shadow: 0 0 8px var(--glow-color), 0 0 12px var(--glow-color), 0 0 16px var(--glow-color);
+}

@@ -1,0 +1,161 @@
+
+
+/*
+ * =================================================================
+ * LAYOUTS
+ * =================================================================
+ * This file contains styles for major layout components and
+ * page-specific structural styling.
+ * =================================================================
+ */
+
+/* Admin Panel Background */
+.admin-bg-overlay {
+  @apply bg-[#0d1117]/[.75];
+}
+
+/* Header Container */
+.dashboard-header {
+  @apply flex flex-col items-end justify-center gap-4 p-4;
+}
+
+/* Boss Hunt Header */
+.boss-hunt-header {
+    @apply p-4 bg-cover bg-center;
+    background-image: url('/l9rs/bg_header.jpg');
+}
+
+
+/* Tavern Dashboard Styles */
+.tavern-dashboard-container {
+  --pin-color: #555;
+  --gold-glow: #ffd700;
+  --cyan-glow: #00e5ff;
+}
+
+/* Illuminated Welcome Banner */
+.welcome-banner {
+  @apply relative flex items-center justify-center text-center py-8 px-4 rounded-lg overflow-hidden;
+  background: rgba(10, 5, 5, 0.5);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 211, 105, 0.2);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+}
+
+.banner-content {
+  @apply relative z-10;
+}
+
+.banner-title {
+  @apply font-cinzel text-3xl md:text-4xl font-bold bg-clip-text text-transparent;
+  background-image: linear-gradient(to bottom, #ffffff, #d4d4d4);
+  filter: drop-shadow(0 0 10px rgba(255, 211, 105, 0.6)) drop-shadow(0 0 2px #FFD700);
+}
+
+.banner-subtitle {
+  @apply font-sans text-lg text-gray-300/80 mt-2 tracking-wide;
+}
+
+.banner-glow-left,
+.banner-glow-right {
+  @apply absolute top-1/2 -translate-y-1/2 w-1/3 h-[200%] rounded-full;
+  background-color: #FFD700;
+  filter: blur(100px);
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.banner-glow-left {
+  @apply left-0 -translate-x-1/2;
+}
+
+.banner-glow-right {
+  @apply right-0 translate-x-1/2;
+}
+
+/* Dashboard v2 Image Buttons */
+.feature-button-v2 {
+  @apply relative transition-transform duration-300 ease-in-out hover:scale-105;
+}
+.feature-button-v2.disabled {
+  @apply cursor-not-allowed hover:scale-100;
+}
+
+/* Ability card - plain, no color design */
+.ability-card {
+  position: relative;
+  width: 180px;
+  height: 225px;
+  border-radius: 0.7rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ability-card-inner {
+  background: transparent;
+  color: #e8e8e8;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 0.7rem;
+}
+
+.ability-card .ability-card-level-trigger svg {
+  display: none;
+}
+
+.ability-card-selectable {
+  transition: none;
+}
+
+/* Level select dropdown: transparent, blended with page */
+.ability-level-select-content {
+  background: rgba(0, 0, 0, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+.ability-level-select-content [data-state=checked] {
+  background: rgba(255, 255, 255, 0.06);
+  color: inherit;
+}
+.ability-level-select-content [data-state=checked] > span:first-of-type {
+  opacity: 0.5;
+}
+.ability-level-select-content [data-highlighted] {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Ability table: no scroll when a category filter is selected (scrolling only for "All") */
+.ability-table-no-scroll [data-radix-scroll-area-viewport] {
+  overflow: hidden !important;
+}
+/* Hide only the vertical scrollbar when scrolling is disabled (do not hide viewport/content) */
+.ability-table-no-scroll [data-radix-scroll-area-scrollbar][data-orientation="vertical"],
+.ability-table-no-scroll > [data-orientation="vertical"],
+.ability-table-no-scroll > [class*="w-2.5"] {
+  display: none !important;
+}
+
+/* Access Denied Card */
+.access-denied-card {
+  @apply relative p-6 sm:p-8 rounded-lg text-center bg-gradient-to-br from-slate-900 to-black border border-cyan-400/20 max-w-md;
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.15), inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+.access-denied-card::before {
+  content: '';
+  @apply absolute -inset-px rounded-lg bg-gradient-to-r from-cyan-500/80 to-blue-600/80 blur-lg opacity-30;
+  z-index: -1;
+}
+
+.access-denied-title {
+  @apply font-orbitron text-2xl sm:text-3xl font-bold uppercase text-white;
+  text-shadow: 0 0 5px rgba(0, 229, 255, 0.7), 0 0 10px rgba(0, 229, 255, 0.5), 0 0 20px rgba(0, 229, 255, 0.3);
+}
+
+.access-denied-message {
+  @apply mt-2 text-base sm:text-lg text-slate-300;
+}
+

@@ -1,0 +1,31 @@
+
+{
+  "ctaImage": {
+    "url": "https://picsum.photos/seed/cta-image/500/500",
+    "hint": "fantasy warrior map"
+  },
+  "avatar1": {
+    "url": "https://picsum.photos/seed/avatar1/100/100",
+    "hint": "fantasy warrior portrait"
+  },
+  "avatar2": {
+    "url": "https://picsum.photos/seed/avatar2/100/100",
+    "hint": "fantasy mage portrait"
+  },
+  "avatar3": {
+    "url": "https://picsum.photos/seed/avatar3/100/100",
+    "hint": "fantasy rogue portrait"
+  },
+  "avatar4": {
+    "url": "https://picsum.photos/seed/avatar4/100/100",
+    "hint": "fantasy cleric portrait"
+  },
+  "avatar5": {
+    "url": "https://picsum.photos/seed/avatar5/100/100",
+    "hint": "fantasy archer portrait"
+  },
+  "avatar6": {
+    "url": "https://picsum.photos/seed/avatar6/100/100",
+    "hint": "fantasy knight portrait"
+  }
+}

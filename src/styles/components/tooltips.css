@@ -1,0 +1,53 @@
+/*
+ * =================================================================
+ * TOOLTIPS
+ * =================================================================
+ * This file contains styles for custom tooltip components.
+ * =================================================================
+ */
+
+/* Retro Tooltip for Boss Hunt */
+.retro-tooltip-content {
+  --background: #181818;
+  --inner-shadow: #9faef93a;
+  --inner-outline: #34217d;
+  --inner-outline-bottom: #1a1a1a;
+  --inner-outline-middle: #8880d5;
+  --inner-outline-outer-top: #fefcff;
+  --inner-outline-outer-bottom-1: #29107b;
+  --inner-outline-outer-bottom-2: #5b42c4;
+  --inner-outline-outer-bottom-3: #200265;
+  
+  background: transparent !important;
+  border-radius: 0.7rem;
+  padding: 0 !important;
+  border: none !important;
+  box-shadow: inset 0px 1px 8px 1px var(--inner-shadow),
+    0px 2px 0px 0px var(--inner-outline-bottom),
+    0px -2px 0px 0px var(--inner-outline),
+    -2px -2px 0px 0px var(--inner-outline),
+    2px -2px 0px 0px var(--inner-outline),
+    0px 0px 0px 6px var(--inner-outline-middle),
+    0px -2px 0px 7px var(--inner-outline-outer-top),
+    0px 4px 0px 7px var(--inner-outline-outer-bottom-1),
+    0px 7px 0px 7px var(--inner-outline-outer-bottom-2),
+    0px 10px 0px 7px var(--inner-outline-outer-bottom-3);
+}
+
+.retro-tooltip-content[data-side="top"]::before {
+  content: "";
+  position: absolute;
+  height: 1em;
+  width: 1em;
+  bottom: -0.2em;
+  left: 50%;
+  transform: translate(-50%) translateY(2px) rotate(45deg);
+  background: var(--background);
+  border-radius: 0.2em;
+  box-shadow: 1px 1px 0px var(--inner-outline-outer-top), 
+              5px 5px 0px var(--inner-outline-middle),
+              9px 9px 0px var(--inner-outline-outer-bottom-1), 
+              12px 12px 0px var(--inner-outline-outer-bottom-2),
+              14px 14px 0px var(--inner-outline-outer-bottom-3), 
+              inset -3px -3px 3px var(--inner-shadow);
+}

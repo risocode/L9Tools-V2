@@ -1,0 +1,93 @@
+/*
+ * =================================================================
+ * CARDS & PANELS
+ * =================================================================
+ * This file contains styles for custom card and panel components.
+ * =================================================================
+ */
+
+/* Glowing Card (Wrapper for Donation Dialog) */
+.glowing-card {
+  background: linear-gradient(137deg, rgb(255, 0, 179) 0%, rgba(0,212,255,1) 100%);
+  transition: 0.3s ease;
+  border-radius: 30px;
+  padding: 2px;
+  filter: drop-shadow(0px 0px 15px rgba(209, 38, 197, 0.5));
+}
+
+.glowing-card:hover {
+  filter: drop-shadow(0px 0px 20px rgba(209, 38, 197, 1));
+}
+
+/* Admin Stat Card */
+.admin-stat-card {
+  @apply relative rounded-lg p-4 transition-all duration-300;
+  background: linear-gradient(145deg, #0a0f1a, #15202b);
+  border: 1px solid var(--glow-color-faint);
+  box-shadow: 0 0 10px 1px var(--glow-color-faint);
+}
+
+.admin-stat-card:hover {
+  animation: pulse-border 2s infinite ease-in-out;
+}
+
+.admin-stat-card-total { --glow-color: #00e5ff; --glow-color-faint: #00e5ff33; }
+.admin-stat-card-pro { --glow-color: #FFD700; --glow-color-faint: #FFD70033; }
+.admin-stat-card-lifetime { --glow-color: #ff4d4d; --glow-color-faint: #ff4d4d33; }
+.admin-stat-card-free { --glow-color: #d9d9d9; --glow-color-faint: #d9d9d933; }
+
+.admin-stat-card-label { @apply text-xs font-medium text-[#c0c0c0]; }
+.admin-stat-card-value {
+  @apply text-2xl font-bold;
+  text-shadow: 0 0 8px var(--glow-color), 0 0 12px var(--glow-color-faint);
+}
+.admin-stat-card-icon {
+  @apply h-5 w-5;
+  color: var(--glow-color);
+  filter: drop-shadow(0 0 5px var(--glow-color));
+}
+
+/* Tavern Dashboard Card (Replaces Parchment) */
+.parchment-card {
+  @apply relative p-6 text-center transition-all duration-300;
+  background-color: rgba(10, 5, 5, 0.7); /* Dark semi-transparent background */
+  backdrop-filter: blur(4px);
+  border-radius: 4px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.4), inset 0 0 20px rgba(0,0,0,0.2);
+  border: 1px solid rgba(193, 183, 156, 0.5); /* Fainter border */
+}
+.parchment-card:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  border-color: rgba(193, 183, 156, 0.8);
+}
+.parchment-header {
+  @apply flex items-center justify-center gap-3 mb-4;
+}
+.parchment-title {
+  @apply font-cinzel text-xl font-bold text-stone-100 uppercase tracking-widest; /* Brighter title */
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+}
+.parchment-icon {
+  @apply h-6 w-6;
+  filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.3));
+}
+.parchment-content {
+  @apply space-y-1;
+}
+.parchment-main-text {
+  @apply text-3xl font-bold;
+  text-shadow: 0 0 8px currentColor;
+}
+.parchment-subtext {
+  @apply text-sm text-stone-300;
+}
+.parchment-pin {
+  @apply absolute w-4 h-4 rounded-full;
+  background-color: #333;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+  border: 1px solid #1a1a1a;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+}

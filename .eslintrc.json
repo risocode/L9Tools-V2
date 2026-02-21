@@ -1,0 +1,7 @@
+{
+  "extends": "next/core-web-vitals",
+  "ignorePatterns": [
+    "src/ai/**/*.ts",
+    "src/app/actions/**/*.ts"
+  ]
+}

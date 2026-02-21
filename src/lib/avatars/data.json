@@ -1,0 +1,3088 @@
+
+[
+  {
+    "id": 1,
+    "name": "Conqueror Marek",
+    "grade": "Mythic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+100%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+50%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+20%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+280",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+270",
+        "icon": "shield"
+      },
+      {
+        "attribute": "All Damage in PvP",
+        "value": "10%",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Dmg Received Decrease",
+        "value": "8%",
+        "icon": "minus-circle"
+      },
+      {
+        "attribute": "Max HP",
+        "value": "540",
+        "icon": "heart-pulse"
+      },
+      {
+        "attribute": "Status Effects Res.",
+        "value": "9%",
+        "icon": "shield-check"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 2,
+    "name": "Liberator Radiant",
+    "grade": "Mythic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+100%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+50%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+20%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+270",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+280",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Dmg Received Decrease",
+        "value": "8%",
+        "icon": "minus-circle"
+      },
+      {
+        "attribute": "Max HP",
+        "value": "540",
+        "icon": "heart-pulse"
+      },
+      {
+        "attribute": "Status Effects Res.",
+        "value": "9%",
+        "icon": "shield-check"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 3,
+    "name": "Blessing of Alchemy Nesha",
+    "grade": "Legendary",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+80%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+35%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+15%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+230",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+220",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Dmg Received Decrease in PvP",
+        "value": "7%",
+        "icon": "minus-circle"
+      },
+      {
+        "attribute": "Evasion",
+        "value": "90",
+        "icon": "shield-check"
+      },
+      {
+        "attribute": "Max HP",
+        "value": "450",
+        "icon": "heart-pulse"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Aquila",
+      "description": "Attack Speed +10%, Channeling Speed +5%, All Damage +3%"
+    }
+  },
+  {
+    "id": 4,
+    "name": "Blue Rose Rowain",
+    "grade": "Legendary",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+76%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+35%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+15%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+205",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+195",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Dmg to Elite Monsters",
+        "value": "Increase 10%",
+        "icon": "dna"
+      },
+      {
+        "attribute": "Accuracy",
+        "value": "80",
+        "icon": "target"
+      },
+      {
+        "attribute": "Max HP",
+        "value": "360",
+        "icon": "heart-pulse"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Deligeon",
+      "description": "Attack Speed +10%, Channeling Speed +5%, All Damage +3%"
+    }
+  },
+  {
+    "id": 5,
+    "name": "Grand Warlock of Schemes Eldrich",
+    "grade": "Legendary",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+77%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+35%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+15%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+215",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+205",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Skill Damage",
+        "value": "8%",
+        "icon": "gem"
+      },
+      {
+        "attribute": "Endurance Ignore",
+        "value": "50",
+        "icon": "target"
+      },
+      {
+        "attribute": "Max HP",
+        "value": "390",
+        "icon": "heart-pulse"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Morian",
+      "description": "Attack Speed +10%, Channeling Speed +5%, All Damage +3%"
+    }
+  },
+  {
+    "id": 6,
+    "name": "Immortal Veteran Deligeon",
+    "grade": "Legendary",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+79%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+35%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+15%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+225",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+215",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Dmg Received from Monsters",
+        "value": "Decrease 8%",
+        "icon": "minus-circle"
+      },
+      {
+        "attribute": "MP Recovery in Battle",
+        "value": "20",
+        "icon": "gem"
+      },
+      {
+        "attribute": "Max HP",
+        "value": "420",
+        "icon": "heart-pulse"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Rowain",
+      "description": "Attack Speed +10%, Channeling Speed +5%, All Damage +3%"
+    }
+  },
+  {
+    "id": 7,
+    "name": "Iron-Blooded Strategist Krous",
+    "grade": "Legendary",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+79%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+35%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+15%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+225",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+215",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Dmg to Monsters",
+        "value": "Increase 8%",
+        "icon": "dna"
+      },
+      {
+        "attribute": "HP Recovery in Battle",
+        "value": "40",
+        "icon": "heart-pulse"
+      },
+      {
+        "attribute": "Max HP",
+        "value": "420",
+        "icon": "heart-pulse"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Karmen",
+      "description": "Attack Speed +10%, Channeling Speed +5%, All Damage +3%"
+    }
+  },
+  {
+    "id": 8,
+    "name": "Lawless Empress Karmen",
+    "grade": "Legendary",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+78%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+35%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+15%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+220",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+210",
+        "icon": "shield"
+      },
+      {
+        "attribute": "All Damage",
+        "value": "6%",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Critical Hit Resistance",
+        "value": "80",
+        "icon": "shield-check"
+      },
+      {
+        "attribute": "Max HP",
+        "value": "390",
+        "icon": "heart-pulse"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Lael",
+      "description": "Attack Speed +10%, Channeling Speed +5%, All Damage +3%"
+    }
+  },
+  {
+    "id": 9,
+    "name": "Mission of Brilliant Light Lael",
+    "grade": "Legendary",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+80%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+35%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+15%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+230",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+220",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Damage Received Decrease",
+        "value": "6%",
+        "icon": "minus-circle"
+      },
+      {
+        "attribute": "Accuracy",
+        "value": "90",
+        "icon": "target"
+      },
+      {
+        "attribute": "Max HP",
+        "value": "450",
+        "icon": "heart-pulse"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Morian",
+      "description": "Attack Speed +10%, Channeling Speed +5%, All Damage +3%"
+    }
+  },
+  {
+    "id": 10,
+    "name": "Radiance of the Sun Lael",
+    "grade": "Legendary",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+75%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+35%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+15%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+200",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+190",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Dmg to Normal Monsters",
+        "value": "Increase 10%",
+        "icon": "dna"
+      },
+      {
+        "attribute": "Accuracy",
+        "value": "80",
+        "icon": "target"
+      },
+      {
+        "attribute": "Max HP",
+        "value": "360",
+        "icon": "heart-pulse"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Rowain",
+      "description": "Attack Speed +10%, Channeling Speed +5%, All Damage +3%"
+    }
+  },
+  {
+    "id": 11,
+    "name": "Reaper of the Night Deligeon",
+    "grade": "Legendary",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+80%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+35%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+15%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+230",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+220",
+        "icon": "shield"
+      },
+      {
+        "attribute": "All Damage",
+        "value": "6%",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Critical Hit",
+        "value": "90",
+        "icon": "target"
+      },
+      {
+        "attribute": "Max HP",
+        "value": "450",
+        "icon": "heart-pulse"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Eldrich",
+      "description": "Attack Speed +10%, Channeling Speed +5%, All Damage +3%"
+    }
+  },
+  {
+    "id": 12,
+    "name": "Ruler of the Desert Aquila",
+    "grade": "Legendary",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+78%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+35%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+15%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+220",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+210",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Damage Received Decrease",
+        "value": "6%",
+        "icon": "minus-circle"
+      },
+      {
+        "attribute": "Critical Hit",
+        "value": "80",
+        "icon": "target"
+      },
+      {
+        "attribute": "Max HP",
+        "value": "390",
+        "icon": "heart-pulse"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Eldrich",
+      "description": "Attack Speed +10%, Channeling Speed +5%, All Damage +3%"
+    }
+  },
+  {
+    "id": 13,
+    "name": "Shadow Witch Morian",
+    "grade": "Legendary",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+76%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+35%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+15%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+210",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+200",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Dmg to Boss Monsters",
+        "value": "Increase 10%",
+        "icon": "dna"
+      },
+      {
+        "attribute": "Accuracy",
+        "value": "80",
+        "icon": "target"
+      },
+      {
+        "attribute": "Max HP",
+        "value": "360",
+        "icon": "heart-pulse"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Barthes",
+      "description": "Attack Speed +10%, Channeling Speed +5%, All Damage +3%"
+    }
+  },
+  {
+    "id": 14,
+    "name": "Unyielding Ambition Garbana",
+    "grade": "Legendary",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+80%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+35%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+15%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+230",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+220",
+        "icon": "shield"
+      },
+      {
+        "attribute": "All Damage in PvP",
+        "value": "7%",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Accuracy",
+        "value": "90",
+        "icon": "target"
+      },
+      {
+        "attribute": "Max HP",
+        "value": "450",
+        "icon": "heart-pulse"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Krous",
+      "description": "Attack Speed +10%, Channeling Speed +5%, All Damage +3%"
+    }
+  },
+  {
+    "id": 15,
+    "name": "White Wolf Barthes",
+    "grade": "Legendary",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+77%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+35%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+15%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+215",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+205",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Critical Hit Damage",
+        "value": "8%",
+        "icon": "gem"
+      },
+      {
+        "attribute": "Endurance",
+        "value": "50",
+        "icon": "heart-pulse"
+      },
+      {
+        "attribute": "Max HP",
+        "value": "390",
+        "icon": "heart-pulse"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Lael",
+      "description": "Attack Speed +10%, Channeling Speed +5%, All Damage +3%"
+    }
+  },
+  {
+    "id": 16,
+    "name": "Affectionate Compassion Musetta",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+40%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+120",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+115",
+        "icon": "shield"
+      },
+      {
+        "attribute": "All Damage",
+        "value": "4%",
+        "icon": "swords"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 17,
+    "name": "Blade of Purification Jerome",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+52%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+16%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+6%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+153",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+146",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Damage to Monsters",
+        "value": "Increase 6%",
+        "icon": "dna"
+      },
+      {
+        "attribute": "Attack Speed with Sword and Shield Equipped",
+        "value": "+10%",
+        "icon": "wind"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Axana",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 18,
+    "name": "Blazing Faith Biwis",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+50%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+148",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+131",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Damage Received Decrease",
+        "value": "4%",
+        "icon": "minus-circle"
+      },
+      {
+        "attribute": "Battle Shield Equip CD",
+        "value": "-5%",
+        "icon": "minus-circle"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Celior",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 19,
+    "name": "Blessing of the Sun Odelia",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+52%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+16%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+6%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+150",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+149",
+        "icon": "shield"
+      },
+      {
+        "attribute": "All Damage",
+        "value": "4%",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Attack Speed with Staff Equipped",
+        "value": "+10%",
+        "icon": "wind"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Ricardo",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 20,
+    "name": "Bringer of Rest Pheon",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+45%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+130",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+115",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Damage Received Decrease in PvP",
+        "value": "6%",
+        "icon": "minus-circle"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Paiton",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 21,
+    "name": "Burning Desert Amira",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+40%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+125",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+110",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Damage Received Decrease",
+        "value": "4%",
+        "icon": "minus-circle"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 22,
+    "name": "Clumsy Ambition Adan",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+35%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+110",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+100",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Accuracy",
+        "value": "30",
+        "icon": "target"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 23,
+    "name": "Contemptuous Bernois",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+40%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+118",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+108",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Critical Hit",
+        "value": "75",
+        "icon": "target"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 24,
+    "name": "Dragon's Fang Huxley",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+40%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+124",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+112",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Bag Weight",
+        "value": "300",
+        "icon": "gem"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Sun's Xergios",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 25,
+    "name": "Faint Smile Giselle",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+50%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+143",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+136",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Dmg to Monsters",
+        "value": "Increase 6%",
+        "icon": "dna"
+      },
+      {
+        "attribute": "Crossbow Equip CD",
+        "value": "-5%",
+        "icon": "minus-circle"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Linda",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 26,
+    "name": "Frozen Gaby",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+50%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+140",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+139",
+        "icon": "shield"
+      },
+      {
+        "attribute": "All Damage",
+        "value": "4%",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Battle Staff Equip CD",
+        "value": "-5%",
+        "icon": "minus-circle"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Priscilla",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 27,
+    "name": "Grasp of Freedom Bris",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+52%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+16%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+6%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+152",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+147",
+        "icon": "shield"
+      },
+      {
+        "attribute": "All Damage",
+        "value": "4%",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Attack Speed with Dual Daggers Equipped",
+        "value": "+10%",
+        "icon": "wind"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Thalia",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 28,
+    "name": "Gray Heinkell",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+50%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+140",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+139",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Dmg Rcvd from Monsters",
+        "value": "Decrease 6%",
+        "icon": "minus-circle"
+      },
+      {
+        "attribute": "Dual Daggers Equip CD",
+        "value": "Decrease +5%",
+        "icon": "minus-circle"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Parrell",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 29,
+    "name": "Guide of Runes Simon",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+45%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+132",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+122",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Critical Hit Resistance",
+        "value": "70",
+        "icon": "shield-check"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Unknown Awakening Elsie",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 30,
+    "name": "Hawk's Talon Ricardo",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+40%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+124",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+114",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Gold Gain",
+        "value": "2.5%",
+        "icon": "gem"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 31,
+    "name": "Helper of Light Priscilla",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+45%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+125",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+120",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Skill Damage",
+        "value": "7%",
+        "icon": "gem"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Gaby",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 32,
+    "name": "Investigator Linda",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+45%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+131",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+119",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Accuracy",
+        "value": "80",
+        "icon": "target"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Faint Smile Giselle",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 33,
+    "name": "Iron Wall Master Thalia",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+40%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+122",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+111",
+        "icon": "shield"
+      },
+      {
+        "attribute": "MP Recovery in Battle",
+        "value": "15",
+        "icon": "gem"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 34,
+    "name": "Lieutenant of Condemnation Paiton",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+50%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+147",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+132",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Damage Received Decrease",
+        "value": "4%",
+        "icon": "minus-circle"
+      },
+      {
+        "attribute": "Sword and Shield Equip CD",
+        "value": "-5%",
+        "icon": "minus-circle"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Pheon",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 35,
+    "name": "Milestone of Desire Raphsie",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+52%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+16%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+6%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+155",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+144",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Damage Received from Monsters",
+        "value": "Decrease 6%",
+        "icon": "minus-circle"
+      },
+      {
+        "attribute": "Attack Speed with Battle Staff Equipped",
+        "value": "+10%",
+        "icon": "wind"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Amira",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 36,
+    "name": "New World Visitor Orca",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+52%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+16%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+6%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+157",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+142",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Damage Received Decrease",
+        "value": "4%",
+        "icon": "minus-circle"
+      },
+      {
+        "attribute": "Attack Speed with Bow Equipped",
+        "value": "+10%",
+        "icon": "wind"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Sith",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 37,
+    "name": "Oathbound Godfried",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+45%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+125",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+120",
+        "icon": "shield"
+      },
+      {
+        "attribute": "All Damage in PvP",
+        "value": "6%",
+        "icon": "swords"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 38,
+    "name": "Outlaw Predator Seron",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+45%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+131",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+122",
+        "icon": "shield"
+      },
+      {
+        "attribute": "HP Recovery in Battle",
+        "value": "30",
+        "icon": "heart-pulse"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 39,
+    "name": "Pioneer of Knowledge Axana",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+45%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+133",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+123",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Gold Gain",
+        "value": "2.5%",
+        "icon": "gem"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 40,
+    "name": "Pioneer of Oaths Dorothea",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+45%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+130",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+115",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Critical Hit Damage",
+        "value": "7%",
+        "icon": "gem"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 41,
+    "name": "Promised Glory Sith",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+50%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+142",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+137",
+        "icon": "shield"
+      },
+      {
+        "attribute": "All Damage",
+        "value": "4%",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Greatsword Equip CD",
+        "value": "+5%",
+        "icon": "minus-circle"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Seron",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 42,
+    "name": "Reins of Eternity Ferran",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+52%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+16%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+6%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+158",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+141",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Damage Received Decrease",
+        "value": "4%",
+        "icon": "minus-circle"
+      },
+      {
+        "attribute": "Attack Speed with Crossbow Equipped",
+        "value": "+10%",
+        "icon": "wind"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Paiton",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 43,
+    "name": "Rising Light Celior",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+40%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+123",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+108",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Max HP",
+        "value": "300",
+        "icon": "heart-pulse"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Biwis",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 44,
+    "name": "Silent Parrell",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+40%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+119",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+111",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Evasion",
+        "value": "75",
+        "icon": "shield-check"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Gray Heinkell",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 45,
+    "name": "Snowfield Challenger Garud",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+52%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+16%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+6%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+150",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+149",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Damage Received from Monsters",
+        "value": "Decrease 6%",
+        "icon": "minus-circle"
+      },
+      {
+        "attribute": "Attack Speed with Greatsword Equipped",
+        "value": "+10%",
+        "icon": "wind"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Musetta",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 46,
+    "name": "Sun's Xergios",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+50%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+145",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+134",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Dmg Rcvd from Monsters",
+        "value": "-6%",
+        "icon": "minus-circle"
+      },
+      {
+        "attribute": "Staff Equip CD",
+        "value": "-5%",
+        "icon": "minus-circle"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Huxley",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 47,
+    "name": "Touch of a Beast Kaisa",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+50%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+141",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+138",
+        "icon": "shield"
+      },
+      {
+        "attribute": "All Damage",
+        "value": "4%",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Bare Hands/Knuckles Equip CD",
+        "value": "-5%",
+        "icon": "minus-circle"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Godfried",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 48,
+    "name": "Undying Hope Dahn",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+52%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+16%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+6%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+154",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+145",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Damage to Monsters",
+        "value": "Increase 6%",
+        "icon": "dna"
+      },
+      {
+        "attribute": "Attack Speed with Battle Shield Equipped",
+        "value": "+10%",
+        "icon": "wind"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Bernois",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 49,
+    "name": "Unknown Awakening Elsie",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+50%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+15%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+5%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+144",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+135",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Dmg to Monsters",
+        "value": "+6%",
+        "icon": "dna"
+      },
+      {
+        "attribute": "Bow Equip CD",
+        "value": "-5%",
+        "icon": "minus-circle"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Simon",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 50,
+    "name": "Vengeful Tracker Sorel",
+    "grade": "Epic",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+52%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+16%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Movement Speed",
+        "value": "+6%",
+        "icon": "forward"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+151",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+148",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Damage Received from Monsters",
+        "value": "Decrease 6%",
+        "icon": "minus-circle"
+      },
+      {
+        "attribute": "Attack Speed with Bare Hands or Knuckles Equipped",
+        "value": "+10%",
+        "icon": "wind"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "Dorothea",
+      "description": "Attack Speed +4%, Channeling Speed +4%"
+    }
+  },
+  {
+    "id": 51,
+    "name": "Advisor Louis",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+24%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+5%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+50",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+40",
+        "icon": "shield"
+      },
+      {
+        "attribute": "HP Recovery in Battle",
+        "value": "20",
+        "icon": "heart-pulse"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 52,
+    "name": "Aide Andres",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+27%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+5%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+56",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+46",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Defense Penetration",
+        "value": "60",
+        "icon": "target"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 53,
+    "name": "Blind Savior Riley",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+24%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+5%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+50",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+40",
+        "icon": "shield"
+      },
+      {
+        "attribute": "MP Recovery in Battle",
+        "value": "10",
+        "icon": "gem"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 54,
+    "name": "Blooming Desire Sven",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+26%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+5%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+54",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+44",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Endurance Ignore",
+        "value": "40",
+        "icon": "target"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 55,
+    "name": "Bright Smile Linden",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+26%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+5%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+54",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+44",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Gold Gain",
+        "value": "2%",
+        "icon": "gem"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 56,
+    "name": "Commander of Condemnation Garain",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+25%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+5%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+52",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+42",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Max MP",
+        "value": "135",
+        "icon": "gem"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 57,
+    "name": "Departed Happiness Closer",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+27%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+5%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+56",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+46",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Damage Received Decrease",
+        "value": "3%",
+        "icon": "minus-circle"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 58,
+    "name": "Eyes of the Void Emily",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+24%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+5%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+50",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+40",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Accuracy",
+        "value": "70",
+        "icon": "target"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 59,
+    "name": "Falcon Trainer Harper",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+25%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+5%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+52",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+42",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Gold Gain",
+        "value": "2%",
+        "icon": "gem"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 60,
+    "name": "Fallen Shadow Naomi",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+28%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+5%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+58",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+48",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Critical Hit Damage",
+        "value": "5%",
+        "icon": "gem"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 61,
+    "name": "False Hero Kyle",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+29%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+5%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+60",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+50",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Dmg to Monsters",
+        "value": "+5%",
+        "icon": "dna"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 62,
+    "name": "Forgotten Collectible Blanco",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+30%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+5%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+80",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+70",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Dmg Received Decrease in PvP",
+        "value": "4%",
+        "icon": "minus-circle"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 63,
+    "name": "Gray Wolf Brandy",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+26%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+5%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+54",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+44",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Endurance",
+        "value": "40",
+        "icon": "heart-pulse"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 64,
+    "name": "Lost Happiness Travis",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+28%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+5%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+58",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+48",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Critical Hit Resistance",
+        "value": "70",
+        "icon": "shield-check"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 65,
+    "name": "Subjugated Morres",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+30%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+5%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+60",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+50",
+        "icon": "shield"
+      },
+      {
+        "attribute": "All Damage in PvP",
+        "value": "4%",
+        "icon": "swords"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 66,
+    "name": "Supremacist Eowyn",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+29%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+5%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+60",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+50",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Dmg Rcvd from Monsters",
+        "value": "-5%",
+        "icon": "minus-circle"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 67,
+    "name": "Swindler Henry",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+25%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+5%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+52",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+42",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Max HP",
+        "value": "270",
+        "icon": "heart-pulse"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 68,
+    "name": "Taciturn Xaion",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+27%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+5%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+56",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+46",
+        "icon": "shield"
+      },
+      {
+        "attribute": "All Damage",
+        "value": "3%",
+        "icon": "swords"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 69,
+    "name": "Village Fixer Gia",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+29%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+5%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+60",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+50",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Skill Damage",
+        "value": "5%",
+        "icon": "gem"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  },
+  {
+    "id": 70,
+    "name": "Wolf Tamer Cassian",
+    "grade": "Rare",
+    "image": "/l9rs/avatar.png",
+    "stats": [
+      {
+        "attribute": "Attack Speed",
+        "value": "+28%",
+        "icon": "wind"
+      },
+      {
+        "attribute": "Channeling Speed",
+        "value": "+5%",
+        "icon": "zap"
+      },
+      {
+        "attribute": "Attack",
+        "value": "+58",
+        "icon": "swords"
+      },
+      {
+        "attribute": "Defense Power",
+        "value": "+48",
+        "icon": "shield"
+      },
+      {
+        "attribute": "Critical Hit",
+        "value": "70",
+        "icon": "target"
+      }
+    ],
+    "fatedRelationship": {
+      "name": "N/A",
+      "description": ""
+    }
+  }
+]

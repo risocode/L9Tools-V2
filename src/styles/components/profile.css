@@ -1,0 +1,165 @@
+/*
+ * =================================================================
+ * PROFILE PAGE
+ * =================================================================
+ * This file contains all styles related to the redesigned
+ * user profile page.
+ * =================================================================
+ */
+
+.profile-card {
+  @apply bg-gradient-to-b from-[#0d1117] to-[#15202b] border-cyan-300/30 rounded-lg shadow-2xl shadow-cyan-500/10;
+}
+.profile-card::before {
+  content: '';
+  @apply absolute -inset-px rounded-lg bg-gradient-to-r from-cyan-400/50 to-purple-500/50 opacity-50 blur;
+  z-index: -1;
+}
+
+.profile-header {
+  @apply p-0 m-0 relative flex flex-col items-center;
+}
+
+.profile-banner {
+  @apply h-36 w-full bg-cover bg-center rounded-t-lg relative overflow-hidden;
+  background-image: url('/l9rs/bg_header.jpg');
+}
+
+.profile-banner-border {
+  @apply absolute bottom-0 left-0 w-full h-1;
+  background: linear-gradient(90deg, transparent, #00e5ff, #845ec2, #00e5ff, transparent);
+  filter: blur(3px);
+  box-shadow: 0 0 10px #00e5ff, 0 0 20px #845ec2;
+}
+
+.profile-avatar-container {
+  @apply absolute top-16 w-32 h-32;
+}
+
+.profile-avatar-ring {
+  @apply absolute inset-0 rounded-full;
+  background: url('/l9rs/rune_ring.png') center/contain no-repeat;
+  animation: rotate-glow 20s linear infinite;
+  filter: drop-shadow(0 0 8px #00e5ff) drop-shadow(0 0 15px #845ec2);
+}
+
+.profile-avatar {
+  @apply w-full h-full border-4;
+}
+
+.profile-name-container {
+  @apply text-center;
+}
+
+.profile-content {
+  @apply pt-16;
+}
+
+.profile-username {
+  @apply font-orbitron uppercase text-3xl font-bold text-white;
+  text-shadow: 0 0 8px rgba(0, 229, 255, 0.7);
+}
+.profile-username:hover {
+  text-shadow: 0 0 12px rgba(0, 229, 255, 1);
+}
+
+.profile-email {
+  @apply text-base text-sm text-[#c0c0c0];
+}
+
+.profile-divider {
+  @apply bg-cyan-300/40;
+  box-shadow: 0 0 5px rgba(0, 229, 255, 0.5);
+}
+
+.profile-section-title {
+  @apply font-orbitron text-xl font-bold uppercase text-white relative pb-2;
+}
+.profile-section-title::after {
+  content: '';
+  @apply absolute bottom-0 left-0 h-[2px] w-1/4;
+  background: linear-gradient(90deg, #00e5ff, transparent);
+  box-shadow: 0 0 8px #00e5ff;
+}
+
+.profile-detail-item {
+  @apply space-y-1;
+}
+
+.profile-detail-label {
+  @apply text-sm text-[#bfbfbf] flex items-center gap-2;
+}
+
+.profile-detail-value {
+  @apply text-lg font-semibold text-[#a6a6a6] font-mono;
+}
+.profile-detail-value-cyan {
+  @apply text-lg font-semibold text-[#00e5ff];
+  text-shadow: 0 0 6px rgba(0, 229, 255, 0.8);
+}
+.profile-detail-value-gold {
+   @apply text-lg font-semibold text-[#FFD700];
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.8);
+}
+
+.profile-tier-pill {
+  @apply inline-flex items-center capitalize px-4 py-1.5 text-sm font-bold rounded-full;
+  transition: all 0.3s ease;
+}
+
+.profile-tier-pill:hover {
+  transform: scale(1.05);
+}
+
+.profile-tier-free {
+  @apply bg-[#bfbfbf]/10 border border-[#bfbfbf]/50 text-white;
+}
+.profile-tier-pro {
+  @apply bg-[#FFD700]/20 border border-[#FFD700] text-white;
+  box-shadow: 0 0 8px #FFD70080;
+}
+.profile-tier-pro:hover {
+  box-shadow: 0 0 12px #FFD700;
+}
+.profile-tier-lifetime {
+  @apply bg-amber-500/20 border border-amber-500 text-white;
+  box-shadow: 0 0 8px #f59e0b80;
+}
+.profile-tier-lifetime:hover {
+  box-shadow: 0 0 12px #f59e0b;
+}
+
+.profile-tier-admin {
+  @apply bg-purple-500/20 border-purple-500 text-purple-400;
+   box-shadow: 0 0 8px #8B5CF699;
+}
+.profile-tier-admin:hover {
+  box-shadow: 0 0 12px #8B5CF6;
+}
+
+.profile-expires-active {
+  @apply text-[#00e5ff];
+  text-shadow: 0 0 4px #00e5ff80;
+}
+
+.profile-expires-expired {
+  @apply text-[#ff4d4d];
+  text-shadow: 0 0 4px #ff4d4d80;
+}
+
+.profile-update-button {
+  @apply bg-[#15202b] border border-[#00e5ff] rounded-md text-base font-bold text-white;
+  box-shadow: 0 0 8px #00e5ff66;
+  transition: all 0.3s;
+}
+
+.profile-update-button:hover:not(:disabled) {
+  box-shadow: 0 0 15px #00e5ff;
+  background-color: #1a2a3a;
+}
+
+.profile-update-button:disabled {
+  @apply bg-[#15202b]/50 border-[#00e5ff]/30 text-white/50;
+  box-shadow: none;
+  cursor: not-allowed;
+}

@@ -1,0 +1,259 @@
+
+[
+  {
+    "level": 60,
+    "name": "Venatus",
+    "location": "Corrupted River Stream",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 10
+  },
+  {
+    "level": 65,
+    "name": "Viorent",
+    "location": "Gill Stream",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 10
+  },
+  {
+    "level": 70,
+    "name": "Ego",
+    "location": "Reclaimed Gathering Point",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 21
+  },
+  {
+    "level": 70,
+    "name": "Clemantis",
+    "location": "White Witch's Cradle",
+    "spawnTime": "Mon 11:30 & Thu 19:00",
+    "isFixedSpawn": true,
+    "respawnCooldown": null
+  },
+  {
+    "level": 75,
+    "name": "Livera",
+    "location": "Black Storm Peninsula",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 24
+  },
+  {
+    "level": 75,
+    "name": "Araneo",
+    "location": "Lower Tomb of Tyriosa 1F",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 24
+  },
+  {
+    "level": 80,
+    "name": "Undomiel",
+    "location": "Test Subject Lab",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 24
+  },
+  {
+    "level": 80,
+    "name": "Saphirus",
+    "location": "Moonlight Shackle",
+    "spawnTime": "Sun 17:00 & Tue 11:30",
+    "isFixedSpawn": true,
+    "respawnCooldown": null
+  },
+  {
+    "level": 80,
+    "name": "Neutro",
+    "location": "Battlefield of Love and Hatred",
+    "spawnTime": "Tue 19:00 & Thu 11:30",
+    "isFixedSpawn": true,
+    "respawnCooldown": null
+  },
+  {
+    "level": 85,
+    "name": "Lady Dalia",
+    "location": "Bloody Shadow",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 18
+  },
+  {
+    "level": 85,
+    "name": "General Aquleus",
+    "location": "Lower Tomb of Tyriosa 2F",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 29
+  },
+  {
+    "level": 85,
+    "name": "Thymele",
+    "location": "Mark of Rampage",
+    "spawnTime": "Mon 19:00 & Wed 11:30",
+    "isFixedSpawn": true,
+    "respawnCooldown": null
+  },
+  {
+    "level": 88,
+    "name": "Amentis",
+    "location": "Limestone Cape",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 29
+  },
+  {
+    "level": 88,
+    "name": "Baron Braudmore",
+    "location": "Rosevine Bridge",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 32
+  },
+  {
+    "level": 90,
+    "name": "Milavy",
+    "location": "Lower Tomb of Tyriosa 3F",
+    "spawnTime": "Sat 15:00",
+    "isFixedSpawn": true,
+    "respawnCooldown": null
+  },
+  {
+    "level": 93,
+    "name": "Wannitas",
+    "location": "Snare Swamp",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 48
+  },
+  {
+    "level": 93,
+    "name": "Metus",
+    "location": "Follower's Field",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 48
+  },
+  {
+    "level": 93,
+    "name": "Duplican",
+    "location": "Open-Eyed Puppet's Throne",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 48
+  },
+  {
+    "level": 95,
+    "name": "Shuliar",
+    "location": "Masquerade of Hounds",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 35
+  },
+  {
+    "level": 95,
+    "name": "Ringor",
+    "location": "Torchlight Highway",
+    "spawnTime": "Sat 17:00",
+    "isFixedSpawn": true,
+    "respawnCooldown": null
+  },
+  {
+    "level": 95,
+    "name": "Roderick",
+    "location": "Garbana Underground Waterway 1F",
+    "spawnTime": "Fri 19:00",
+    "isFixedSpawn": true,
+    "respawnCooldown": null
+  },
+  {
+    "level": 98,
+    "name": "Gareth",
+    "location": "Deadman's Land District 1",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 32
+  },
+  {
+    "level": 98,
+    "name": "Titore",
+    "location": "Deadman's Land District 2",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 37
+  },
+  {
+    "level": 98,
+    "name": "Larba",
+    "location": "Garbana Reclaimed Land",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 35
+  },
+  {
+    "level": 100,
+    "name": "Catena",
+    "location": "Deadman's Land District 3",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 35
+  },
+  {
+    "level": 100,
+    "name": "Auraq",
+    "location": "Garbana Underground Waterway 2F",
+    "spawnTime": "Sun 21:00 & Wed 21:00",
+    "isFixedSpawn": true,
+    "respawnCooldown": null
+  },
+  {
+    "level": 100,
+    "name": "Secreta",
+    "location": "Kallion's Tomb",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 62
+  },
+  {
+    "level": 100,
+    "name": "Ordo",
+    "location": "Successor's Paradise",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 62
+  },
+  {
+    "level": 100,
+    "name": "Asta",
+    "location": "Goldblood Plain",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 62
+  },
+  {
+    "level": 100,
+    "name": "Supore",
+    "location": "Goldblood Plain",
+    "spawnTime": "",
+    "isFixedSpawn": false,
+    "respawnCooldown": 62
+  },
+  {
+    "level": 120,
+    "name": "Chaiflock",
+    "location": "Kallion's Tomb",
+    "spawnTime": "Sat 22:00",
+    "isFixedSpawn": true,
+    "respawnCooldown": null
+  },
+  {
+    "level": 140,
+    "name": "Tumier",
+    "location": "Garbana Underground, Waterway 3F",
+    "spawnTime": "Sun 19:00",
+    "isFixedSpawn": true,
+    "respawnCooldown": null
+  }
+]

@@ -1,0 +1,45 @@
+/*
+ * =================================================================
+ * SELECTS
+ * =================================================================
+ * This file contains styles for custom select (dropdown) components.
+ * =================================================================
+ */
+
+.futuristic-select-trigger {
+  @apply h-12 border-none rounded-md px-4;
+  background: rgba(0, 12, 36, 0.7);
+  color: rgba(0, 195, 255, 0.9);
+  font-family: "Orbitron", sans-serif;
+  font-size: 14px;
+  letter-spacing: 1px;
+  box-shadow:
+    0 0 15px rgba(0, 140, 255, 0.3),
+    inset 0 0 10px rgba(0, 0, 0, 0.8);
+  transition: all 0.3s ease;
+  text-shadow: 0 0 5px rgba(0, 160, 255, 0.7);
+  border: 1px solid rgba(0, 150, 255, 0.4);
+}
+
+.futuristic-select-trigger:hover {
+  background: rgba(0, 22, 46, 0.8);
+  border-color: rgba(0, 180, 255, 0.7);
+}
+
+.futuristic-select-trigger[data-state=open] {
+  box-shadow:
+    0 0 20px rgba(0, 150, 255, 0.4),
+    inset 0 0 15px rgba(0, 0, 0, 0.9);
+  color: rgba(0, 210, 255, 1);
+  border-color: rgba(0, 180, 255, 1);
+}
+
+.futuristic-select-trigger .lucide-chevron-down {
+  color: rgba(0, 195, 255, 0.7);
+  transition: transform 0.2s ease-in-out;
+}
+
+.futuristic-select-trigger[data-state=open] .lucide-chevron-down {
+  transform: rotate(180deg);
+  color: rgba(0, 210, 255, 1);
+}
