@@ -59,6 +59,6 @@ export const config = {
      * - Static assets and important files (ads.txt, robots.txt, sitemap.xml, manifest.json, etc.)
      * - API webhooks (should not go through auth middleware)
      */
-    '/((?!_next/static|_next/image|favicon.ico|favicon|bosses|map|wallet|logo.png|l9rs|ads.txt|robots.txt|sitemap.xml|manifest.json|sw.js|workbox-.*\\.js|api/webhooks|api/payments).*)',
+    '/((?!_next/static|_next/image|favicon.ico|favicon|bosses|map|wallet|logo.png|l9rs|ads.txt|robots.txt|sitemap.xml|manifest.json|sw.js|pwa-sw.js|workbox-.*\\.js|api/webhooks|api/payments).*)',
   ],
 };

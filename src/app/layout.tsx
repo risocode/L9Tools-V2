@@ -40,6 +40,7 @@ import { AuthProvider } from "@/context/auth-context";
 import PageLoaderWrapper from "@/components/layout/page-loader-wrapper";
 import { LoadingProvider } from "@/context/loading-context";
 import { AdProvider } from "@/context/ad-context";
+import { RegisterSw } from "@/components/register-sw";
 
 
 const cinzel = Cinzel({ subsets: ["latin"], variable: "--font-cinzel" });
@@ -103,6 +104,7 @@ export default function RootLayout({
               </Suspense>
               <Toaster />
               <PageLoaderWrapper />
+              <RegisterSw />
             </AuthProvider>
           </LoadingProvider>
         </AdProvider>

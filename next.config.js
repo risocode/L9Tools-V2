@@ -3,7 +3,8 @@
 
 const withPWA = require('next-pwa')({
   dest: 'public',
-  register: true,
+  sw: 'pwa-sw.js', // generated worker name so custom public/sw.js is not overwritten
+  register: false,  // we register custom /sw.js in the app instead
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
   runtimeCaching: [
