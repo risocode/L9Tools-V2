@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useRef, ReactNode } from 'react';
 
 // Future-proof the ad object to allow for different types of ads
 interface Ad {
@@ -11,7 +11,7 @@ interface Ad {
 
 interface AdContextState {
   ad: { isOpen: boolean; type: Ad['type'] | null };
-  openAdDialog: (type?: Ad['type']) => void;
+  openAdDialog: (type?: Ad['type'], onClosed?: () => void) => void;
   closeAdDialog: () => void;
 }
 
@@ -19,13 +19,18 @@ const AdContext = createContext<AdContextState | undefined>(undefined);
 
 export function AdProvider({ children }: { children: ReactNode }) {
   const [ad, setAd] = useState<AdContextState['ad']>({ isOpen: false, type: null });
+  const onClosedRef = useRef<(() => void) | null>(null);
 
-  const openAdDialog = (type: Ad['type'] = 'video') => {
+  const openAdDialog = (type: Ad['type'] = 'video', onClosed?: () => void) => {
+    onClosedRef.current = onClosed ?? null;
     setAd({ isOpen: true, type });
   };
 
   const closeAdDialog = () => {
+    const cb = onClosedRef.current;
+    onClosedRef.current = null;
     setAd({ isOpen: false, type: null });
+    cb?.();
   };
 
   const value: AdContextState = {

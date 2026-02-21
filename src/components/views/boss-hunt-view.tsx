@@ -240,22 +240,28 @@ export function BossHuntView({ initialBosses }: BossHuntViewProps) {
   const [mapBoss, setMapBoss] = useState<Boss | null>(null);
   
   const handleOpenMapDialog = (boss: Boss) => {
-    // Show ad for guest or free users when they click the map
     if (!user || user.subscription_tier === 'free') {
-        openAdDialog();
+      openAdDialog(undefined, () => {
+        setMapBoss(boss);
+        setIsMapDialogOpen(true);
+      });
+    } else {
+      setMapBoss(boss);
+      setIsMapDialogOpen(true);
     }
-    setMapBoss(boss);
-    setIsMapDialogOpen(true);
   };
-  
+
   const handleOpenResetDialog = (boss: Boss) => {
     if (boss.isFixedSpawn || !boss.lastKilled) return;
-    // Show ad for guest or free users when they click reset
     if (!user || user.subscription_tier === 'free') {
-      openAdDialog();
+      openAdDialog(undefined, () => {
+        setResettingBoss(boss);
+        setIsResetConfirmationOpen(true);
+      });
+    } else {
+      setResettingBoss(boss);
+      setIsResetConfirmationOpen(true);
     }
-    setResettingBoss(boss);
-    setIsResetConfirmationOpen(true);
   };
 
   const handleConfirmReset = () => {

@@ -32,13 +32,15 @@ export function useTimeDialog(
             return;
         }
 
-        // Show ad for free tier or guest users on any allowed action
         if (!user || user.subscription_tier === 'free') {
-            openAdDialog();
+            openAdDialog(undefined, () => {
+                setTimeDialogBoss(boss);
+                setIsTimePickerDialog(true);
+            });
+        } else {
+            setTimeDialogBoss(boss);
+            setIsTimePickerDialog(true);
         }
-        
-        setTimeDialogBoss(boss);
-        setIsTimePickerDialog(true);
     }, [user, openAdDialog, onOpenProDialog]);
 
     const handleConfirmSetTime = useCallback(async (boss: Boss, killedAt: Date) => {
