@@ -7,7 +7,6 @@ import { useAuth } from "@/context/auth-context";
 import { supabase } from "@/lib/supabase-client";
 
 const FIRST_TIME_KEY = "l9tools_first_time_user";
-const GUEST_TIMERS_KEY = "guestBossTimers";
 
 interface BossTimer {
   boss_id: number;
@@ -55,11 +54,8 @@ export function useBossData(initialBosses: Boss[]) {
 
           setUserTimers(timerMap);
         } else {
-          const localTimers = localStorage.getItem(GUEST_TIMERS_KEY);
-          const timerMap: Record<string, string | null> = localTimers
-            ? JSON.parse(localTimers)
-            : {};
-          setUserTimers(timerMap);
+          // Guest: do not load timers from storage so they reset on reload until they log in
+          setUserTimers({});
         }
       } catch (err: any) {
         console.error("Error fetching boss timers:", err.message);
@@ -108,11 +104,7 @@ export function useBossData(initialBosses: Boss[]) {
 
         if (error) throw error;
       } else {
-        const localTimers = JSON.parse(
-          localStorage.getItem(GUEST_TIMERS_KEY) || "{}"
-        );
-        localTimers[boss.id] = killedAt.toISOString();
-        localStorage.setItem(GUEST_TIMERS_KEY, JSON.stringify(localTimers));
+        // Guest: only update in-memory; do not persist so timers reset on page reload
       }
 
       setUserTimers((prev) => ({
@@ -146,11 +138,7 @@ export function useBossData(initialBosses: Boss[]) {
 
         if (error) throw error;
       } else {
-        const localTimers = JSON.parse(
-          localStorage.getItem(GUEST_TIMERS_KEY) || "{}"
-        );
-        delete localTimers[boss.id];
-        localStorage.setItem(GUEST_TIMERS_KEY, JSON.stringify(localTimers));
+        // Guest: only update state; no persistence
       }
 
       const newTimers = { ...userTimers };
@@ -170,29 +158,25 @@ export function useBossData(initialBosses: Boss[]) {
     }
   };
 
-  // Guest-only bulk reset
+  // Guest-only bulk reset (session state only; guest timers are not persisted)
   const handleGuestReportReset = (bossIds: string[]) => {
-    const localTimers = JSON.parse(
-      localStorage.getItem(GUEST_TIMERS_KEY) || "{}"
-    );
-    let changed = false;
-    const newTimers = { ...localTimers };
-
-    bossIds.forEach((id) => {
-      if (newTimers[id]) {
-        delete newTimers[id];
-        changed = true;
-      }
-    });
-
-    if (changed) {
-      localStorage.setItem(GUEST_TIMERS_KEY, JSON.stringify(newTimers));
-      setUserTimers(newTimers);
-      toast({
-        title: "Guest Timers Reset",
-        description: "Your timers for this session have been cleared.",
+    setUserTimers((prev) => {
+      let changed = false;
+      const next = { ...prev };
+      bossIds.forEach((id) => {
+        if (next[id]) {
+          delete next[id];
+          changed = true;
+        }
       });
-    }
+      if (changed) {
+        toast({
+          title: "Guest Timers Reset",
+          description: "Your timers for this session have been cleared.",
+        });
+      }
+      return next;
+    });
   };
 
   return {

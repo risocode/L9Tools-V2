@@ -34,7 +34,7 @@ export default function PrivacyPage() {
                 <ul className="list-disc list-inside ml-4 space-y-2 text-muted-foreground">
                   <li><strong>Account Information:</strong> When you sign up, we collect your email, username, and encrypted password. If you use Google Sign-In, we receive your public profile information.</li>
                   <li><strong>User-Provided Data:</strong> We store boss death timers you manually input, associated with your user account.</li>
-                  <li><strong>Locally Stored Data:</strong> For guest users, timer data is stored locally in your browser. For all users, Discord webhook URLs are stored locally.</li>
+                  <li><strong>Locally Stored Data:</strong> For guest users, timer data is kept only for the current session and is reset when you reload or leave the page. For all users, Discord webhook URLs are stored locally.</li>
                 </ul>
               </div>
               
