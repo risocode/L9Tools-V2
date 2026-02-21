@@ -33,7 +33,6 @@ import "../styles/components/tooltips.css";
 import "../styles/utilities.css";
 
 import { Suspense } from "react";
-import Script from "next/script";
 import { Cinzel, Inter, Roboto, Orbitron } from "next/font/google";
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/toaster";
@@ -42,6 +41,7 @@ import PageLoaderWrapper from "@/components/layout/page-loader-wrapper";
 import { LoadingProvider } from "@/context/loading-context";
 import { AdProvider } from "@/context/ad-context";
 import { RegisterSw } from "@/components/register-sw";
+import { InPagePushScript } from "@/components/in-page-push-script";
 
 
 const cinzel = Cinzel({ subsets: ["latin"], variable: "--font-cinzel" });
@@ -95,15 +95,9 @@ export default function RootLayout({
         />
         <link rel="shortcut icon" href="/favicon/favicon.ico" />
         <meta name="theme-color" content="#18181b" />
-        <Script
-          src="https://quge5.com/88/tag.min.js"
-          data-zone="213198"
-          async
-          data-cfasync="false"
-          strategy="lazyOnload"
-        />
       </head>
       <body className="font-roboto h-full flex flex-col bg-background">
+        <InPagePushScript />
         <AdProvider>
           <LoadingProvider>
             <AuthProvider>

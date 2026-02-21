@@ -37,6 +37,20 @@ import { ContactDialog } from '../views/contact-dialog';
 import { Button } from '../ui/button';
 import { useIsMobile } from '@/hooks/use-is-mobile';
 
+/** Onclick ad: open in new tab at most once every 5 minutes (closeable by user) */
+const ONCLICK_AD_KEY = 'l9tools_onclick_ad_last';
+const ONCLICK_AD_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
+const ONCLICK_AD_URL = 'https://al5sm.com/88/10637949';
+
+function maybeOpenOnclickAdInNewTab() {
+  if (typeof window === 'undefined') return;
+  const last = window.localStorage.getItem(ONCLICK_AD_KEY);
+  const now = Date.now();
+  if (last && now - Number(last) < ONCLICK_AD_INTERVAL_MS) return;
+  window.localStorage.setItem(ONCLICK_AD_KEY, String(now));
+  window.open(ONCLICK_AD_URL, '_blank', 'noopener,noreferrer');
+}
+
 
 const donateButtonImages = ['/l9rs/donate1.png', '/l9rs/donate2.png'];
 
@@ -104,9 +118,12 @@ export function L9ToolsLayout({
   const handleNavClick = (e: MouseEvent, href: string) => {
     e.preventDefault();
     if (pathname !== href) {
-        showLoader(() => router.push(href));
+      if (href === '/dashboard' || href === '/boss-hunt') {
+        maybeOpenOnclickAdInNewTab();
+      }
+      showLoader(() => router.push(href));
     }
-  }
+  };
 
 
   const navItems: NavItem[] = useMemo(() => {
