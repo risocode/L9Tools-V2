@@ -34,6 +34,8 @@ import { ViewHeaderProps } from './view-header';
 import { useAd } from '@/context/ad-context';
 import { useBossNotifications } from '@/hooks/use-boss-notifications';
 import { useToast } from '@/hooks/use-toast';
+import { hasActiveProSubscription } from '@/lib/subscription-utils';
+import { isUserAdmin } from '@/lib/supabase-admin';
 
 interface BossHuntViewProps {
   initialBosses: Boss[];
@@ -47,7 +49,15 @@ export function BossHuntView({ initialBosses }: BossHuntViewProps) {
   const { showLoader } = useLoading();
   const { openAdDialog } = useAd();
   const { toast } = useToast();
-  
+
+  const isProUser = user
+    ? hasActiveProSubscription(
+        user.subscription_tier as 'free' | 'pro' | 'lifetime',
+        user.subscription_expires_at,
+        isUserAdmin(user)
+      )
+    : false;
+
   const {
     bossesWithTimers,
     isBossDataLoading,
@@ -240,7 +250,7 @@ export function BossHuntView({ initialBosses }: BossHuntViewProps) {
   const [mapBoss, setMapBoss] = useState<Boss | null>(null);
   
   const handleOpenMapDialog = (boss: Boss) => {
-    if (!user || user.subscription_tier === 'free') {
+    if (!isProUser) {
       openAdDialog(undefined, () => {
         setMapBoss(boss);
         setIsMapDialogOpen(true);
@@ -253,7 +263,7 @@ export function BossHuntView({ initialBosses }: BossHuntViewProps) {
 
   const handleOpenResetDialog = (boss: Boss) => {
     if (boss.isFixedSpawn || !boss.lastKilled) return;
-    if (!user || user.subscription_tier === 'free') {
+    if (!isProUser) {
       openAdDialog(undefined, () => {
         setResettingBoss(boss);
         setIsResetConfirmationOpen(true);

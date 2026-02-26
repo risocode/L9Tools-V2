@@ -27,6 +27,7 @@ import { UserNav } from './user-nav';
 import { AuthDialog } from '../views/auth-dialog';
 import { useAuth } from '@/context/auth-context';
 import { isUserAdmin } from '@/lib/supabase-admin';
+import { hasActiveProSubscription } from '@/lib/subscription-utils';
 import { cn } from '@/lib/utils';
 import { LegalDialog } from '../views/legal-dialog';
 import { DonationDialog } from '../views/donation-dialog';
@@ -91,6 +92,14 @@ export function L9ToolsLayout({
   const isProfilePage = pathname === '/profile';
   const isDashboardPage = pathname.startsWith('/dashboard');
 
+  const isProUser = user
+    ? hasActiveProSubscription(
+        user.subscription_tier as 'free' | 'pro' | 'lifetime',
+        user.subscription_expires_at,
+        isUserAdmin(user)
+      )
+    : false;
+
 
   // Open legal dialog if query param exists
   useEffect(() => {
@@ -118,7 +127,7 @@ export function L9ToolsLayout({
   const handleNavClick = (e: MouseEvent, href: string) => {
     e.preventDefault();
     if (pathname !== href) {
-      if (href === '/dashboard' || href === '/boss-hunt') {
+      if (!isProUser && (href === '/dashboard' || href === '/boss-hunt')) {
         maybeOpenOnclickAdInNewTab();
       }
       showLoader(() => router.push(href));

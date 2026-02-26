@@ -97,10 +97,10 @@ export default function RootLayout({
         <meta name="theme-color" content="#18181b" />
       </head>
       <body className="font-roboto h-full flex flex-col bg-background">
-        <InPagePushScript />
         <AdProvider>
           <LoadingProvider>
             <AuthProvider>
+              <InPagePushScript />
               <Suspense>
                 {children}
               </Suspense>

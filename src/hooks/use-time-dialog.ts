@@ -32,7 +32,7 @@ export function useTimeDialog(
             return;
         }
 
-        if (!user || user.subscription_tier === 'free') {
+        if (!isProUser) {
             openAdDialog(undefined, () => {
                 setTimeDialogBoss(boss);
                 setIsTimePickerDialog(true);

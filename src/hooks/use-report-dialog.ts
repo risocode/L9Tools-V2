@@ -31,6 +31,10 @@ export function useReportDialog(bosses: ProcessedBoss[], onGuestReportReset: (bo
     const { user } = useAuth();
     const { openAdDialog } = useAd();
 
+    const isProUser = user
+        ? hasActiveProSubscription(user.subscription_tier as any, user.subscription_expires_at, isUserAdmin(user))
+        : false;
+
     const getStorageKey = useCallback(() => {
         return user ? `${REPORT_USAGE_KEY_PREFIX}_${user.id}` : `${REPORT_USAGE_KEY_PREFIX}_guest`;
     }, [user]);
@@ -114,8 +118,8 @@ export function useReportDialog(bosses: ProcessedBoss[], onGuestReportReset: (bo
             return;
         }
 
-        // Show ad for guest or free users when they initiate a report
-        if (!user || user.subscription_tier === 'free') {
+        // Show ad only for guest/free; no ads for Pro/Lifetime/Admin
+        if (!isProUser) {
             openAdDialog();
         }
         
