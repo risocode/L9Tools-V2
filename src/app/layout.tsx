@@ -41,7 +41,6 @@ import PageLoaderWrapper from "@/components/layout/page-loader-wrapper";
 import { LoadingProvider } from "@/context/loading-context";
 import { AdProvider } from "@/context/ad-context";
 import { RegisterSw } from "@/components/register-sw";
-import { InPagePushScript } from "@/components/in-page-push-script";
 
 
 const cinzel = Cinzel({ subsets: ["latin"], variable: "--font-cinzel" });
@@ -100,7 +99,6 @@ export default function RootLayout({
         <AdProvider>
           <LoadingProvider>
             <AuthProvider>
-              <InPagePushScript />
               <Suspense>
                 {children}
               </Suspense>

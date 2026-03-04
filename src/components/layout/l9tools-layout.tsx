@@ -27,7 +27,6 @@ import { UserNav } from './user-nav';
 import { AuthDialog } from '../views/auth-dialog';
 import { useAuth } from '@/context/auth-context';
 import { isUserAdmin } from '@/lib/supabase-admin';
-import { hasActiveProSubscription } from '@/lib/subscription-utils';
 import { cn } from '@/lib/utils';
 import { LegalDialog } from '../views/legal-dialog';
 import { DonationDialog } from '../views/donation-dialog';
@@ -37,21 +36,6 @@ import { AboutDialog } from '../views/about-dialog';
 import { ContactDialog } from '../views/contact-dialog';
 import { Button } from '../ui/button';
 import { useIsMobile } from '@/hooks/use-is-mobile';
-
-/** Onclick ad: open in new tab at most once every 5 minutes (closeable by user) */
-const ONCLICK_AD_KEY = 'l9tools_onclick_ad_last';
-const ONCLICK_AD_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
-const ONCLICK_AD_URL = 'https://al5sm.com/88/10637949';
-
-function maybeOpenOnclickAdInNewTab() {
-  if (typeof window === 'undefined') return;
-  const last = window.localStorage.getItem(ONCLICK_AD_KEY);
-  const now = Date.now();
-  if (last && now - Number(last) < ONCLICK_AD_INTERVAL_MS) return;
-  window.localStorage.setItem(ONCLICK_AD_KEY, String(now));
-  window.open(ONCLICK_AD_URL, '_blank', 'noopener,noreferrer');
-}
-
 
 const donateButtonImages = ['/l9rs/donate1.png', '/l9rs/donate2.png'];
 
@@ -92,15 +76,6 @@ export function L9ToolsLayout({
   const isProfilePage = pathname === '/profile';
   const isDashboardPage = pathname.startsWith('/dashboard');
 
-  const isProUser = user
-    ? hasActiveProSubscription(
-        user.subscription_tier as 'free' | 'pro' | 'lifetime',
-        user.subscription_expires_at,
-        isUserAdmin(user)
-      )
-    : false;
-
-
   // Open legal dialog if query param exists
   useEffect(() => {
     const action = searchParams.get('action');
@@ -127,9 +102,6 @@ export function L9ToolsLayout({
   const handleNavClick = (e: MouseEvent, href: string) => {
     e.preventDefault();
     if (pathname !== href) {
-      if (!isProUser && (href === '/dashboard' || href === '/boss-hunt')) {
-        maybeOpenOnclickAdInNewTab();
-      }
       showLoader(() => router.push(href));
     }
   };
