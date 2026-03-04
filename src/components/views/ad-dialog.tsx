@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -17,9 +17,6 @@ import { useLoading } from "@/context/loading-context";
 import { useRouter } from "next/navigation";
 import { Star, CheckCircle } from "lucide-react";
 
-/** Monetag popup – opens in new tab when ad dialog opens (user can close tab) */
-const MONETAG_POPUP_URL = "https://omg10.com/4/10637732";
-
 const PRO_PERKS = [
   "Save your boss timers across all devices",
   "Send unlimited boss reports to Discord",
@@ -31,7 +28,6 @@ export function AdDialog() {
   const { ad, closeAdDialog } = useAd();
   const { user } = useAuth();
   const [countdown, setCountdown] = useState(3);
-  const monetagOpenedRef = useRef(false);
   const { showLoader } = useLoading();
   const router = useRouter();
 
@@ -46,15 +42,6 @@ export function AdDialog() {
       closeAdDialog();
     }
   }, [ad.isOpen, isProUser, closeAdDialog]);
-
-  // Open Monetag in new tab once when dialog opens (closeable by user)
-  useEffect(() => {
-    if (ad.isOpen && !isProUser && !monetagOpenedRef.current && typeof window !== "undefined") {
-      monetagOpenedRef.current = true;
-      window.open(MONETAG_POPUP_URL, "_blank", "noopener,noreferrer");
-    }
-    if (!ad.isOpen) monetagOpenedRef.current = false;
-  }, [ad.isOpen, isProUser]);
 
   useEffect(() => {
     if (ad.isOpen && !isProUser) {
