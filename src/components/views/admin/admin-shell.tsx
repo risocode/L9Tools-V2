@@ -2,20 +2,23 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AdminErrorBanner } from './admin-error-banner';
-
-export type AdminTab = 'overview' | 'users' | 'email' | 'maintenance' | 'content';
+import type { AdminTab } from './admin-types';
 
 interface AdminShellProps {
+  activeTab: AdminTab;
+  onTabChange: (tab: AdminTab) => void;
   error: string | null;
   onDismissError: () => void;
   overview: React.ReactNode;
   users: React.ReactNode;
   email: React.ReactNode;
   maintenance: React.ReactNode;
-  content: React.ReactNode;
+  content: React.ReactNode | null;
 }
 
 export function AdminShell({
+  activeTab,
+  onTabChange,
   error,
   onDismissError,
   overview,
@@ -27,7 +30,11 @@ export function AdminShell({
   return (
     <div className="admin-bg-overlay absolute inset-0 flex h-full flex-col gap-4 p-4 md:p-6 overflow-y-auto">
       <AdminErrorBanner message={error} onDismiss={onDismissError} />
-      <Tabs defaultValue="overview" className="flex flex-1 flex-col min-h-0">
+      <Tabs
+        value={activeTab}
+        onValueChange={(v) => onTabChange(v as AdminTab)}
+        className="flex flex-1 flex-col min-h-0"
+      >
         <TabsList className="grid w-full max-w-2xl grid-cols-5">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="users">Users</TabsTrigger>
@@ -54,3 +61,4 @@ export function AdminShell({
     </div>
   );
 }
+

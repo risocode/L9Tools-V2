@@ -34,17 +34,19 @@ function normalizeBossAssetName(name: string) {
 }
 
 export function AdminContentPanel() {
+  const [subTab, setSubTab] = useState<'bosses' | 'avatars'>('bosses');
+
   return (
-    <Tabs defaultValue="bosses" className="w-full">
+    <Tabs value={subTab} onValueChange={(v) => setSubTab(v as 'bosses' | 'avatars')} className="w-full">
       <TabsList className="grid w-full max-w-md grid-cols-2">
         <TabsTrigger value="bosses">Bosses</TabsTrigger>
         <TabsTrigger value="avatars">Avatars</TabsTrigger>
       </TabsList>
       <TabsContent value="bosses" className="mt-4">
-        <BossesAdmin />
+        {subTab === 'bosses' ? <BossesAdmin /> : null}
       </TabsContent>
       <TabsContent value="avatars" className="mt-4">
-        <AvatarsAdmin />
+        {subTab === 'avatars' ? <AvatarsAdmin /> : null}
       </TabsContent>
     </Tabs>
   );

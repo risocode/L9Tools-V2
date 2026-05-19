@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback, useTransition } from 'react';
+import { useState, useEffect, useCallback, useTransition, useRef } from 'react';
 import type { Profile } from '@/types';
 import { useAuth } from '@/context/auth-context';
 import { isUserAdmin } from '@/lib/supabase-admin';
 import { ADMIN_PAGE_SIZE, type AdminExtraFilter, type SubscriptionTierFilter } from '@/lib/admin-constants';
 import { getAllProfiles } from '@/app/actions/get-all-profiles';
+import { loadAdminDashboard } from '@/app/actions/load-admin-dashboard';
 import { getCachedUserStats } from '@/app/actions/get-cached-user-stats';
 import { refreshUserStatsCache } from '@/app/actions/refresh-user-stats-cache';
 import { refreshUserStatus } from '@/app/actions/refresh-user-status';
@@ -22,6 +23,7 @@ import { AdminUsersPanel } from './admin-users-panel';
 import { AdminMaintenancePanel } from './admin-maintenance-panel';
 import { AdminContentPanel } from './admin-content-panel';
 import { useAdminPresence } from '@/hooks/admin/use-admin-presence';
+import type { AdminTab } from './admin-types';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
   AlertDialog,
@@ -62,13 +64,14 @@ const StatCardSkeleton = () => (
 export function AdminDashboard() {
   const { user, isInitialLoading: isAuthLoading } = useAuth();
   const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState<AdminTab>('overview');
   const [paginatedProfiles, setPaginatedProfiles] = useState<Profile[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [analytics, setAnalytics] = useState<{ signupsLast7Days: number; proExpiringNext7Days: number } | null>(null);
   const [totalProfileCount, setTotalProfileCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
-  const [isDataLoading, setIsDataLoading] = useState(true);
+  const [isBootstrapping, setIsBootstrapping] = useState(true);
   const [isTableLoading, setIsTableLoading] = useState(false);
   const [isRefreshingStats, setIsRefreshingStats] = useState(false);
   const [isRefreshingStatus, setIsRefreshingStatus] = useState(false);
@@ -85,31 +88,30 @@ export function AdminDashboard() {
   const [eligibleUpgradeCount, setEligibleUpgradeCount] = useState(0);
   const [onlineCount, setOnlineCount] = useState(0);
 
+  const skipNextProfilesFetch = useRef(true);
   const { toast } = useToast();
 
-  const presenceEnabled = !isDataLoading && !isAuthLoading && Boolean(user && isUserAdmin(user));
+  const presenceEnabled = !isBootstrapping && !isAuthLoading && Boolean(user && isUserAdmin(user));
   const { onlineUsersRef, presenceOnlineCount, sortProfilesByOnlineStatus } = useAdminPresence(
     presenceEnabled,
     setPaginatedProfiles
   );
 
   const fetchOnlineCount = useCallback(async () => {
-    const { count, error } = await getAdminOnlineCount();
-    if (!error) {
-      setOnlineCount(count);
-    }
+    const { count, error: countError } = await getAdminOnlineCount();
+    if (!countError) setOnlineCount(count);
   }, []);
 
   useEffect(() => {
-    if (!isDataLoading && user && isUserAdmin(user)) {
+    if (!isBootstrapping && user && isUserAdmin(user)) {
       fetchOnlineCount();
     }
-  }, [isDataLoading, user, fetchOnlineCount, presenceOnlineCount]);
+  }, [isBootstrapping, user, fetchOnlineCount, presenceOnlineCount]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       if (user && isUserAdmin(user)) fetchOnlineCount();
-    }, 30000);
+    }, 60000);
     return () => clearInterval(interval);
   }, [user, fetchOnlineCount]);
 
@@ -123,22 +125,51 @@ export function AdminDashboard() {
     }
   }, [searchParams, toast]);
 
-  const fetchStats = useCallback(async () => {
-    const { data, error: statsError } = await getCachedUserStats();
-    if (statsError || !data) {
-      console.error('Error fetching user stats:', statsError);
-    } else {
+  const applyDashboardPayload = useCallback(
+    (payload: Awaited<ReturnType<typeof loadAdminDashboard>>) => {
+      if (payload.error && !payload.stats) {
+        setError(payload.error);
+        setStats({ totalUsers: 0, proSubscribers: 0, lifetimeSubscribers: 0, freeUsers: 0 });
+      } else if (payload.stats) {
+        setStats({
+          totalUsers: payload.stats.total_users,
+          proSubscribers: payload.stats.pro_users,
+          lifetimeSubscribers: payload.stats.lifetime_users,
+          freeUsers: payload.stats.free_users,
+        });
+      }
+
+      if (payload.analytics) setAnalytics(payload.analytics);
+      setOnlineCount(payload.onlineCount);
+
+      if (payload.profiles.length > 0 || payload.totalCount >= 0) {
+        setPaginatedProfiles(sortProfilesByOnlineStatus(payload.profiles));
+        setTotalProfileCount(payload.totalCount);
+      }
+
+      if (payload.error) setError(payload.error);
+      else setError(null);
+    },
+    [sortProfilesByOnlineStatus]
+  );
+
+  const fetchOverviewMetrics = useCallback(async () => {
+    const [statsResult, analyticsResult, onlineResult] = await Promise.all([
+      getCachedUserStats(),
+      getAdminAnalytics(),
+      getAdminOnlineCount(),
+    ]);
+
+    if (statsResult.data) {
       setStats({
-        totalUsers: data.total_users,
-        proSubscribers: data.pro_users,
-        lifetimeSubscribers: data.lifetime_users,
-        freeUsers: data.free_users,
+        totalUsers: statsResult.data.total_users,
+        proSubscribers: statsResult.data.pro_users,
+        lifetimeSubscribers: statsResult.data.lifetime_users,
+        freeUsers: statsResult.data.free_users,
       });
     }
-    const analyticsResult = await getAdminAnalytics();
-    if (analyticsResult.data) {
-      setAnalytics(analyticsResult.data);
-    }
+    if (analyticsResult.data) setAnalytics(analyticsResult.data);
+    if (!onlineResult.error) setOnlineCount(onlineResult.count);
   }, []);
 
   const fetchProfiles = useCallback(
@@ -156,8 +187,7 @@ export function AdminDashboard() {
         setError(fetchError);
         setPaginatedProfiles([]);
       } else {
-        const sorted = sortProfilesByOnlineStatus(fetchedProfiles || []);
-        setPaginatedProfiles(sorted);
+        setPaginatedProfiles(sortProfilesByOnlineStatus(fetchedProfiles || []));
         if (count !== null) setTotalProfileCount(count);
         setError(null);
       }
@@ -166,45 +196,18 @@ export function AdminDashboard() {
     [sortProfilesByOnlineStatus]
   );
 
-  const fetchInitialData = useCallback(async () => {
-    setIsDataLoading(true);
+  const bootstrapDashboard = useCallback(async () => {
+    setIsBootstrapping(true);
+    skipNextProfilesFetch.current = true;
     try {
-      const [statsResult, profilesResult] = await Promise.all([
-        getCachedUserStats(),
-        getAllProfiles({ page: 1, pageSize: ADMIN_PAGE_SIZE, query: '', tier: 'all', extraFilter: 'none' }),
-      ]);
-
-      if (statsResult.error || !statsResult.data) {
-        setError('Could not load user statistics.');
-        setStats({ totalUsers: 0, proSubscribers: 0, lifetimeSubscribers: 0, freeUsers: 0 });
-      } else {
-        const d = statsResult.data;
-        setStats({
-          totalUsers: d.total_users,
-          proSubscribers: d.pro_users,
-          lifetimeSubscribers: d.lifetime_users,
-          freeUsers: d.free_users,
-        });
-      }
-
-      const analyticsResult = await getAdminAnalytics();
-      if (analyticsResult.data) setAnalytics(analyticsResult.data);
-
-      await fetchOnlineCount();
-
-      if (profilesResult.error) {
-        setError(profilesResult.error);
-        setPaginatedProfiles([]);
-      } else {
-        setPaginatedProfiles(sortProfilesByOnlineStatus(profilesResult.profiles || []));
-        if (profilesResult.count !== null) setTotalProfileCount(profilesResult.count);
-      }
+      const payload = await loadAdminDashboard();
+      applyDashboardPayload(payload);
     } catch {
       setError('An unexpected error occurred while loading dashboard data.');
     } finally {
-      setIsDataLoading(false);
+      setIsBootstrapping(false);
     }
-  }, [sortProfilesByOnlineStatus, fetchOnlineCount]);
+  }, [applyDashboardPayload]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -217,38 +220,47 @@ export function AdminDashboard() {
   }, [searchQuery]);
 
   useEffect(() => {
-    if (user && isUserAdmin(user)) fetchInitialData();
-    else if (!isAuthLoading && !user) setIsDataLoading(false);
-    else if (!isAuthLoading && user && !isUserAdmin(user)) setIsDataLoading(false);
-  }, [user, isAuthLoading, fetchInitialData]);
+    if (user && isUserAdmin(user)) {
+      bootstrapDashboard();
+    } else if (!isAuthLoading && !user) {
+      setIsBootstrapping(false);
+    } else if (!isAuthLoading && user && !isUserAdmin(user)) {
+      setIsBootstrapping(false);
+    }
+  }, [user, isAuthLoading, bootstrapDashboard]);
 
   useEffect(() => {
-    if (isDataLoading) return;
+    if (isBootstrapping) return;
+
+    if (skipNextProfilesFetch.current) {
+      skipNextProfilesFetch.current = false;
+      return;
+    }
+
     fetchProfiles(currentPage, debouncedSearchQuery, tierFilter, extraFilter);
-  }, [currentPage, debouncedSearchQuery, tierFilter, extraFilter, isDataLoading, fetchProfiles]);
+  }, [currentPage, debouncedSearchQuery, tierFilter, extraFilter, isBootstrapping, fetchProfiles]);
 
   const handleProfileUpdate = useCallback(async () => {
     if (isUserAdmin(user)) {
       setIsTableLoading(true);
       await Promise.all([
         fetchProfiles(currentPage, debouncedSearchQuery, tierFilter, extraFilter),
-        fetchStats(),
+        fetchOverviewMetrics(),
       ]);
       setIsTableLoading(false);
     }
-  }, [user, fetchProfiles, currentPage, debouncedSearchQuery, tierFilter, extraFilter, fetchStats]);
+  }, [user, fetchProfiles, currentPage, debouncedSearchQuery, tierFilter, extraFilter, fetchOverviewMetrics]);
 
-  const handleManualRefreshStats = async () => {
+  const handleManualRefreshStatus = async () => {
     setIsRefreshingStatus(true);
     const visibleUserIds = paginatedProfiles.map((p) => p.id);
     if (visibleUserIds.length === 0) {
       setIsRefreshingStatus(false);
       return;
     }
-    const [result] = await Promise.all([
-      refreshUserStatus(visibleUserIds),
-      new Promise((r) => setTimeout(r, 1000)),
-    ]);
+
+    const result = await refreshUserStatus(visibleUserIds);
+
     if (result.success && result.data) {
       const statusMap = new Map(result.data.map((item) => [item.id, item]));
       setPaginatedProfiles((prev) =>
@@ -278,7 +290,7 @@ export function AdminDashboard() {
     setIsRefreshingStats(true);
     const result = await refreshUserStatsCache();
     if (result.success) {
-      await fetchStats();
+      await fetchOverviewMetrics();
       toast({ title: 'Stats cache refreshed' });
     } else {
       toast({ variant: 'destructive', title: 'Failed', description: result.error ?? undefined });
@@ -308,18 +320,16 @@ export function AdminDashboard() {
       setIsUpgradeDialogOpen(false);
       setUpgradeMonths(1);
       setUpgradeConfirmText('');
-      await Promise.all([
-        fetchStats(),
-        fetchProfiles(currentPage, debouncedSearchQuery, tierFilter, extraFilter),
-        fetchOnlineCount(),
-      ]);
+      skipNextProfilesFetch.current = true;
+      const payload = await loadAdminDashboard();
+      applyDashboardPayload(payload);
     } else {
       toast({ variant: 'destructive', title: 'Upgrade failed', description: result.message });
     }
     setIsUpgrading(false);
   };
 
-  if (isAuthLoading || isDataLoading) {
+  if (isAuthLoading) {
     return (
       <div className="admin-bg-overlay absolute inset-0 flex h-full flex-col gap-6 p-4 md:p-6 overflow-y-auto">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -343,9 +353,28 @@ export function AdminDashboard() {
   const totalPages = totalProfileCount > 0 ? Math.ceil(totalProfileCount / ADMIN_PAGE_SIZE) : 1;
   const isLoadingOrPending = isTableLoading || isPending;
 
+  if (isBootstrapping) {
+    return (
+      <div className="admin-bg-overlay absolute inset-0 flex h-full flex-col gap-4 p-4 md:p-6 overflow-y-auto">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+        </div>
+        <div className="flex items-center justify-center gap-2 py-8 text-muted-foreground text-sm">
+          <Loader className="h-5 w-5" />
+          Loading admin data…
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <AdminShell
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
         error={error}
         onDismissError={() => setError(null)}
         overview={<AdminOverview stats={stats} onlineCount={onlineCount} analytics={analytics} />}
@@ -378,7 +407,7 @@ export function AdminDashboard() {
             onlineUserIds={onlineUsersRef.current}
             isRefreshingStatus={isRefreshingStatus}
             isRefreshingStats={isRefreshingStats}
-            onRefreshStatus={handleManualRefreshStats}
+            onRefreshStatus={handleManualRefreshStatus}
             onRefreshStats={handleRefreshStatsCache}
             onSendEmail={() => setIsSendEmailDialogOpen(true)}
             onUpgradeUsers={openUpgradeDialog}
@@ -390,8 +419,8 @@ export function AdminDashboard() {
             <Button onClick={() => setIsSendEmailDialogOpen(true)}>Open email dialog</Button>
           </div>
         }
-        maintenance={<AdminMaintenancePanel onStatsRefresh={() => { fetchStats(); fetchOnlineCount(); }} />}
-        content={<AdminContentPanel />}
+        maintenance={<AdminMaintenancePanel onStatsRefresh={fetchOverviewMetrics} />}
+        content={activeTab === 'content' ? <AdminContentPanel /> : null}
       />
 
       <SendEmailDialog isOpen={isSendEmailDialogOpen} onClose={() => setIsSendEmailDialogOpen(false)} />
@@ -458,4 +487,3 @@ export function AdminDashboard() {
     </>
   );
 }
-
