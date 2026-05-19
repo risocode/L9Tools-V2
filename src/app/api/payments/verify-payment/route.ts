@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
+import { recordPayment } from '@/lib/payment-records';
 
 /**
  * Verify and manually activate subscription for a payment intent
@@ -123,8 +124,28 @@ export async function POST(request: NextRequest) {
       paidPaymentId: paidPayment?.id,
     });
 
-    // Activate subscription
     const supabaseAdmin = getSupabaseAdmin();
+    if (supabaseAdmin && paidPayment?.id && userId && plan) {
+      const amountCents =
+        paidPayment.attributes?.amount ?? paymentIntent.attributes?.amount ?? 0;
+      if (amountCents > 0) {
+        await recordPayment(supabaseAdmin, {
+          userId,
+          paymongoPaymentId: paidPayment.id,
+          paymongoPaymentIntentId: intentId,
+          amountCents,
+          plan,
+          months,
+          userEmail: (metadata.email as string) || user.email || null,
+          paidAt:
+            paidPayment.attributes?.paid_at != null
+              ? new Date(paidPayment.attributes.paid_at * 1000).toISOString()
+              : undefined,
+        });
+      }
+    }
+
+    // Activate subscription
     if (!supabaseAdmin) {
       throw new Error('Could not create admin database client');
     }

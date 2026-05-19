@@ -10,6 +10,7 @@ interface AdminShellProps {
   error: string | null;
   onDismissError: () => void;
   overview: React.ReactNode;
+  payments: React.ReactNode | null;
   users: React.ReactNode;
   email: React.ReactNode;
   maintenance: React.ReactNode;
@@ -22,6 +23,7 @@ export function AdminShell({
   error,
   onDismissError,
   overview,
+  payments,
   users,
   email,
   maintenance,
@@ -35,8 +37,9 @@ export function AdminShell({
         onValueChange={(v) => onTabChange(v as AdminTab)}
         className="flex flex-1 flex-col min-h-0"
       >
-        <TabsList className="grid w-full max-w-2xl grid-cols-5">
+        <TabsList className="grid w-full max-w-3xl grid-cols-3 sm:grid-cols-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="payments">Payments</TabsTrigger>
           <TabsTrigger value="users">Users</TabsTrigger>
           <TabsTrigger value="email">Email</TabsTrigger>
           <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
@@ -44,6 +47,9 @@ export function AdminShell({
         </TabsList>
         <TabsContent value="overview" className="mt-4 flex-1">
           {overview}
+        </TabsContent>
+        <TabsContent value="payments" className="mt-4 flex-1">
+          {payments}
         </TabsContent>
         <TabsContent value="users" className="mt-4 flex-1 flex flex-col min-h-0">
           {users}

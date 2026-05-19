@@ -185,8 +185,104 @@ BEGIN
 END;
 $$;
 
+-- Payment records (PayMongo and future manual entries)
+CREATE TABLE IF NOT EXISTS public.payment_records (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid REFERENCES public.profiles(id) ON DELETE SET NULL,
+  paymongo_payment_id text UNIQUE,
+  paymongo_payment_intent_id text,
+  amount_cents integer NOT NULL CHECK (amount_cents > 0),
+  currency text NOT NULL DEFAULT 'PHP',
+  plan text NOT NULL,
+  months integer NOT NULL DEFAULT 1 CHECK (months > 0),
+  status text NOT NULL DEFAULT 'paid',
+  source text NOT NULL DEFAULT 'paymongo',
+  user_email text,
+  paid_at timestamptz NOT NULL DEFAULT now(),
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS payment_records_paid_at_idx ON public.payment_records (paid_at DESC);
+CREATE INDEX IF NOT EXISTS payment_records_user_id_idx ON public.payment_records (user_id);
+CREATE INDEX IF NOT EXISTS payment_records_intent_idx ON public.payment_records (paymongo_payment_intent_id);
+
+ALTER TABLE public.payment_records ENABLE ROW LEVEL SECURITY;
+
+CREATE OR REPLACE FUNCTION public.get_admin_payment_summary()
+RETURNS TABLE (
+  total_amount_cents bigint,
+  payment_count bigint,
+  amount_last_7_days_cents bigint,
+  payments_last_7_days bigint
+)
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT
+    COALESCE(SUM(amount_cents) FILTER (WHERE status = 'paid'), 0)::bigint,
+    COUNT(*) FILTER (WHERE status = 'paid')::bigint,
+    COALESCE(SUM(amount_cents) FILTER (WHERE status = 'paid' AND paid_at >= now() - interval '7 days'), 0)::bigint,
+    COUNT(*) FILTER (WHERE status = 'paid' AND paid_at >= now() - interval '7 days')::bigint
+  FROM public.payment_records;
+$$;
+
+CREATE OR REPLACE FUNCTION public.get_admin_payments(
+  p_page int DEFAULT 1,
+  p_page_size int DEFAULT 20
+)
+RETURNS TABLE (
+  payments jsonb,
+  total_count bigint
+)
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_offset int;
+BEGIN
+  v_offset := GREATEST((p_page - 1) * p_page_size, 0);
+
+  RETURN QUERY
+  WITH counted AS (
+    SELECT COUNT(*)::bigint AS cnt FROM public.payment_records WHERE status = 'paid'
+  ),
+  paged AS (
+    SELECT
+      pr.id,
+      pr.user_id,
+      pr.paymongo_payment_id,
+      pr.amount_cents,
+      pr.currency,
+      pr.plan,
+      pr.months,
+      pr.status,
+      pr.source,
+      pr.user_email,
+      pr.paid_at,
+      pr.created_at,
+      p.display_name AS user_display_name,
+      p.email AS profile_email
+    FROM public.payment_records pr
+    LEFT JOIN public.profiles p ON p.id = pr.user_id
+    WHERE pr.status = 'paid'
+    ORDER BY pr.paid_at DESC
+    LIMIT p_page_size
+    OFFSET v_offset
+  )
+  SELECT
+    COALESCE((SELECT jsonb_agg(to_jsonb(x.*)) FROM paged x), '[]'::jsonb),
+    (SELECT cnt FROM counted);
+END;
+$$;
+
 GRANT EXECUTE ON FUNCTION public.get_admin_profiles TO service_role;
 GRANT EXECUTE ON FUNCTION public.get_admin_analytics TO service_role;
 GRANT EXECUTE ON FUNCTION public.get_admin_audit_log TO service_role;
+GRANT EXECUTE ON FUNCTION public.get_admin_payment_summary TO service_role;
+GRANT EXECUTE ON FUNCTION public.get_admin_payments TO service_role;
 GRANT EXECUTE ON FUNCTION public.force_logout_all_users TO service_role;
 GRANT EXECUTE ON FUNCTION public.effective_subscription_tier TO service_role;

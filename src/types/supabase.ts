@@ -45,6 +45,62 @@ export type Database = {
           },
         ]
       }
+      payment_records: {
+        Row: {
+          id: string
+          user_id: string | null
+          paymongo_payment_id: string | null
+          paymongo_payment_intent_id: string | null
+          amount_cents: number
+          currency: string
+          plan: string
+          months: number
+          status: string
+          source: string
+          user_email: string | null
+          paid_at: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id?: string | null
+          paymongo_payment_id?: string | null
+          paymongo_payment_intent_id?: string | null
+          amount_cents: number
+          currency?: string
+          plan: string
+          months?: number
+          status?: string
+          source?: string
+          user_email?: string | null
+          paid_at?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string | null
+          paymongo_payment_id?: string | null
+          paymongo_payment_intent_id?: string | null
+          amount_cents?: number
+          currency?: string
+          plan?: string
+          months?: number
+          status?: string
+          source?: string
+          user_email?: string | null
+          paid_at?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_records_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       app_stats: {
         Row: {
           created_at: string
@@ -387,6 +443,25 @@ export type Database = {
       force_logout_all_users: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      get_admin_payment_summary: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          total_amount_cents: number
+          payment_count: number
+          amount_last_7_days_cents: number
+          payments_last_7_days: number
+        }[]
+      }
+      get_admin_payments: {
+        Args: {
+          p_page?: number
+          p_page_size?: number
+        }
+        Returns: {
+          payments: Json
+          total_count: number
+        }[]
       }
     }
     Enums: {

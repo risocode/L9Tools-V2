@@ -5,8 +5,10 @@ import { isOkAdminSession, requireAdminSession } from '@/lib/admin-session';
 import {
   queryAdminAnalytics,
   queryOnlineCount,
+  queryPaymentSummary,
   queryProfilePage,
   queryUserStats,
+  type AdminPaymentSummary,
 } from '@/lib/admin-data';
 import type { Profile } from '@/types';
 
@@ -24,6 +26,7 @@ export interface AdminDashboardPayload {
     proExpiringNext7Days: number;
   } | null;
   onlineCount: number;
+  paymentSummary: AdminPaymentSummary | null;
   error: string | null;
 }
 
@@ -38,12 +41,13 @@ export async function loadAdminDashboard(): Promise<AdminDashboardPayload> {
       totalCount: 0,
       analytics: null,
       onlineCount: 0,
+      paymentSummary: null,
       error: session.error ?? 'Unauthorized',
     };
   }
 
   try {
-    const [stats, profileResult, analytics, onlineCount] = await Promise.all([
+    const [stats, profileResult, analytics, onlineCount, paymentSummary] = await Promise.all([
       queryUserStats(session.admin),
       queryProfilePage(session.admin, {
         page: 1,
@@ -53,6 +57,7 @@ export async function loadAdminDashboard(): Promise<AdminDashboardPayload> {
       }),
       queryAdminAnalytics(session.admin),
       queryOnlineCount(session.admin),
+      queryPaymentSummary(session.admin),
     ]);
 
     if (profileResult.error) {
@@ -62,6 +67,7 @@ export async function loadAdminDashboard(): Promise<AdminDashboardPayload> {
         totalCount: 0,
         analytics,
         onlineCount,
+        paymentSummary,
         error: profileResult.error,
       };
     }
@@ -72,6 +78,7 @@ export async function loadAdminDashboard(): Promise<AdminDashboardPayload> {
       totalCount: profileResult.count,
       analytics,
       onlineCount,
+      paymentSummary,
       error: null,
     };
   } catch (err: unknown) {
@@ -83,6 +90,7 @@ export async function loadAdminDashboard(): Promise<AdminDashboardPayload> {
       totalCount: 0,
       analytics: null,
       onlineCount: 0,
+      paymentSummary: null,
       error: message,
     };
   }

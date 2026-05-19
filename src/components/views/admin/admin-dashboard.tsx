@@ -22,6 +22,8 @@ import { AdminOverview } from './admin-overview';
 import { AdminUsersPanel } from './admin-users-panel';
 import { AdminMaintenancePanel } from './admin-maintenance-panel';
 import { AdminContentPanel } from './admin-content-panel';
+import { AdminPaymentsPanel } from './admin-payments-panel';
+import type { AdminPaymentSummary } from '@/app/actions/get-admin-payments';
 import { useAdminPresence } from '@/hooks/admin/use-admin-presence';
 import type { AdminTab } from './admin-types';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -87,6 +89,7 @@ export function AdminDashboard() {
   const [upgradeConfirmText, setUpgradeConfirmText] = useState('');
   const [eligibleUpgradeCount, setEligibleUpgradeCount] = useState(0);
   const [onlineCount, setOnlineCount] = useState(0);
+  const [paymentSummary, setPaymentSummary] = useState<AdminPaymentSummary | null>(null);
 
   const skipNextProfilesFetch = useRef(true);
   const { toast } = useToast();
@@ -141,6 +144,7 @@ export function AdminDashboard() {
 
       if (payload.analytics) setAnalytics(payload.analytics);
       setOnlineCount(payload.onlineCount);
+      if (payload.paymentSummary) setPaymentSummary(payload.paymentSummary);
 
       if (payload.profiles.length > 0 || payload.totalCount >= 0) {
         setPaginatedProfiles(sortProfilesByOnlineStatus(payload.profiles));
@@ -378,6 +382,9 @@ export function AdminDashboard() {
         error={error}
         onDismissError={() => setError(null)}
         overview={<AdminOverview stats={stats} onlineCount={onlineCount} analytics={analytics} />}
+        payments={
+          activeTab === 'payments' ? <AdminPaymentsPanel initialSummary={paymentSummary} /> : null
+        }
         users={
           <AdminUsersPanel
             profiles={paginatedProfiles}

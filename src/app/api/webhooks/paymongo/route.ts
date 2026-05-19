@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
+import { recordPayment } from '@/lib/payment-records';
 
 /**
  * PayMongo webhook handler for payment events
@@ -198,6 +199,26 @@ export async function POST(request: NextRequest) {
           userId,
         });
         return NextResponse.json({ received: true }, { status: 200 });
+      }
+
+      const amountCents =
+        payment.attributes?.amount ?? paymentIntent.attributes?.amount ?? 0;
+
+      const supabaseAdmin = getSupabaseAdmin();
+      if (supabaseAdmin && amountCents > 0) {
+        await recordPayment(supabaseAdmin, {
+          userId,
+          paymongoPaymentId: payment.id,
+          paymongoPaymentIntentId: paymentIntentId,
+          amountCents,
+          plan,
+          months,
+          userEmail: metadata.email as string | undefined,
+          paidAt:
+            payment.attributes?.paid_at != null
+              ? new Date(payment.attributes.paid_at * 1000).toISOString()
+              : undefined,
+        });
       }
 
       console.log('[PayMongo Webhook] Activating subscription:', {

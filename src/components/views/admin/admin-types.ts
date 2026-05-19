@@ -1,1 +1,1 @@
-export type AdminTab = 'overview' | 'users' | 'email' | 'maintenance' | 'content';
+export type AdminTab = 'overview' | 'payments' | 'users' | 'email' | 'maintenance' | 'content';
