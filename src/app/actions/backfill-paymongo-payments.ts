@@ -6,6 +6,7 @@ import { backfillPaymentsFromPayMongo } from '@/lib/paymongo-sync';
 export async function backfillPayMongoPayments(): Promise<{
   success: boolean;
   imported?: number;
+  alreadySynced?: number;
   skipped?: number;
   errors?: number;
   error?: string;

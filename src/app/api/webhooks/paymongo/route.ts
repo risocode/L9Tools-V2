@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import { recordPayment } from '@/lib/payment-records';
+import { parseSubscriptionFromDescription } from '@/lib/paymongo-sync';
 
 /**
  * PayMongo webhook handler for payment events
@@ -181,22 +182,15 @@ export async function POST(request: NextRequest) {
         months: metadata.months,
       });
       
-      const userId = metadata.user_id;
-      const plan = metadata.plan;
-      const months = parseInt(metadata.months || '1');
-
-      if (!userId) {
-        console.error('[PayMongo Webhook] ❌ No user_id in metadata', {
-          metadata,
-          paymentIntentId,
-        });
-        return NextResponse.json({ received: true }, { status: 200 });
-      }
+      const userId = metadata.user_id as string | undefined;
+      const parsedDescription = parseSubscriptionFromDescription(paymentIntent.attributes?.description);
+      const plan = metadata.plan || parsedDescription?.plan;
+      const months = parseInt(metadata.months || String(parsedDescription?.months ?? '1'), 10) || 1;
 
       if (!plan) {
-        console.error('[PayMongo Webhook] ❌ No plan in metadata', {
+        console.error('[PayMongo Webhook] ❌ Could not resolve plan from metadata or description', {
           metadata,
-          userId,
+          paymentIntentId,
         });
         return NextResponse.json({ received: true }, { status: 200 });
       }
@@ -207,7 +201,7 @@ export async function POST(request: NextRequest) {
       const supabaseAdmin = getSupabaseAdmin();
       if (supabaseAdmin && amountCents > 0) {
         await recordPayment(supabaseAdmin, {
-          userId,
+          userId: userId ?? null,
           paymongoPaymentId: payment.id,
           paymongoPaymentIntentId: paymentIntentId,
           amountCents,
@@ -219,6 +213,14 @@ export async function POST(request: NextRequest) {
               ? new Date(payment.attributes.paid_at * 1000).toISOString()
               : undefined,
         });
+      }
+
+      if (!userId) {
+        console.error('[PayMongo Webhook] ❌ No user_id in metadata — payment logged, subscription not activated', {
+          metadata,
+          paymentIntentId,
+        });
+        return NextResponse.json({ received: true, message: 'Payment logged without user_id' }, { status: 200 });
       }
 
       console.log('[PayMongo Webhook] Activating subscription:', {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import { recordPayment } from '@/lib/payment-records';
+import { parseSubscriptionFromDescription } from '@/lib/paymongo-sync';
 
 /**
  * Verify and manually activate subscription for a payment intent
@@ -57,8 +58,9 @@ export async function POST(request: NextRequest) {
     const metadata = paymentIntent.attributes.metadata || {};
 
     const userId = metadata.user_id;
-    const plan = metadata.plan;
-    const months = parseInt(metadata.months || '1');
+    const parsedDescription = parseSubscriptionFromDescription(paymentIntent.attributes?.description);
+    const plan = metadata.plan || parsedDescription?.plan;
+    const months = parseInt(metadata.months || String(parsedDescription?.months ?? '1'), 10) || 1;
 
     // Verify this payment intent belongs to the current user
     if (userId !== user.id) {
@@ -125,7 +127,7 @@ export async function POST(request: NextRequest) {
     });
 
     const supabaseAdmin = getSupabaseAdmin();
-    if (supabaseAdmin && paidPayment?.id && userId && plan) {
+    if (supabaseAdmin && paidPayment?.id && plan) {
       const amountCents =
         paidPayment.attributes?.amount ?? paymentIntent.attributes?.amount ?? 0;
       if (amountCents > 0) {

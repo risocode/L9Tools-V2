@@ -1,7 +1,7 @@
 import type { AdminSupabaseClient } from '@/lib/admin-session';
 
 export interface RecordPaymentInput {
-  userId: string;
+  userId?: string | null;
   paymongoPaymentId: string;
   paymongoPaymentIntentId?: string | null;
   amountCents: number;
@@ -15,27 +15,34 @@ export interface RecordPaymentInput {
 export async function recordPayment(
   admin: AdminSupabaseClient,
   input: RecordPaymentInput
-): Promise<{ ok: boolean; error?: string }> {
+): Promise<{ ok: boolean; duplicate?: boolean; error?: string }> {
   if (!input.paymongoPaymentId || input.amountCents <= 0) {
     return { ok: false, error: 'Invalid payment record' };
   }
 
-  const { error } = await admin.from('payment_records').upsert(
-    {
-      user_id: input.userId,
-      paymongo_payment_id: input.paymongoPaymentId,
-      paymongo_payment_intent_id: input.paymongoPaymentIntentId ?? null,
-      amount_cents: input.amountCents,
-      currency: 'PHP',
-      plan: input.plan,
-      months: input.months ?? 1,
-      status: 'paid',
-      source: 'paymongo',
-      user_email: input.userEmail ?? null,
-      paid_at: input.paidAt ?? new Date().toISOString(),
-    },
-    { onConflict: 'paymongo_payment_id', ignoreDuplicates: true }
-  );
+  const { data: existing } = await admin
+    .from('payment_records')
+    .select('id')
+    .eq('paymongo_payment_id', input.paymongoPaymentId)
+    .maybeSingle();
+
+  if (existing) {
+    return { ok: true, duplicate: true };
+  }
+
+  const { error } = await admin.from('payment_records').insert({
+    user_id: input.userId ?? null,
+    paymongo_payment_id: input.paymongoPaymentId,
+    paymongo_payment_intent_id: input.paymongoPaymentIntentId ?? null,
+    amount_cents: input.amountCents,
+    currency: 'PHP',
+    plan: input.plan,
+    months: input.months ?? 1,
+    status: 'paid',
+    source: 'paymongo',
+    user_email: input.userEmail ?? null,
+    paid_at: input.paidAt ?? new Date().toISOString(),
+  });
 
   if (error) {
     console.error('[Payment Records] Failed to record payment:', error.message);

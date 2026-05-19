@@ -76,7 +76,7 @@ export function AdminPaymentsPanel({ initialSummary }: AdminPaymentsPanelProps) 
 
     toast({
       title: 'PayMongo import complete',
-      description: `Imported ${result.imported ?? 0}, skipped ${result.skipped ?? 0}, errors ${result.errors ?? 0}.`,
+      description: `New: ${result.imported ?? 0}, already in database: ${result.alreadySynced ?? 0}, skipped: ${result.skipped ?? 0}, errors: ${result.errors ?? 0}.`,
     });
     setPage(1);
     await loadPage(1);
