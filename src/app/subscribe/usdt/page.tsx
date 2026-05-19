@@ -9,6 +9,12 @@ import { useIsMobile } from "@/hooks/use-is-mobile";
 import { Copy, Mail, ArrowLeft, Star, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 import Link from "next/link";
+import {
+  getCheckoutOriginalTotalPhp,
+  getPlanConfig,
+  getPlanLabel,
+  isSubscriptionPlanId,
+} from "@/lib/subscription-plans";
 
 const usdtWalletAddress = "0xdc6852d5f99844142cfef79e28cb4bf4b7bcc1b0";
 
@@ -19,15 +25,38 @@ function UsdtPaymentContent() {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   
-  const plan = searchParams.get('plan') || 'N/A';
+  const planParam = searchParams.get('plan') || 'N/A';
+  const plan = isSubscriptionPlanId(planParam) ? planParam : planParam;
+  const planConfig = isSubscriptionPlanId(plan) ? getPlanConfig(plan) : null;
   const priceParam = searchParams.get('price');
   const usdtParam = searchParams.get('usdt');
-  const initialMonths = parseInt(searchParams.get('months') || '1');
 
-  const price = priceParam ? parseFloat(priceParam) : null;
-  const usdt = usdtParam ? parseFloat(usdtParam) : null;
-  const months = plan === 'monthly' ? initialMonths : plan === 'yearly' ? 12 : 1;
-  const basePrice = price;
+  const initialMonths = parseInt(searchParams.get('months') || '1', 10) || 1;
+  const unitSalePrice = priceParam ? parseFloat(priceParam) : planConfig?.pricePhp ?? null;
+  const unitOriginalPrice = planConfig?.originalPricePhp ?? null;
+  const unitUsdt = usdtParam ? parseFloat(usdtParam) : planConfig?.usdtPrice ?? null;
+
+  const [months, setMonths] = useState(
+    plan === 'monthly' ? initialMonths : plan === 'yearly' ? 12 : 1
+  );
+
+  const totalPhp =
+    plan === 'monthly' && unitSalePrice != null ? unitSalePrice * months : unitSalePrice;
+  const totalUsdt =
+    plan === 'monthly' && unitUsdt != null ? unitUsdt * months : unitUsdt;
+  const originalTotal =
+    isSubscriptionPlanId(plan) && unitOriginalPrice != null
+      ? getCheckoutOriginalTotalPhp(plan, months)
+      : null;
+  const planLabel = planConfig?.label ?? getPlanLabel(plan);
+
+  const updateMonthlyMonths = (newMonths: number) => {
+    if (!isSubscriptionPlanId(plan) || plan !== 'monthly' || !unitSalePrice || !unitUsdt) return;
+    setMonths(newMonths);
+    router.replace(
+      `/subscribe/usdt?plan=${plan}&price=${unitSalePrice}&months=${newMonths}&usdt=${(unitUsdt * newMonths).toFixed(2)}`
+    );
+  };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(usdtWalletAddress).then(() => {
@@ -136,63 +165,47 @@ function UsdtPaymentContent() {
                   <p className="text-xl sm:text-2xl font-cinzel font-bold capitalize mb-1 tracking-wide" style={{
                     color: '#FFD700',
                     textShadow: '0 0 15px rgba(255, 215, 0, 0.6), 0 0 25px rgba(255, 215, 0, 0.4)'
-                  }}>{plan === 'monthly' ? `${months} ${months === 1 ? 'Month' : 'Months'} Plan` : plan === 'yearly' ? 'Yearly Plan (12 Months)' : plan === 'lifetime' ? 'Lifetime' : plan}</p>
+                  }}>{planLabel}</p>
                   <p className="text-gray-300 font-orbitron text-xs mb-2">
-                    {plan === 'lifetime' ? 'One-time payment' : plan === 'yearly' ? '12 months subscription' : plan === 'monthly' ? 'Add more months below' : 'Billed monthly'}
+                    {plan === 'lifetime'
+                      ? 'One-time payment'
+                      : plan === 'yearly'
+                        ? '12 months of Pro access'
+                        : 'Add more months below'}
                   </p>
-                  
-                  {/* Month Selector - Only for monthly plan */}
-                  {plan === 'monthly' && (
+
+                  {plan === 'monthly' && unitSalePrice != null && (
                     <div className="mt-2 bg-black/60 backdrop-blur-sm rounded-lg p-3 border-2 border-purple-500/50 shadow-lg">
-                      <p className="text-xs sm:text-sm font-orbitron font-semibold text-white mb-3 uppercase tracking-widest text-center" style={{
-                        textShadow: '0 0 8px rgba(255, 255, 255, 0.3)'
-                      }}>SELECT DURATION</p>
+                      <p className="text-xs sm:text-sm font-orbitron font-semibold text-white mb-3 uppercase tracking-widest text-center">
+                        SELECT DURATION
+                      </p>
                       <div className="flex items-center justify-center gap-3 sm:gap-4 mb-3">
                         <button
-                          onClick={() => {
-                            const newMonths = Math.max(1, months - 1);
-                            router.push(`/subscribe/usdt?plan=${plan}&price=${basePrice}&usdt=${usdt ? (usdt / months * newMonths).toFixed(2) : ''}&months=${newMonths}`);
-                          }}
-                          className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-purple-600/50 hover:bg-purple-600/70 border-2 border-purple-400/70 text-white font-bold text-lg sm:text-xl transition-all flex items-center justify-center shadow-lg hover:shadow-purple-500/50"
-                          style={{
-                            boxShadow: '0 0 15px rgba(139, 92, 246, 0.5), inset 0 0 10px rgba(139, 92, 246, 0.2)'
-                          }}
+                          type="button"
+                          onClick={() => updateMonthlyMonths(Math.max(1, months - 1))}
+                          className="w-10 h-10 rounded-lg bg-purple-600/50 border-2 border-purple-400/70 text-white font-bold text-xl"
                         >
                           −
                         </button>
                         <div className="text-center min-w-[70px]">
-                          <div className="text-2xl sm:text-3xl font-cinzel font-bold mb-1" style={{
-                            color: '#FFD700',
-                            textShadow: '0 0 15px rgba(255, 215, 0, 0.8), 0 0 25px rgba(255, 215, 0, 0.5)'
-                          }}>
-                            {months}
-                          </div>
-                          <p className="text-xs sm:text-sm font-orbitron font-semibold text-white uppercase tracking-wide" style={{
-                            textShadow: '0 0 5px rgba(255, 255, 255, 0.3)'
-                          }}>
+                          <div className="text-2xl font-cinzel font-bold text-[#FFD700]">{months}</div>
+                          <p className="text-xs font-orbitron text-white uppercase">
                             {months === 1 ? 'Month' : 'Months'}
                           </p>
                         </div>
                         <button
-                          onClick={() => {
-                            const newMonths = Math.min(12, months + 1);
-                            router.push(`/subscribe/usdt?plan=${plan}&price=${basePrice}&usdt=${usdt ? (usdt / months * newMonths).toFixed(2) : ''}&months=${newMonths}`);
-                          }}
-                          className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-purple-600/50 hover:bg-purple-600/70 border-2 border-purple-400/70 text-white font-bold text-lg sm:text-xl transition-all flex items-center justify-center shadow-lg hover:shadow-purple-500/50"
-                          style={{
-                            boxShadow: '0 0 15px rgba(139, 92, 246, 0.5), inset 0 0 10px rgba(139, 92, 246, 0.2)'
-                          }}
+                          type="button"
+                          onClick={() => updateMonthlyMonths(Math.min(12, months + 1))}
+                          className="w-10 h-10 rounded-lg bg-purple-600/50 border-2 border-purple-400/70 text-white font-bold text-xl"
                         >
                           +
                         </button>
                       </div>
-                      <div className="pt-2 border-t border-purple-500/30">
-                        <p className="text-xs sm:text-sm font-orbitron font-semibold text-white text-center" style={{
-                          textShadow: '0 0 5px rgba(255, 255, 255, 0.3)'
-                        }}>
-                          ₱{basePrice?.toFixed(2)} per month × {months} {months === 1 ? 'month' : 'months'}
-                        </p>
-                      </div>
+                      <p className="text-xs font-orbitron text-center text-white pt-2 border-t border-purple-500/30">
+                        <span className="text-green-400">₱{unitSalePrice}</span>
+                        <span className="text-gray-400 line-through ml-2">₱{unitOriginalPrice}</span>
+                        <span className="text-gray-300"> / month · 50% off</span>
+                      </p>
                     </div>
                   )}
                 </div>
@@ -204,31 +217,73 @@ function UsdtPaymentContent() {
               <div className="flex justify-between items-center">
                 <span className="text-gray-300 font-orbitron text-xs">Price</span>
                 <span className="text-sm font-cinzel font-semibold text-gray-400">
-                  ₱{basePrice?.toFixed(2)}
+                  {plan === 'monthly' ? (
+                    <>
+                      ₱{unitSalePrice?.toFixed(2)}
+                      {unitOriginalPrice != null && (
+                        <span className="text-gray-500 line-through ml-1">₱{unitOriginalPrice.toFixed(2)}</span>
+                      )}
+                      <span className="text-gray-500"> /mo</span>
+                    </>
+                  ) : (
+                    <>
+                      ₱{unitSalePrice?.toFixed(2)}
+                      {unitOriginalPrice != null && (
+                        <span className="text-gray-500 line-through ml-1">₱{unitOriginalPrice.toFixed(2)}</span>
+                      )}
+                    </>
+                  )}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-300 font-orbitron text-xs">Months</span>
-                <span className={plan === 'lifetime' ? 'text-lg font-bold text-red-400' : 'text-sm font-cinzel font-semibold text-gray-400'}>
-                  {plan === 'lifetime' ? '∞' : `${months} ${months === 1 ? 'month' : 'months'}`}
+                <span className="text-gray-300 font-orbitron text-xs">
+                  {plan === 'monthly' ? 'Months' : 'Duration'}
+                </span>
+                <span
+                  className={
+                    plan === 'lifetime'
+                      ? 'text-lg font-bold text-red-400'
+                      : 'text-sm font-cinzel font-semibold text-gray-400'
+                  }
+                >
+                  {plan === 'lifetime'
+                    ? '∞'
+                    : plan === 'monthly'
+                      ? `${months} ${months === 1 ? 'month' : 'months'}`
+                      : planLabel}
                 </span>
               </div>
               <div className="flex justify-between items-center pt-1.5 border-t border-gray-600/50">
                 <span className="text-sm sm:text-base font-cinzel font-semibold tracking-wide" style={{
                   color: '#FFD700',
                   textShadow: '0 0 10px rgba(255, 215, 0, 0.5)'
-                }}>Total</span>
-                <span className="text-xl sm:text-2xl font-cinzel font-bold tracking-wide" style={{
-                  color: '#FFD700',
-                  textShadow: '0 0 15px rgba(255, 215, 0, 0.6), 0 0 25px rgba(255, 215, 0, 0.4)'
-                }}>₱{price?.toFixed(2)}</span>
+                }}
+                >
+                  Total
+                </span>
+                <span className="text-right">
+                  <span
+                    className="text-xl sm:text-2xl font-cinzel font-bold tracking-wide block"
+                    style={{
+                      color: '#FFD700',
+                      textShadow: '0 0 15px rgba(255, 215, 0, 0.6), 0 0 25px rgba(255, 215, 0, 0.4)',
+                    }}
+                  >
+                    ₱{totalPhp?.toFixed(2)}
+                  </span>
+                  {originalTotal != null && totalPhp != null && originalTotal > totalPhp && (
+                    <span className="text-sm text-gray-500 line-through font-orbitron block">
+                      ₱{originalTotal.toFixed(2)}
+                    </span>
+                  )}
+                </span>
               </div>
               <div className="flex justify-between items-center pt-1.5 border-t border-gray-600/50">
                 <span className="text-xs font-orbitron text-gray-300">USDT Amount</span>
                 <span className="text-base font-cinzel font-semibold" style={{
                   color: '#FFD700',
                   textShadow: '0 0 8px rgba(255, 215, 0, 0.4)'
-                }}>{usdt?.toFixed(2)} USDT</span>
+                }}>{totalUsdt?.toFixed(2)} USDT</span>
               </div>
             </div>
           </div>
@@ -284,7 +339,7 @@ function UsdtPaymentContent() {
                     <Copy className="h-4 w-4 opacity-70 group-hover:opacity-100 flex-shrink-0" />
                   </button>
                   <p className="text-xs text-gray-600 text-center font-orbitron">
-                    Send exactly <span className="font-bold text-purple-600">{usdt?.toFixed(2)} USDT (BEP20)</span> to this address
+                    Send exactly <span className="font-bold text-purple-600">{totalUsdt?.toFixed(2)} USDT (BEP20)</span> to this address
                   </p>
                 </div>
               </div>
@@ -369,7 +424,7 @@ function UsdtPaymentContent() {
                   <Copy className="h-3 w-3 opacity-70 group-hover:opacity-100 flex-shrink-0" />
                 </button>
                 <p className="text-xs text-gray-300 text-center font-orbitron">
-                  Send exactly <span className="font-bold text-yellow-400">{usdt?.toFixed(2)} USDT (BEP20)</span>
+                  Send exactly <span className="font-bold text-yellow-400">{totalUsdt?.toFixed(2)} USDT (BEP20)</span>
                 </p>
               </div>
             </div>

@@ -39,6 +39,17 @@ export function parseSubscriptionFromDescription(description?: string): {
   months: number;
 } | null {
   if (!description) return null;
+
+  if (/L9 Tools 1 month/i.test(description)) {
+    return { plan: 'monthly', months: 1 };
+  }
+  if (/L9 Tools 1 year/i.test(description)) {
+    return { plan: 'yearly', months: 12 };
+  }
+  if (/L9 Tools Lifetime/i.test(description)) {
+    return { plan: 'lifetime', months: 1 };
+  }
+
   const match = description.match(/L9 Tools (\w+) subscription\s*-\s*(\d+)\s*month/i);
   if (!match) return null;
   return {

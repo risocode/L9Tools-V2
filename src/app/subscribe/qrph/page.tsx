@@ -41,6 +41,12 @@ import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-is-mobile";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import {
+  getCheckoutOriginalTotalPhp,
+  getPlanConfig,
+  getPlanLabel,
+  isSubscriptionPlanId,
+} from "@/lib/subscription-plans";
 
 function QRPhPaymentContent() {
   const searchParams = useSearchParams();
@@ -48,17 +54,30 @@ function QRPhPaymentContent() {
   const { user, refreshUser } = useAuth();
   const { toast } = useToast();
   
-  const plan = searchParams.get('plan') || 'N/A';
+  const planParam = searchParams.get('plan') || 'N/A';
+  const plan = isSubscriptionPlanId(planParam) ? planParam : planParam;
+  const planConfig = isSubscriptionPlanId(plan) ? getPlanConfig(plan) : null;
   const priceParam = searchParams.get('price');
-  const initialMonths = parseInt(searchParams.get('months') || '1');
 
-  const basePrice = priceParam ? parseFloat(priceParam) : null;
-  
-  // State for number of months (only for monthly plan)
-  const [months, setMonths] = useState(plan === 'monthly' ? initialMonths : plan === 'yearly' ? 12 : 1);
-  
-  // Calculate total price based on months (only for monthly plan)
-  const price = plan === 'monthly' && basePrice ? basePrice * months : basePrice;
+  const initialMonths = parseInt(searchParams.get('months') || '1', 10) || 1;
+  const unitSalePrice = priceParam
+    ? parseFloat(priceParam)
+    : planConfig?.pricePhp ?? null;
+  const unitOriginalPrice = planConfig?.originalPricePhp ?? null;
+
+  const [months, setMonths] = useState(
+    plan === 'monthly' ? initialMonths : plan === 'yearly' ? 12 : 1
+  );
+
+  const price =
+    plan === 'monthly' && unitSalePrice != null
+      ? unitSalePrice * months
+      : unitSalePrice;
+  const originalTotal =
+    isSubscriptionPlanId(plan) && unitOriginalPrice != null
+      ? getCheckoutOriginalTotalPhp(plan, months)
+      : null;
+  const planLabel = planConfig?.label ?? getPlanLabel(plan);
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'awaiting_scan' | 'polling' | 'success' | 'error'>('idle');
@@ -391,59 +410,63 @@ function QRPhPaymentContent() {
                   <p className="text-xl sm:text-2xl font-cinzel font-bold capitalize mb-1 tracking-wide" style={{
                     color: '#FFD700',
                     textShadow: '0 0 15px rgba(255, 215, 0, 0.6), 0 0 25px rgba(255, 215, 0, 0.4)'
-                  }}>{plan === 'monthly' ? `${months} ${months === 1 ? 'Month' : 'Months'} Plan` : plan === 'yearly' ? 'Yearly Plan (12 Months)' : plan === 'lifetime' ? 'Lifetime' : plan}</p>
+                  }}>{planLabel}</p>
                   <p className="text-gray-300 font-orbitron text-xs mb-2">
-                    {plan === 'lifetime' ? 'One-time payment' : plan === 'yearly' ? '12 months subscription' : plan === 'monthly' ? 'Add more months below' : 'Billed monthly'}
+                    {plan === 'lifetime'
+                      ? 'One-time payment'
+                      : plan === 'yearly'
+                        ? '12 months of Pro access'
+                        : 'Add more months below'}
                   </p>
-                  
-                  {/* Month Selector - Only for monthly plan */}
-                  {plan === 'monthly' && (
+
+                  {plan === 'monthly' && unitSalePrice != null && (
                     <div className="mt-2 bg-black/60 backdrop-blur-sm rounded-lg p-3 border-2 border-purple-500/50 shadow-lg">
-                      <p className="text-xs sm:text-sm font-orbitron font-semibold text-white mb-3 uppercase tracking-widest text-center" style={{
-                        textShadow: '0 0 8px rgba(255, 255, 255, 0.3)'
-                      }}>SELECT DURATION</p>
+                      <p
+                        className="text-xs sm:text-sm font-orbitron font-semibold text-white mb-3 uppercase tracking-widest text-center"
+                        style={{ textShadow: '0 0 8px rgba(255, 255, 255, 0.3)' }}
+                      >
+                        SELECT DURATION
+                      </p>
                       <div className="flex items-center justify-center gap-3 sm:gap-4 mb-3">
                         <button
+                          type="button"
                           onClick={() => setMonths(Math.max(1, months - 1))}
-                          className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-purple-600/50 hover:bg-purple-600/70 border-2 border-purple-400/70 text-white font-bold text-lg sm:text-xl transition-all flex items-center justify-center shadow-lg hover:shadow-purple-500/50"
-                          style={{
-                            boxShadow: '0 0 15px rgba(139, 92, 246, 0.5), inset 0 0 10px rgba(139, 92, 246, 0.2)'
-                          }}
+                          className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-purple-600/50 hover:bg-purple-600/70 border-2 border-purple-400/70 text-white font-bold text-lg sm:text-xl transition-all flex items-center justify-center shadow-lg"
                         >
                           −
                         </button>
                         <div className="text-center min-w-[70px]">
-                          <div className="text-2xl sm:text-3xl font-cinzel font-bold mb-1" style={{
-                            color: '#FFD700',
-                            textShadow: '0 0 15px rgba(255, 215, 0, 0.8), 0 0 25px rgba(255, 215, 0, 0.5)'
-                          }}>
+                          <div
+                            className="text-2xl sm:text-3xl font-cinzel font-bold mb-1"
+                            style={{
+                              color: '#FFD700',
+                              textShadow: '0 0 15px rgba(255, 215, 0, 0.8), 0 0 25px rgba(255, 215, 0, 0.5)',
+                            }}
+                          >
                             {months}
                           </div>
-                          <p className="text-xs sm:text-sm font-orbitron font-semibold text-white uppercase tracking-wide" style={{
-                            textShadow: '0 0 5px rgba(255, 255, 255, 0.3)'
-                          }}>
+                          <p className="text-xs sm:text-sm font-orbitron font-semibold text-white uppercase tracking-wide">
                             {months === 1 ? 'Month' : 'Months'}
                           </p>
                         </div>
                         <button
+                          type="button"
                           onClick={() => setMonths(Math.min(12, months + 1))}
-                          className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-purple-600/50 hover:bg-purple-600/70 border-2 border-purple-400/70 text-white font-bold text-lg sm:text-xl transition-all flex items-center justify-center shadow-lg hover:shadow-purple-500/50"
-                          style={{
-                            boxShadow: '0 0 15px rgba(139, 92, 246, 0.5), inset 0 0 10px rgba(139, 92, 246, 0.2)'
-                          }}
+                          className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-purple-600/50 hover:bg-purple-600/70 border-2 border-purple-400/70 text-white font-bold text-lg sm:text-xl transition-all flex items-center justify-center shadow-lg"
                         >
                           +
                         </button>
                       </div>
-                      <div className="pt-2 border-t border-purple-500/30">
-                        <p className="text-xs sm:text-sm font-orbitron font-semibold text-white text-center" style={{
-                          textShadow: '0 0 5px rgba(255, 255, 255, 0.3)'
-                        }}>
-                          ₱{basePrice?.toFixed(2)} per month × {months} {months === 1 ? 'month' : 'months'}
+                      <div className="pt-2 border-t border-purple-500/30 text-center space-y-1">
+                        <p className="text-xs sm:text-sm font-orbitron font-semibold text-white">
+                          <span className="text-green-400">₱{unitSalePrice}</span>
+                          <span className="text-gray-400 line-through ml-2">₱{unitOriginalPrice}</span>
+                          <span className="text-gray-300"> / month</span>
                         </p>
+                        <p className="text-xs text-gray-400 font-orbitron">50% off per month</p>
                       </div>
-              </div>
-          )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Mobile: GCash Payment Method Selector */}
@@ -546,24 +569,66 @@ function QRPhPaymentContent() {
               <div className="flex justify-between items-center">
                 <span className="text-gray-300 font-orbitron text-xs">Price</span>
                 <span className="text-sm font-cinzel font-semibold text-gray-400">
-                  ₱{basePrice?.toFixed(2)}
+                  {plan === 'monthly' ? (
+                    <>
+                      ₱{unitSalePrice?.toFixed(2)}
+                      {unitOriginalPrice != null && (
+                        <span className="text-gray-500 line-through ml-1">₱{unitOriginalPrice.toFixed(2)}</span>
+                      )}
+                      <span className="text-gray-500"> /mo</span>
+                    </>
+                  ) : (
+                    <>
+                      ₱{unitSalePrice?.toFixed(2)}
+                      {unitOriginalPrice != null && (
+                        <span className="text-gray-500 line-through ml-1">₱{unitOriginalPrice.toFixed(2)}</span>
+                      )}
+                    </>
+                  )}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-300 font-orbitron text-xs">Months</span>
-                <span className={plan === 'lifetime' ? 'text-lg font-bold text-red-400' : 'text-sm font-cinzel font-semibold text-gray-400'}>
-                  {plan === 'lifetime' ? '∞' : `${months} ${months === 1 ? 'month' : 'months'}`}
+                <span className="text-gray-300 font-orbitron text-xs">
+                  {plan === 'monthly' ? 'Months' : 'Duration'}
+                </span>
+                <span
+                  className={
+                    plan === 'lifetime'
+                      ? 'text-lg font-bold text-red-400'
+                      : 'text-sm font-cinzel font-semibold text-gray-400'
+                  }
+                >
+                  {plan === 'lifetime'
+                    ? '∞'
+                    : plan === 'monthly'
+                      ? `${months} ${months === 1 ? 'month' : 'months'}`
+                      : planLabel}
                 </span>
               </div>
               <div className="flex justify-between items-center pt-1.5 border-t border-gray-600/50">
                 <span className="text-sm sm:text-base font-cinzel font-semibold tracking-wide" style={{
                   color: '#FFD700',
                   textShadow: '0 0 10px rgba(255, 215, 0, 0.5)'
-                }}>Total</span>
-                <span className="text-xl sm:text-2xl font-cinzel font-bold tracking-wide" style={{
-                  color: '#FFD700',
-                  textShadow: '0 0 15px rgba(255, 215, 0, 0.6), 0 0 25px rgba(255, 215, 0, 0.4)'
-                }}>₱{price?.toFixed(2)}</span>
+                }}
+                >
+                  Total
+                </span>
+                <span className="text-right">
+                  <span
+                    className="text-xl sm:text-2xl font-cinzel font-bold tracking-wide block"
+                    style={{
+                      color: '#FFD700',
+                      textShadow: '0 0 15px rgba(255, 215, 0, 0.6), 0 0 25px rgba(255, 215, 0, 0.4)',
+                    }}
+                  >
+                    ₱{price?.toFixed(2)}
+                  </span>
+                  {originalTotal != null && originalTotal > (price ?? 0) && (
+                    <span className="text-sm text-gray-500 line-through font-orbitron block">
+                      ₱{originalTotal.toFixed(2)}
+                    </span>
+                  )}
+                </span>
               </div>
             </div>
           </div>
@@ -610,11 +675,6 @@ function QRPhPaymentContent() {
                       }}>
                         ₱{price?.toFixed(2)}
                       </p>
-                      {plan === 'monthly' && months > 1 && (
-                        <p className="text-sm text-gray-600 mt-2 font-orbitron">
-                          {months} {months === 1 ? 'month' : 'months'} × ₱{basePrice?.toFixed(2)}
-                        </p>
-                      )}
                       {plan === 'lifetime' && (
                         <p className="text-sm text-gray-600 mt-2 font-orbitron">
                           One-time payment

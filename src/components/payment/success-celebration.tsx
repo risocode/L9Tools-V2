@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { GamingConfetti } from "@/components/ui/gaming-confetti";
 import { Award, Home, User, Star } from "lucide-react";
+import { getSuccessPlanTitle } from "@/lib/subscription-plans";
 
 interface SuccessCelebrationProps {
   plan: string;
@@ -22,19 +23,7 @@ const proFeatures = [
 export function SuccessCelebration({ plan, months = 1 }: SuccessCelebrationProps) {
   const router = useRouter();
   
-  // Generate plan display name
-  const getPlanDisplayName = () => {
-    if (plan === 'lifetime') {
-      return 'Lifetime Plan Unlocked';
-    } else if (plan === 'monthly') {
-      if (months === 1) {
-        return '1 Month Plan Unlocked';
-      } else {
-        return `${months} Months Plan Unlocked`;
-      }
-    }
-    return 'Plan Unlocked';
-  };
+  const planDisplayName = getSuccessPlanTitle(plan, months);
 
   return (
     <>
@@ -104,7 +93,7 @@ export function SuccessCelebration({ plan, months = 1 }: SuccessCelebrationProps
               </div>
             </div>
             <p className="text-sm sm:text-base text-gray-300 font-orbitron">
-              {getPlanDisplayName()}
+              {planDisplayName}
             </p>
           </motion.div>
 

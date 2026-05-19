@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
+import { getPaymentDescription, isSubscriptionPlanId } from '@/lib/subscription-plans';
 
 /**
  * Create a PayMongo payment intent for GCash payment
@@ -98,7 +99,9 @@ export async function POST(request: NextRequest) {
             amount: amountInCents,
             currency: 'PHP',
             payment_method_allowed: ['qrph'], // QRPh payment method
-            description: `L9 Tools ${plan} subscription - ${months} month(s)`,
+            description: isSubscriptionPlanId(plan)
+              ? getPaymentDescription(plan)
+              : `L9 Tools ${plan} subscription - ${months} month(s)`,
             metadata: {
               user_id: user.id,
               plan: plan,

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import PaymentLayout from "../payment-layout";
 import Link from "next/link";
 import { Mail } from "lucide-react";
+import { getPlanLabel, isSubscriptionPlanId } from "@/lib/subscription-plans";
 
 const DiscordIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg
@@ -48,7 +49,7 @@ function GCashPaymentContent() {
       <div className="space-y-6">
           {!isDonation && price && (
               <div className="rounded-lg border-2 border-primary/20 bg-black/30 p-4 text-center">
-                  <p className="font-bold text-lg">Plan: <span className="text-primary capitalize">{plan}</span></p>
+                  <p className="font-bold text-lg">Plan: <span className="text-primary">{isSubscriptionPlanId(plan) ? getPlanLabel(plan) : plan}</span></p>
                   <p className="font-bold text-2xl">Amount to Pay: <span className="text-primary">₱{price}</span></p>
               </div>
           )}
