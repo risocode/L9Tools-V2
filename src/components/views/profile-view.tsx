@@ -2,11 +2,9 @@
 "use client";
 
 import { useAuth } from "@/context/auth-context";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Crown, Star, User, Hash, Calendar, Gem, Bell, Settings, Trash2, MailX } from "lucide-react";
+import { Crown, Star, User, Hash, Calendar, Gem, Bell, Settings, Trash2, MailX, ShieldCheck, Clock } from "lucide-react";
 import Link from "next/link";
 import Loader from "@/components/ui/loader";
 import { format } from "date-fns";
@@ -89,11 +87,17 @@ export function ProfileView() {
         }
     }
 
+    const isLifetimeOrAdmin = user.subscription_tier === 'lifetime' || user.is_admin;
     const expiresDate = user.subscription_expires_at ? new Date(user.subscription_expires_at) : null;
-    const isExpired = expiresDate ? new Date() > expiresDate : false;
+    const isExpired = !isLifetimeOrAdmin && expiresDate ? new Date() > expiresDate : false;
+    const tierLabel = user.is_admin ? 'Admin' : (user.subscription_tier || 'free');
+    const displayName = user.display_name || user.username || 'L9 Player';
+    const subscriptionDateLabel = isLifetimeOrAdmin ? 'Access' : isExpired ? 'Expired' : 'Expires On';
+    const subscriptionDateValue = isLifetimeOrAdmin ? 'Never' : expiresDate ? format(expiresDate, 'MMM d, yyyy') : 'N/A';
+    const notificationStatus = notificationPref ? 'Enabled' : 'Disabled';
 
     return (
-        <div className="profile-card w-full max-w-2xl my-auto mx-auto">
+        <div className="profile-card w-full max-w-5xl my-auto mx-auto">
             <header className="profile-header">
                 <div className="profile-banner">
                     <div className="profile-banner-border" />
@@ -101,75 +105,104 @@ export function ProfileView() {
                 <div className="profile-avatar-container">
                     <div className="profile-avatar-ring" />
                      <Avatar className={cn("profile-avatar", getAvatarBorderClass(user.subscription_tier, user.is_admin))}>
-                        <AvatarImage src={user.user_photo_url || ''} alt={user.display_name || 'User'} />
+                        <AvatarImage src={user.user_photo_url || ''} alt={displayName} />
                         <AvatarFallback className="text-4xl bg-gray-800">{fallback}</AvatarFallback>
                     </Avatar>
                 </div>
                  <div className="profile-name-container pt-16">
                     <h1 className="profile-username flex items-center justify-center gap-2">
-                        {user.display_name || user.username}
+                        {displayName}
                         {user.is_admin && <Crown className="h-5 w-5 text-red-400" />}
                     </h1>
                     <p className="profile-email">{user.email}</p>
+                    <div className={cn("profile-tier-pill mt-4", getTierPillClass(user.subscription_tier))}>
+                        {user.is_admin && <Crown className="h-4 w-4 mr-2" />}
+                        {user.subscription_tier === 'lifetime' && <Gem className="h-4 w-4 mr-2"/>}
+                        {tierLabel}
+                    </div>
                 </div>
             </header>
             <div className="profile-content">
-
-                <Separator className="profile-divider my-4" />
-
-                <div className="px-4 py-2 space-y-4">
-                    <h3 className="profile-section-title"><User className="mr-3" /> Profile Details</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-                       <div className="profile-detail-item">
-                           <p className="profile-detail-label"><User className="h-4 w-4" />Username</p>
-                           <p className="profile-detail-value-cyan">{user.username || 'Not set'}</p>
-                       </div>
-                       <div className="profile-detail-item">
-                           <p className="profile-detail-label"><Hash className="h-4 w-4" />User ID</p>
-                           <p className="profile-detail-value">{user.short_id}</p>
-                       </div>
-                       <div className="profile-detail-item col-span-1 md:col-span-2">
-                           <p className="profile-detail-label"><Calendar className="h-4 w-4" />Member Since</p>
-                           <p className="profile-detail-value-gold">{format(new Date(user.created_at), 'MMMM d, yyyy')}</p>
-                       </div>
+                <section className="profile-section">
+                    <h3 className="profile-section-title"><User className="mr-3" /> Account Overview</h3>
+                    <div className="profile-status-grid">
+                        <div className="profile-stat-card">
+                            <div className="profile-stat-icon profile-stat-icon-cyan"><User className="h-5 w-5" /></div>
+                            <div>
+                                <p className="profile-detail-label">Username</p>
+                                <p className="profile-detail-value-cyan">{user.username || 'Not set'}</p>
+                            </div>
+                        </div>
+                        <div className="profile-stat-card">
+                            <div className="profile-stat-icon profile-stat-icon-purple"><Hash className="h-5 w-5" /></div>
+                            <div>
+                                <p className="profile-detail-label">User ID</p>
+                                <p className="profile-detail-value">{user.short_id}</p>
+                            </div>
+                        </div>
+                        <div className="profile-stat-card">
+                            <div className="profile-stat-icon profile-stat-icon-gold"><Calendar className="h-5 w-5" /></div>
+                            <div>
+                                <p className="profile-detail-label">Member Since</p>
+                                <p className="profile-detail-value-gold">{format(new Date(user.created_at), 'MMMM d, yyyy')}</p>
+                            </div>
+                        </div>
+                        <div className="profile-stat-card">
+                            <div className="profile-stat-icon profile-stat-icon-cyan"><Bell className="h-5 w-5" /></div>
+                            <div>
+                                <p className="profile-detail-label">Boss Alerts</p>
+                                <p className={cn("profile-detail-value", notificationPref && "profile-detail-value-cyan")}>{notificationStatus}</p>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </section>
                 
-                <Separator className="profile-divider my-4" />
-                
-                <div className="px-4 py-2 space-y-4">
+                <section className="profile-section">
                      <h3 className="profile-section-title"><Star className="mr-3 text-yellow-400" /> Subscription</h3>
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
-                        <div className="profile-detail-item">
-                            <p className="profile-detail-label">Current Tier</p>
+                     <div className="profile-subscription-panel">
+                        <div className="flex items-start gap-4">
+                            <div className="profile-stat-icon profile-stat-icon-gold">
+                                {user.is_admin ? <Crown className="h-5 w-5" /> : user.subscription_tier === 'lifetime' ? <Gem className="h-5 w-5" /> : <ShieldCheck className="h-5 w-5" />}
+                            </div>
+                            <div className="min-w-0">
+                                <p className="profile-detail-label">Current Tier</p>
+                                <h4 className="profile-subscription-title">{tierLabel}</h4>
+                                <p className="profile-muted">
+                                    {user.is_admin
+                                        ? 'Administrator access includes all premium features.'
+                                        : user.subscription_tier === 'lifetime'
+                                            ? 'Lifetime access is active and never expires.'
+                                            : user.subscription_tier === 'pro' && !isExpired
+                                                ? 'Your Pro benefits are active.'
+                                                : 'Upgrade to remove ads and unlock premium boss tools.'}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="profile-subscription-side">
                             <div className={cn("profile-tier-pill", getTierPillClass(user.subscription_tier))}>
                                 {user.is_admin && <Crown className="h-4 w-4 mr-2" />}
                                 {user.subscription_tier === 'lifetime' && <Gem className="h-4 w-4 mr-2"/>}
-                                {user.is_admin ? 'Admin' : (user.subscription_tier || 'free')}
+                                {tierLabel}
                             </div>
-                        </div>
-                        <div className="profile-detail-item text-left sm:text-right">
-                            <p className="profile-detail-label sm:justify-end">
-                                {isExpired ? 'Expired' : 'Expires On'}
-                            </p>
                             <p className={cn(
-                                "font-semibold text-lg",
+                                "profile-subscription-date",
                                 isExpired ? "profile-expires-expired" : "profile-expires-active"
                             )}>
-                                {expiresDate 
-                                    ? format(expiresDate, 'MMM d, yyyy') 
-                                    : (user.subscription_tier === 'lifetime' || user.is_admin ? 'Never' : 'N/A')
-                                }
+                                <Clock className="h-4 w-4" />
+                                {subscriptionDateLabel}: {subscriptionDateValue}
                             </p>
+                            {(!user.subscription_tier || user.subscription_tier === 'free' || isExpired) && !user.is_admin && (
+                                <Button asChild className="profile-upgrade-button">
+                                    <Link href="/subscribe">Upgrade / Manage Plan</Link>
+                                </Button>
+                            )}
                         </div>
                      </div>
-                </div>
+                </section>
 
-                <Separator className="profile-divider my-4" />
-
-                 <div className="px-4 py-2 space-y-4">
+                 <section className="profile-section">
                     <h3 className="profile-section-title"><Bell className="mr-3 text-cyan-300" /> Notifications</h3>
-                    <div className="flex items-center justify-between rounded-lg p-4 bg-black/30">
+                    <div className="profile-action-card profile-action-card-cyan">
                         <div>
                             <Label htmlFor="notifications-switch" className="font-semibold text-base text-white">Boss Spawn Alerts</Label>
                             <p className="text-sm text-muted-foreground">Receive browser notifications 5 minutes before a boss spawns and when it becomes active.</p>
@@ -181,15 +214,13 @@ export function ProfileView() {
                             disabled={isSaving}
                         />
                     </div>
-                </div>
+                </section>
 
-                <Separator className="profile-divider my-4" />
-
-                <div className="px-4 py-2 space-y-4">
+                <section className="profile-section pb-6">
                     <h3 className="profile-section-title"><Settings className="mr-3 text-yellow-400" /> Account Settings</h3>
                     <div className="space-y-3">
                         <Link href="/unsubscribe" className="block">
-                            <div className="flex items-center justify-between rounded-lg p-4 bg-black/30 border-2 border-yellow-400/30 hover:border-yellow-400/60 transition-colors">
+                            <div className="profile-action-card profile-action-card-gold">
                                 <div className="flex items-center gap-3">
                                     <MailX className="h-5 w-5 text-yellow-400" />
                                     <div>
@@ -200,7 +231,7 @@ export function ProfileView() {
                             </div>
                         </Link>
                         <Link href="/unsubscribe" className="block">
-                            <div className="flex items-center justify-between rounded-lg p-4 bg-black/30 border-2 border-red-500/30 hover:border-red-500/60 transition-colors">
+                            <div className="profile-action-card profile-action-card-danger">
                                 <div className="flex items-center gap-3">
                                     <Trash2 className="h-5 w-5 text-red-500" />
                                     <div>
@@ -211,11 +242,7 @@ export function ProfileView() {
                             </div>
                         </Link>
                     </div>
-                </div>
-
-                <div className="flex justify-center pt-6 pb-4">
-                    <Button className="profile-update-button" disabled>Update Profile</Button>
-                </div>
+                </section>
             </div>
         </div>
     );

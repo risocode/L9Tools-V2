@@ -8,11 +8,11 @@
  */
 
 .profile-card {
-  @apply bg-gradient-to-b from-[#0d1117] to-[#15202b] border-cyan-300/30 rounded-lg shadow-2xl shadow-cyan-500/10;
+  @apply relative bg-gradient-to-b from-[#0d1117] to-[#15202b] border border-cyan-300/30 rounded-xl shadow-2xl shadow-cyan-500/10 overflow-hidden;
 }
 .profile-card::before {
   content: '';
-  @apply absolute -inset-px rounded-lg bg-gradient-to-r from-cyan-400/50 to-purple-500/50 opacity-50 blur;
+  @apply absolute -inset-px rounded-xl bg-gradient-to-r from-cyan-400/50 to-purple-500/50 opacity-50 blur;
   z-index: -1;
 }
 
@@ -21,7 +21,7 @@
 }
 
 .profile-banner {
-  @apply h-36 w-full bg-cover bg-center rounded-t-lg relative overflow-hidden;
+  @apply h-36 w-full bg-cover bg-center rounded-t-xl relative overflow-hidden;
   background-image: url('/l9rs/bg_header.jpg');
 }
 
@@ -48,15 +48,15 @@
 }
 
 .profile-name-container {
-  @apply text-center;
+  @apply text-center px-4 max-w-full;
 }
 
 .profile-content {
-  @apply pt-16;
+  @apply pt-8 px-4 sm:px-6 space-y-6;
 }
 
 .profile-username {
-  @apply font-orbitron uppercase text-3xl font-bold text-white;
+  @apply font-orbitron uppercase text-2xl sm:text-3xl font-bold text-white break-words;
   text-shadow: 0 0 8px rgba(0, 229, 255, 0.7);
 }
 .profile-username:hover {
@@ -64,7 +64,7 @@
 }
 
 .profile-email {
-  @apply text-base text-sm text-[#c0c0c0];
+  @apply text-sm sm:text-base text-[#c0c0c0] break-all;
 }
 
 .profile-divider {
@@ -73,7 +73,7 @@
 }
 
 .profile-section-title {
-  @apply font-orbitron text-xl font-bold uppercase text-white relative pb-2;
+  @apply font-orbitron text-lg sm:text-xl font-bold uppercase text-white relative pb-2 flex items-center;
 }
 .profile-section-title::after {
   content: '';
@@ -91,14 +91,14 @@
 }
 
 .profile-detail-value {
-  @apply text-lg font-semibold text-[#a6a6a6] font-mono;
+  @apply text-base sm:text-lg font-semibold text-[#a6a6a6] font-mono break-words;
 }
 .profile-detail-value-cyan {
-  @apply text-lg font-semibold text-[#00e5ff];
+  @apply text-base sm:text-lg font-semibold text-[#00e5ff] break-words;
   text-shadow: 0 0 6px rgba(0, 229, 255, 0.8);
 }
 .profile-detail-value-gold {
-   @apply text-lg font-semibold text-[#FFD700];
+  @apply text-base sm:text-lg font-semibold text-[#FFD700] break-words;
   text-shadow: 0 0 6px rgba(255, 215, 0, 0.8);
 }
 
@@ -130,7 +130,7 @@
 }
 
 .profile-tier-admin {
-  @apply bg-purple-500/20 border-purple-500 text-purple-400;
+  @apply bg-purple-500/20 border border-purple-500 text-purple-400;
    box-shadow: 0 0 8px #8B5CF699;
 }
 .profile-tier-admin:hover {
@@ -147,19 +147,104 @@
   text-shadow: 0 0 4px #ff4d4d80;
 }
 
-.profile-update-button {
-  @apply bg-[#15202b] border border-[#00e5ff] rounded-md text-base font-bold text-white;
-  box-shadow: 0 0 8px #00e5ff66;
-  transition: all 0.3s;
+.profile-section {
+  @apply px-0 py-1 space-y-4;
 }
 
-.profile-update-button:hover:not(:disabled) {
-  box-shadow: 0 0 15px #00e5ff;
-  background-color: #1a2a3a;
+.profile-status-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3;
 }
 
-.profile-update-button:disabled {
-  @apply bg-[#15202b]/50 border-[#00e5ff]/30 text-white/50;
-  box-shadow: none;
-  cursor: not-allowed;
+.profile-stat-card {
+  @apply flex items-start gap-3 rounded-xl border border-cyan-300/15 bg-black/30 p-4 transition-colors;
+}
+
+.profile-stat-card:hover {
+  @apply border-cyan-300/35 bg-black/40;
+}
+
+.profile-stat-icon {
+  @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border;
+}
+
+.profile-stat-icon-cyan {
+  @apply border-cyan-300/40 bg-cyan-300/10 text-cyan-300;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+}
+
+.profile-stat-icon-gold {
+  @apply border-yellow-400/40 bg-yellow-400/10 text-yellow-400;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+.profile-stat-icon-purple {
+  @apply border-purple-400/40 bg-purple-400/10 text-purple-300;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
+}
+
+.profile-subscription-panel {
+  @apply flex flex-col gap-5 rounded-xl border border-yellow-400/20 bg-black/30 p-4 sm:flex-row sm:items-center sm:justify-between;
+}
+
+.profile-subscription-title {
+  @apply font-cinzel text-2xl font-bold capitalize text-white;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.45);
+}
+
+.profile-subscription-side {
+  @apply flex flex-col items-start gap-3 sm:items-end;
+}
+
+.profile-subscription-date {
+  @apply inline-flex items-center gap-2 text-sm font-semibold;
+}
+
+.profile-muted {
+  @apply mt-1 max-w-xl text-sm text-muted-foreground;
+}
+
+.profile-upgrade-button {
+  @apply bg-yellow-500 text-black font-bold hover:bg-yellow-400;
+}
+
+.profile-action-card {
+  @apply flex items-center justify-between gap-4 rounded-xl border-2 bg-black/30 p-4 transition-colors;
+}
+
+.profile-action-card-cyan {
+  @apply border-cyan-300/20 hover:border-cyan-300/40;
+}
+
+.profile-action-card-gold {
+  @apply border-yellow-400/30 hover:border-yellow-400/60;
+}
+
+.profile-action-card-danger {
+  @apply border-red-500/30 hover:border-red-500/60;
+}
+
+@media (max-width: 640px) {
+  .profile-card {
+    @apply rounded-lg;
+  }
+
+  .profile-banner {
+    @apply h-28 rounded-t-lg;
+  }
+
+  .profile-avatar-container {
+    @apply top-14 h-28 w-28;
+  }
+
+  .profile-name-container {
+    @apply pt-14;
+  }
+
+  .profile-content {
+    @apply pt-6 px-3 space-y-5;
+  }
+
+  .profile-action-card {
+    @apply items-start;
+  }
 }
