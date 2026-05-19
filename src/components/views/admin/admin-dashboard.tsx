@@ -11,6 +11,7 @@ import { refreshUserStatsCache } from '@/app/actions/refresh-user-stats-cache';
 import { refreshUserStatus } from '@/app/actions/refresh-user-status';
 import { upgradeUsersToPro, getUpgradeEligibleCount } from '@/app/actions/upgrade-users-pro';
 import { getAdminAnalytics } from '@/app/actions/get-admin-analytics';
+import { getAdminOnlineCount } from '@/app/actions/get-admin-online-count';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AccessDenied } from '../access-denied';
@@ -87,17 +88,30 @@ export function AdminDashboard() {
   const { toast } = useToast();
 
   const presenceEnabled = !isDataLoading && !isAuthLoading && Boolean(user && isUserAdmin(user));
-  const { onlineUsersRef, onlineCountRef, sortProfilesByOnlineStatus } = useAdminPresence(
+  const { onlineUsersRef, presenceOnlineCount, sortProfilesByOnlineStatus } = useAdminPresence(
     presenceEnabled,
     setPaginatedProfiles
   );
 
+  const fetchOnlineCount = useCallback(async () => {
+    const { count, error } = await getAdminOnlineCount();
+    if (!error) {
+      setOnlineCount(count);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isDataLoading && user && isUserAdmin(user)) {
+      fetchOnlineCount();
+    }
+  }, [isDataLoading, user, fetchOnlineCount, presenceOnlineCount]);
+
   useEffect(() => {
     const interval = setInterval(() => {
-      setOnlineCount(onlineCountRef.current);
-    }, 2000);
+      if (user && isUserAdmin(user)) fetchOnlineCount();
+    }, 30000);
     return () => clearInterval(interval);
-  }, [onlineCountRef]);
+  }, [user, fetchOnlineCount]);
 
   useEffect(() => {
     if (searchParams.get('error') === 'unauthorized') {
@@ -176,6 +190,8 @@ export function AdminDashboard() {
       const analyticsResult = await getAdminAnalytics();
       if (analyticsResult.data) setAnalytics(analyticsResult.data);
 
+      await fetchOnlineCount();
+
       if (profilesResult.error) {
         setError(profilesResult.error);
         setPaginatedProfiles([]);
@@ -188,7 +204,7 @@ export function AdminDashboard() {
     } finally {
       setIsDataLoading(false);
     }
-  }, [sortProfilesByOnlineStatus]);
+  }, [sortProfilesByOnlineStatus, fetchOnlineCount]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -251,6 +267,7 @@ export function AdminDashboard() {
         )
       );
       toast({ title: 'Status refreshed', description: `Updated ${result.data.length} user(s).` });
+      await fetchOnlineCount();
     } else {
       toast({ variant: 'destructive', title: 'Refresh failed', description: result.error ?? undefined });
     }
@@ -291,7 +308,11 @@ export function AdminDashboard() {
       setIsUpgradeDialogOpen(false);
       setUpgradeMonths(1);
       setUpgradeConfirmText('');
-      await Promise.all([fetchStats(), fetchProfiles(currentPage, debouncedSearchQuery, tierFilter, extraFilter)]);
+      await Promise.all([
+        fetchStats(),
+        fetchProfiles(currentPage, debouncedSearchQuery, tierFilter, extraFilter),
+        fetchOnlineCount(),
+      ]);
     } else {
       toast({ variant: 'destructive', title: 'Upgrade failed', description: result.message });
     }
@@ -369,7 +390,7 @@ export function AdminDashboard() {
             <Button onClick={() => setIsSendEmailDialogOpen(true)}>Open email dialog</Button>
           </div>
         }
-        maintenance={<AdminMaintenancePanel onStatsRefresh={fetchStats} />}
+        maintenance={<AdminMaintenancePanel onStatsRefresh={() => { fetchStats(); fetchOnlineCount(); }} />}
         content={<AdminContentPanel />}
       />
 

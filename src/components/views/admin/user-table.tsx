@@ -18,6 +18,7 @@ import { useIsMobile } from '@/hooks/use-is-mobile';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAuth } from '@/context/auth-context';
 import { getEffectiveSubscriptionTier } from '@/lib/subscription-utils';
+import { isProfileAway, isProfileOnline } from '@/lib/admin-online-status';
 
 interface UserTableProps {
     profiles: Profile[];
@@ -98,30 +99,9 @@ const ExpiresCell = ({ profile }: { profile: Profile }) => {
 };
 
 const UserStatusCell = ({ profile, isRealtimeOnline }: { profile: Profile; isRealtimeOnline?: boolean }) => {
-    // Prioritize real-time presence data over database/time-based status
-    // Real-time presence is most accurate for current online status
-    
-    // Determine if user is considered "online" based on last sign-in time (fallback)
-    const ONLINE_THRESHOLD_MS = 10 * 60 * 1000; // 10 minutes in milliseconds
-    
-    // Check real-time presence first (most accurate)
-    const isOnlineViaPresence = isRealtimeOnline === true;
-    
-    // Check explicit online_status from database
-    const hasExplicitOnlineStatus = profile.online_status === 'online';
-    
-    // Calculate time-based online status (fallback if no presence data)
-    let isTimeBasedOnline = false;
-    let lastSeenDate: Date | null = null;
-    
-    if (profile.last_sign_in_at) {
-        lastSeenDate = new Date(profile.last_sign_in_at);
-        const timeSinceLastSignIn = Date.now() - lastSeenDate.getTime();
-        isTimeBasedOnline = timeSinceLastSignIn <= ONLINE_THRESHOLD_MS;
-    }
-    
-    // Show "Online" if real-time presence OR explicit status OR signed in recently
-    const isOnline = isOnlineViaPresence || hasExplicitOnlineStatus || isTimeBasedOnline;
+    const lastSeenDate = profile.last_sign_in_at ? new Date(profile.last_sign_in_at) : null;
+    const isOnline = isProfileOnline(profile, isRealtimeOnline);
+    const isAway = isProfileAway(profile, isRealtimeOnline);
     
     if (isOnline) {
         return (
@@ -130,15 +110,25 @@ const UserStatusCell = ({ profile, isRealtimeOnline }: { profile: Profile; isRea
                     <TooltipTrigger>
                         <div className="flex items-center gap-2">
                             <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                {!isAway && (
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                )}
+                                <span
+                                    className={cn(
+                                        'relative inline-flex rounded-full h-2 w-2',
+                                        isAway ? 'bg-yellow-500' : 'bg-green-500'
+                                    )}
+                                />
                             </span>
-                            <span className="text-xs text-green-400">Online</span>
+                            <span className={cn('text-xs', isAway ? 'text-yellow-400' : 'text-green-400')}>
+                                {isAway ? 'Away' : isRealtimeOnline ? 'Live' : 'Online'}
+                            </span>
                         </div>
                     </TooltipTrigger>
                     {lastSeenDate && (
                         <TooltipContent>
                             <p>Last seen: {format(lastSeenDate, 'MMM d, yyyy, h:mm a')}</p>
+                            {isRealtimeOnline && <p className="text-muted-foreground">Active on site now</p>}
                         </TooltipContent>
                     )}
                 </Tooltip>
@@ -146,7 +136,6 @@ const UserStatusCell = ({ profile, isRealtimeOnline }: { profile: Profile; isRea
         );
     }
 
-    // No sign-in history
     if (!profile.last_sign_in_at) {
         return (
             <TooltipProvider>

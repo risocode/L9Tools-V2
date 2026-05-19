@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase-client';
 import { PRESENCE_CHANNEL } from '@/lib/admin-constants';
 import type { Profile } from '@/types';
-import { ONLINE_THRESHOLD_MS } from '@/lib/admin-constants';
+import { isProfileOnline } from '@/lib/admin-online-status';
 
 export function useAdminPresence(
   enabled: boolean,
@@ -13,21 +13,13 @@ export function useAdminPresence(
 ) {
   const presenceChannelRef = useRef<RealtimeChannel | null>(null);
   const onlineUsersRef = useRef<Set<string>>(new Set());
-  const onlineCountRef = useRef(0);
+  const [presenceOnlineCount, setPresenceOnlineCount] = useState(0);
+  const [, setPresenceTick] = useState(0);
 
   const sortProfilesByOnlineStatus = useCallback((profiles: Profile[]): Profile[] => {
     return [...profiles].sort((a, b) => {
-      const isAOnline =
-        onlineUsersRef.current.has(a.id) ||
-        a.online_status === 'online' ||
-        (a.last_sign_in_at &&
-          Date.now() - new Date(a.last_sign_in_at).getTime() <= ONLINE_THRESHOLD_MS);
-
-      const isBOnline =
-        onlineUsersRef.current.has(b.id) ||
-        b.online_status === 'online' ||
-        (b.last_sign_in_at &&
-          Date.now() - new Date(b.last_sign_in_at).getTime() <= ONLINE_THRESHOLD_MS);
+      const isAOnline = isProfileOnline(a, onlineUsersRef.current.has(a.id));
+      const isBOnline = isProfileOnline(b, onlineUsersRef.current.has(b.id));
 
       if (isAOnline && !isBOnline) return -1;
       if (!isAOnline && isBOnline) return 1;
@@ -43,6 +35,12 @@ export function useAdminPresence(
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
   }, []);
+
+  const bumpPresence = useCallback(() => {
+    setPresenceOnlineCount(onlineUsersRef.current.size);
+    setPresenceTick((t) => t + 1);
+    setPaginatedProfiles((prev) => sortProfilesByOnlineStatus(prev));
+  }, [setPaginatedProfiles, sortProfilesByOnlineStatus]);
 
   useEffect(() => {
     if (!enabled) return;
@@ -60,58 +58,28 @@ export function useAdminPresence(
         });
       });
       onlineUsersRef.current = onlineIds;
-      onlineCountRef.current = onlineIds.size;
-
-      setPaginatedProfiles((prev) => {
-        const updated = prev.map((profile) => ({
-          ...profile,
-          online_status: onlineIds.has(profile.id) ? ('online' as const) : profile.online_status,
-        }));
-        return sortProfilesByOnlineStatus(updated);
-      });
+      bumpPresence();
     };
 
     channel
       .on('presence', { event: 'sync' }, applyPresence)
-      .on('presence', { event: 'join' }, ({ newPresences }) => {
-        (newPresences as { id?: string; status?: string }[]).forEach((presence) => {
-          if (presence.id && (presence.status === 'online' || presence.status === 'away')) {
-            onlineUsersRef.current.add(presence.id);
-          }
-        });
-        onlineCountRef.current = onlineUsersRef.current.size;
-        setPaginatedProfiles((prev) => {
-          const updated = prev.map((profile) =>
-            onlineUsersRef.current.has(profile.id)
-              ? { ...profile, online_status: 'online' as const }
-              : profile
-          );
-          return sortProfilesByOnlineStatus(updated);
-        });
-      })
-      .on('presence', { event: 'leave' }, ({ leftPresences }) => {
-        (leftPresences as { id?: string }[]).forEach((presence) => {
-          if (presence.id) onlineUsersRef.current.delete(presence.id);
-        });
-        onlineCountRef.current = onlineUsersRef.current.size;
-        setPaginatedProfiles((prev) => {
-          const updated = prev.map((profile) =>
-            onlineUsersRef.current.has(profile.id)
-              ? profile
-              : { ...profile, online_status: 'offline' as const }
-          );
-          return sortProfilesByOnlineStatus(updated);
-        });
-      })
-      .subscribe();
+      .on('presence', { event: 'join' }, applyPresence)
+      .on('presence', { event: 'leave' }, applyPresence)
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          applyPresence();
+        }
+      });
 
     presenceChannelRef.current = channel;
 
     return () => {
       channel.unsubscribe();
       presenceChannelRef.current = null;
+      onlineUsersRef.current = new Set();
+      setPresenceOnlineCount(0);
     };
-  }, [enabled, setPaginatedProfiles, sortProfilesByOnlineStatus]);
+  }, [enabled, bumpPresence]);
 
-  return { onlineUsersRef, onlineCountRef, sortProfilesByOnlineStatus };
+  return { onlineUsersRef, presenceOnlineCount, sortProfilesByOnlineStatus };
 }
