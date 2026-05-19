@@ -2,14 +2,35 @@
 "use client";
 
 import Image from "next/image";
-import { Clock, MapPin, RefreshCw, Star } from "lucide-react";
+import { Clock, MapPin, RefreshCw } from "lucide-react";
 import type { Boss } from "@/types";
 import { ProcessedBoss, BossTimer } from "./boss-timer";
 import { Button } from "@/components/ui/button";
 import React from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Table, TableBody } from "../ui/table";
 import { cn } from "@/lib/utils";
+
+const BOSS_FALLBACK_IMAGE = "/l9rs/avatar.png";
+
+function BossPortrait({ boss }: { boss: ProcessedBoss }) {
+  const [imageSrc, setImageSrc] = React.useState(boss.image || BOSS_FALLBACK_IMAGE);
+
+  React.useEffect(() => {
+    setImageSrc(boss.image || BOSS_FALLBACK_IMAGE);
+  }, [boss.image]);
+
+  return (
+    <Image
+      src={imageSrc}
+      alt={boss.name}
+      width={80}
+      height={100}
+      className="object-contain px-2 pt-4 pb-2"
+      data-ai-hint="fantasy character"
+      onError={() => setImageSrc(BOSS_FALLBACK_IMAGE)}
+    />
+  );
+}
 
 interface BossTableProps {
   bosses: ProcessedBoss[];
@@ -48,14 +69,7 @@ export const BossTable = React.memo(function BossTable({
                           priority
                         />
                         <div className="absolute inset-0 w-[80px] h-[90px] overflow-hidden">
-                          <Image 
-                            src={boss.image}
-                            alt={boss.name} 
-                            width={80}
-                            height={100}
-                            className="object-contain px-2 pt-4 pb-2" 
-                            data-ai-hint="fantasy character" 
-                          />
+                          <BossPortrait boss={boss} />
                         </div>
                     </div>
                     <div className="text-shadow-soft">

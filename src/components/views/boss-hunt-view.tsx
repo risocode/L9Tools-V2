@@ -338,9 +338,14 @@ export function BossHuntView({ initialBosses }: BossHuntViewProps) {
           </div>
 
           {/* Boss List */}
+          {isBossDataLoading && (
+            <div className="flex items-center justify-center h-[calc(100%-150px)] text-center text-muted-foreground p-8">
+              Loading boss timers...
+            </div>
+          )}
           {processedBosses.length === 0 && !isBossDataLoading && (
             <div className="flex items-center justify-center h-[calc(100%-150px)] text-center text-muted-foreground p-8">
-              No bosses match the current filter.
+              {searchQuery ? "No bosses match your search." : "No bosses match the current filter."}
             </div>
           )}
           <div className="bg-black/60">

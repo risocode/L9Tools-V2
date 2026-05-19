@@ -118,40 +118,44 @@ export function useReportDialog(bosses: ProcessedBoss[], onGuestReportReset: (bo
             return;
         }
 
+        const openReportDialog = () => {
+            const timeZone = 'Asia/Manila';
+            
+            let reportData = bosses
+              .filter(boss => boss.respawnTime !== null)
+              .map(boss => {
+                return {
+                  id: boss.id,
+                  name: boss.name,
+                  level: boss.level,
+                  spawnTime: boss.isSpawned ? 'Active' : formatInTimeZone(toZonedTime(boss.respawnTime!, timeZone), timeZone, 'MMM d, EEE, hh:mm a'),
+                  spawnDate: boss.respawnTime!,
+                  isFixedSpawn: boss.isFixedSpawn,
+                };
+              });
+
+            if (filter === 'today') {
+              reportData = reportData.filter(b => isToday(toZonedTime(b.spawnDate, timeZone)) || b.spawnTime === 'Active');
+            }
+              
+            reportData.sort((a, b) => {
+                if (a.spawnTime === 'Active' && b.spawnTime !== 'Active') return -1;
+                if (a.spawnTime !== 'Active' && b.spawnTime === 'Active') return 1;
+                return a.spawnDate.getTime() - b.spawnDate.getTime();
+            });
+              
+            setReportBosses(reportData);
+            setIsReportDialogOpen(true);
+        };
+
         // Show ad only for guest/free; no ads for Pro/Lifetime/Admin
         if (!isProUser) {
-            openAdDialog();
+            openAdDialog(undefined, openReportDialog);
+            return;
         }
-        
-        const timeZone = 'Asia/Manila';
-        
-        let reportData = bosses
-          .filter(boss => boss.respawnTime !== null)
-          .map(boss => {
-            return {
-              id: boss.id,
-              name: boss.name,
-              level: boss.level,
-              spawnTime: boss.isSpawned ? 'Active' : formatInTimeZone(toZonedTime(boss.respawnTime!, timeZone), timeZone, 'MMM d, EEE, hh:mm a'),
-              spawnDate: boss.respawnTime!,
-              isFixedSpawn: boss.isFixedSpawn,
-            };
-          });
 
-        if (filter === 'today') {
-          const zonedNow = toZonedTime(new Date(), timeZone);
-          reportData = reportData.filter(b => isToday(toZonedTime(b.spawnDate, timeZone)) || b.spawnTime === 'Active');
-        }
-          
-        reportData.sort((a, b) => {
-            if (a.spawnTime === 'Active' && b.spawnTime !== 'Active') return -1;
-            if (a.spawnTime !== 'Active' && b.spawnTime === 'Active') return 1;
-            return a.spawnDate.getTime() - b.spawnDate.getTime();
-        });
-          
-        setReportBosses(reportData);
-        setIsReportDialogOpen(true);
-    }, [bosses, user, checkLimit, openAdDialog]);
+        openReportDialog();
+    }, [bosses, checkLimit, isProUser, openAdDialog]);
 
     const handleConfirmSendReport = async (finalBosses: ReportBoss[], webhookUrl: string) => {
         if (!webhookUrl) {

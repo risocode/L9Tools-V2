@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getRespawnDate, getNextFixedSpawn } from '@/lib/time-utils';
 import type { Boss } from '@/types';
 import { ProcessedBoss } from '@/components/views/boss-timer';
@@ -18,11 +18,16 @@ export function useProcessedBosses(
   searchQuery: string,
   user: User | null
 ) {
+  const [now, setNow] = useState(() => new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 30 * 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const processedBosses = useMemo(() => {
     if (!bosses) return [];
     
-    const now = new Date();
     const oneHourInMillis = 60 * 60 * 1000;
     
     const processed = bosses
@@ -134,7 +139,7 @@ export function useProcessedBosses(
     });
 
     return sorted;
-  }, [bosses, filterType, searchQuery, user]);
+  }, [bosses, filterType, now, searchQuery, user]);
 
   return { processedBosses };
 }

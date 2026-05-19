@@ -2,7 +2,7 @@
 "use client";
 
 import Image from "next/image";
-import { Clock, MapPin, RefreshCw, Star } from "lucide-react";
+import { Clock, MapPin, RefreshCw } from "lucide-react";
 import type { Boss } from "@/types";
 import { ProcessedBoss, BossTimer } from "./boss-timer";
 import {
@@ -14,8 +14,29 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "../ui/scroll-area";
 import React from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { cn } from "@/lib/utils";
+
+const BOSS_FALLBACK_IMAGE = "/l9rs/avatar.png";
+
+function BossPortrait({ boss }: { boss: ProcessedBoss }) {
+  const [imageSrc, setImageSrc] = React.useState(boss.image || BOSS_FALLBACK_IMAGE);
+
+  React.useEffect(() => {
+    setImageSrc(boss.image || BOSS_FALLBACK_IMAGE);
+  }, [boss.image]);
+
+  return (
+    <Image
+      src={imageSrc}
+      alt={boss.name}
+      width={70}
+      height={90}
+      className="object-contain px-2 pt-3 pb-2"
+      data-ai-hint="fantasy character"
+      onError={() => setImageSrc(BOSS_FALLBACK_IMAGE)}
+    />
+  );
+}
 
 interface BossAccordionProps {
   bosses: ProcessedBoss[];
@@ -54,14 +75,7 @@ export const BossAccordion = React.memo(function BossAccordion({
                       priority
                     />
                     <div className="absolute inset-0 w-[70px] h-[80px] top-1 overflow-hidden">
-                      <Image 
-                        src={boss.image}
-                        alt={boss.name} 
-                        width={70}
-                        height={90}
-                        className="object-contain px-2 pt-3 pb-2" 
-                        data-ai-hint="fantasy character"
-                      />
+                      <BossPortrait boss={boss} />
                     </div>
                 </div>
                 <div className="flex-1 min-w-0 text-left text-shadow-soft flex-shrink">

@@ -12,7 +12,7 @@ interface Ad {
 interface AdContextState {
   ad: { isOpen: boolean; type: Ad['type'] | null };
   openAdDialog: (type?: Ad['type'], onClosed?: () => void) => void;
-  closeAdDialog: () => void;
+  closeAdDialog: (runCallback?: boolean) => void;
 }
 
 const AdContext = createContext<AdContextState | undefined>(undefined);
@@ -26,11 +26,13 @@ export function AdProvider({ children }: { children: ReactNode }) {
     setAd({ isOpen: true, type });
   };
 
-  const closeAdDialog = () => {
+  const closeAdDialog = (runCallback = true) => {
     const cb = onClosedRef.current;
     onClosedRef.current = null;
     setAd({ isOpen: false, type: null });
-    cb?.();
+    if (runCallback) {
+      cb?.();
+    }
   };
 
   const value: AdContextState = {

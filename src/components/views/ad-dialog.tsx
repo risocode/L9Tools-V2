@@ -54,7 +54,7 @@ export function AdDialog() {
   }, [ad.isOpen, isProUser]);
 
   const handleUpgradeClick = () => {
-    closeAdDialog();
+    closeAdDialog(false);
     showLoader(() => router.push("/subscribe"));
   };
 
@@ -98,7 +98,7 @@ export function AdDialog() {
           <Button
             variant="secondary"
             size="sm"
-            onClick={closeAdDialog}
+            onClick={() => closeAdDialog()}
             disabled={countdown > 0}
             className="bg-black/50 hover:bg-black/80"
           >
