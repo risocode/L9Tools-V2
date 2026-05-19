@@ -4,6 +4,7 @@
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { getSupabaseAdmin, verifyAdminStatus } from '@/lib/supabase-admin';
 import { revalidatePath } from 'next/cache';
+import { logAdminAction } from '@/lib/admin-audit';
 
 interface UpdateSubscriptionArgs {
   userId: string;
@@ -31,7 +32,12 @@ export async function updateUserSubscription({ userId, tier, expiresAt }: Update
     return { success: false, error: 'Could not create admin database client.' };
   }
 
-  // 3. Perform the update using the admin client
+  const { data: beforeProfile } = await supabaseAdmin
+    .from('profiles')
+    .select('subscription_tier, subscription_expires_at')
+    .eq('id', userId)
+    .maybeSingle();
+
   const { error } = await supabaseAdmin
     .from('profiles')
     .update({
@@ -46,7 +52,17 @@ export async function updateUserSubscription({ userId, tier, expiresAt }: Update
     return { success: false, error: 'Failed to update user subscription.' };
   }
 
-  // 5. Revalidate paths to show updated data
+  await logAdminAction({
+    adminId: adminUser.id,
+    action: 'update_subscription',
+    targetUserId: userId,
+    metadata: {
+      before: beforeProfile,
+      after: { tier, expiresAt },
+    },
+  });
+
+  // Revalidate paths to show updated data
   revalidatePath('/admin');
   revalidatePath('/profile');
 

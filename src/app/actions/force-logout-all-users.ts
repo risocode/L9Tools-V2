@@ -1,77 +1,64 @@
 'use server';
 
 import { createSupabaseServerClient } from '@/lib/supabase-server';
+import { getSupabaseAdmin, verifyAdminStatus } from '@/lib/supabase-admin';
+import { logAdminAction } from '@/lib/admin-audit';
 
-/**
- * Force logout all users by invalidating all refresh tokens
- * This will require all users to sign in again on their next visit
- * 
- * NOTE: This requires Supabase Admin API access via RPC function
- */
 export async function forceLogoutAllUsers() {
   try {
     const supabase = await createSupabaseServerClient();
     
-    // Verify admin access
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
-      return { 
-        success: false, 
-        message: 'Authentication required' 
-      };
+      return { success: false, message: 'Authentication required', sqlRequired: false as const };
     }
 
-    // Check if user is admin using centralized verification
-    const { verifyAdminStatus } = await import('@/lib/supabase-admin');
     const isAdmin = await verifyAdminStatus(user);
     
     if (!isAdmin) {
-      return { 
-        success: false, 
-        message: 'Admin access required' 
-      };
+      return { success: false, message: 'Admin access required', sqlRequired: false as const };
     }
 
-    const supabaseAdminUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    
-    if (!supabaseAdminUrl || !supabaseServiceKey) {
+    const supabaseAdmin = getSupabaseAdmin();
+    if (!supabaseAdmin) {
       return {
         success: false,
-        message: 'Admin API credentials not configured. Please run the SQL script manually in Supabase SQL Editor.',
-        sqlRequired: true
+        message: 'Admin API credentials not configured.',
+        sqlRequired: true,
+        sqlCommand: 'SELECT public.force_logout_all_users();',
       };
     }
 
-    // Use admin client with service role key to access auth schema
-    const { createClient } = await import('@supabase/supabase-js');
-    const adminClient = createClient(supabaseAdminUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
+    const { error: rpcError } = await supabaseAdmin.rpc('force_logout_all_users');
+
+    if (rpcError) {
+      return {
+        success: false,
+        message: `RPC failed: ${rpcError.message}. Run admin-migrations.sql or execute manually.`,
+        sqlRequired: true,
+        sqlCommand: 'SELECT public.force_logout_all_users();',
+      };
+    }
+
+    await logAdminAction({
+      adminId: user.id,
+      action: 'force_logout_all',
+      metadata: {},
     });
 
-    // Attempt to delete all refresh tokens using RPC function
-    // First, we need to create an RPC function in Supabase, or use direct SQL execution
-    // For now, we'll use the Postgres REST API via admin client
-    
-    // Note: Direct deletion from auth.refresh_tokens requires RPC or SQL execution
-    // This is a limitation of Supabase - auth tables are not directly accessible via the client
-    // Return instruction to use SQL editor instead
-    
     return {
-      success: false,
-      message: 'Please run the SQL script in Supabase SQL Editor. See FORCE_LOGOUT_ALL_USERS.sql file for instructions.',
-      sqlRequired: true,
-      sqlCommand: 'DELETE FROM auth.refresh_tokens;'
+      success: true,
+      message: 'All users have been logged out. They must sign in again.',
+      sqlRequired: false as const,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Failed to force logout all users.';
     return {
       success: false,
-      message: error.message || 'Failed to force logout all users. Please use SQL Editor.',
-      sqlRequired: true
+      message,
+      sqlRequired: true,
+      sqlCommand: 'SELECT public.force_logout_all_users();',
     };
   }
 }

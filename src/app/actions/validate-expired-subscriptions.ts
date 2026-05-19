@@ -3,6 +3,7 @@
 import { getSupabaseAdmin, verifyAdminStatus } from '@/lib/supabase-admin';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { getEffectiveSubscriptionTier } from '@/lib/subscription-utils';
+import { logAdminAction } from '@/lib/admin-audit';
 
 /**
  * Validates all subscriptions and auto-downgrades expired Pro subscriptions to Free
@@ -114,6 +115,12 @@ export async function validateExpiredSubscriptions(): Promise<{
         error: `Failed to downgrade subscriptions: ${updateError.message}`
       };
     }
+
+    await logAdminAction({
+      adminId: user.id,
+      action: 'validate_expired_subscriptions',
+      metadata: { downgraded: expiredUserIds.length },
+    });
 
     return {
       success: true,

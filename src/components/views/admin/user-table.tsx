@@ -1,7 +1,8 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Input } from '@/components/ui/input';
 import type { Profile } from '@/types';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -24,8 +25,10 @@ interface UserTableProps {
     onSubscriptionUpdate: () => void;
     currentPage: number;
     totalPages: number;
+    totalCount?: number;
+    pageSize?: number;
     onPageChange: (page: number) => void;
-    onlineUserIds?: Set<string>; // Real-time online user IDs from presence
+    onlineUserIds?: Set<string>;
 }
 
 const isFreeTrialAccount = (profile: Profile): boolean => {
@@ -179,7 +182,15 @@ const UserStatusCell = ({ profile, isRealtimeOnline }: { profile: Profile; isRea
     )
 }
 
-const UserCard = ({ profile, onManageClick }: { profile: Profile; onManageClick: (profile: Profile) => void; }) => (
+const UserCard = ({
+  profile,
+  onManageClick,
+  isRealtimeOnline,
+}: {
+  profile: Profile;
+  onManageClick: (profile: Profile) => void;
+  isRealtimeOnline?: boolean;
+}) => (
     <Card className="admin-table-row bg-transparent border-b-0 rounded-lg mb-4">
         <CardContent className="p-4">
             <div className="flex items-center gap-4 mb-4">
@@ -197,7 +208,7 @@ const UserCard = ({ profile, onManageClick }: { profile: Profile; onManageClick:
             <div className="space-y-2 text-sm">
                  <div className="flex justify-between items-center">
                     <span className="text-muted-foreground">Status:</span>
-                    <UserStatusCell profile={profile} />
+                    <UserStatusCell profile={profile} isRealtimeOnline={isRealtimeOnline} />
                 </div>
                 <div className="flex justify-between">
                     <span className="text-muted-foreground">Email:</span>
@@ -221,29 +232,56 @@ const UserCard = ({ profile, onManageClick }: { profile: Profile; onManageClick:
     </Card>
 );
 
-const PaginationControls = ({ currentPage, totalPages, onPageChange, isLoading }: { currentPage: number; totalPages: number; onPageChange: (page: number) => void; isLoading: boolean; }) => (
-  <div className="flex items-center justify-end space-x-2 py-4 px-4 border-t border-[#00e5ff]/20">
-    <span className="text-sm text-muted-foreground">
+function PaginationControls({
+  currentPage,
+  totalPages,
+  onPageChange,
+  isLoading,
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  isLoading: boolean;
+}) {
+  const [jumpPage, setJumpPage] = useState(String(currentPage));
+
+  useEffect(() => {
+    setJumpPage(String(currentPage));
+  }, [currentPage]);
+
+  const goToPage = () => {
+    const n = parseInt(jumpPage, 10);
+    if (!isNaN(n) && n >= 1 && n <= totalPages) onPageChange(n);
+    else setJumpPage(String(currentPage));
+  };
+
+  return (
+    <div className="flex flex-wrap items-center justify-end gap-2 py-4 px-4 border-t border-[#00e5ff]/20">
+      <span className="text-sm text-muted-foreground mr-auto">
         Page {currentPage} of {totalPages}
-    </span>
-    <Button
-        variant="outline"
-        size="sm"
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage <= 1 || isLoading}
-    >
+      </span>
+      <div className="flex items-center gap-1">
+        <span className="text-xs text-muted-foreground">Go to</span>
+        <Input
+          className="w-14 h-8 text-center"
+          value={jumpPage}
+          onChange={(e) => setJumpPage(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && goToPage()}
+          disabled={isLoading}
+        />
+        <Button variant="ghost" size="sm" onClick={goToPage} disabled={isLoading}>
+          Go
+        </Button>
+      </div>
+      <Button variant="outline" size="sm" onClick={() => onPageChange(currentPage - 1)} disabled={currentPage <= 1 || isLoading}>
         Previous
-    </Button>
-    <Button
-        variant="outline"
-        size="sm"
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage >= totalPages || isLoading}
-    >
+      </Button>
+      <Button variant="outline" size="sm" onClick={() => onPageChange(currentPage + 1)} disabled={currentPage >= totalPages || isLoading}>
         Next
-    </Button>
-  </div>
-);
+      </Button>
+    </div>
+  );
+}
 
 
 export function UserTable({ profiles, isLoading, onSubscriptionUpdate, currentPage, totalPages, onPageChange, onlineUserIds }: UserTableProps) {
@@ -297,7 +335,12 @@ export function UserTable({ profiles, isLoading, onSubscriptionUpdate, currentPa
       return (
         <div className="block md:hidden space-y-4 p-2">
             {profiles.map((profile) => (
-                <UserCard key={profile.id} profile={profile} onManageClick={handleOpenDialog} />
+                <UserCard
+                  key={profile.id}
+                  profile={profile}
+                  onManageClick={handleOpenDialog}
+                  isRealtimeOnline={onlineUserIds?.has(profile.id)}
+                />
             ))}
         </div>
       )
@@ -382,3 +425,4 @@ export function UserTable({ profiles, isLoading, onSubscriptionUpdate, currentPa
 }
 
     
+

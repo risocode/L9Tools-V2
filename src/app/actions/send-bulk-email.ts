@@ -1,61 +1,63 @@
 'use server';
 
 import { createSupabaseServerClient } from '@/lib/supabase-server';
+import { getSupabaseAdmin, verifyAdminStatus } from '@/lib/supabase-admin';
+import { getEffectiveSubscriptionTier } from '@/lib/subscription-utils';
 import { sendBulkEmail } from '@/lib/resend';
+import { logAdminAction } from '@/lib/admin-audit';
+import type { EmailAudience } from '@/lib/admin-constants';
 
 export async function sendBulkEmailToAllUsers(
   subject: string,
-  htmlContent: string
+  htmlContent: string,
+  audience: EmailAudience = 'all'
 ) {
   try {
     const supabase = await createSupabaseServerClient();
     
-    // Verify admin access by checking current user
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
-      return { 
-        success: false, 
-        message: 'Authentication required' 
-      };
+      return { success: false, message: 'Authentication required' };
     }
 
-    // Check if user is admin using centralized verification
-    const { verifyAdminStatus } = await import('@/lib/supabase-admin');
     const isAdmin = await verifyAdminStatus(user);
     
     if (!isAdmin) {
-      return { 
-        success: false, 
-        message: 'Admin access required' 
-      };
+      return { success: false, message: 'Admin access required' };
+    }
+
+    const supabaseAdmin = getSupabaseAdmin();
+    if (!supabaseAdmin) {
+      return { success: false, message: 'Admin client unavailable' };
     }
     
-    // Get all user emails from profiles
-    const { data: profiles, error } = await supabase
+    const { data: profiles, error } = await supabaseAdmin
       .from('profiles')
-      .select('email')
+      .select('email, subscription_tier, subscription_expires_at, is_admin')
       .not('email', 'is', null);
 
     if (error) {
-      return {
-        success: false,
-        message: `Failed to fetch users: ${error.message}`
-      };
+      return { success: false, message: `Failed to fetch users: ${error.message}` };
     }
 
-    const emails = profiles
-      .map((p) => p.email)
-      .filter((email): email is string => Boolean(email));
+    const emails = (profiles ?? [])
+      .filter((p) => {
+        if (!p.email) return false;
+        if (audience === 'all') return true;
+        const effective = getEffectiveSubscriptionTier(
+          p.subscription_tier as 'free' | 'pro' | 'lifetime' | null,
+          p.subscription_expires_at,
+          p.is_admin
+        );
+        return effective === audience;
+      })
+      .map((p) => p.email as string);
 
     if (emails.length === 0) {
-      return { 
-        success: false, 
-        message: 'No valid emails found' 
-      };
+      return { success: false, message: 'No valid emails found for this audience' };
     }
 
-    // Send emails in batches to avoid rate limits
     const batchSize = 10;
     const results = [];
     const errors = [];
@@ -71,11 +73,16 @@ export async function sendBulkEmailToAllUsers(
       results.push(...batchResults);
       errors.push(...batchErrors);
 
-      // Wait 1 second between batches to avoid rate limits
       if (i + batchSize < emails.length) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
+
+    await logAdminAction({
+      adminId: user.id,
+      action: 'bulk_email',
+      metadata: { audience, subject, sent: results.length, failed: errors.length, total: emails.length },
+    });
 
     return {
       success: true,
@@ -85,10 +92,8 @@ export async function sendBulkEmailToAllUsers(
       results,
       errors: errors.length > 0 ? errors : undefined,
     };
-  } catch (error: any) {
-    return {
-      success: false,
-      message: error.message || 'Failed to send bulk emails',
-    };
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Failed to send bulk emails';
+    return { success: false, message };
   }
 }

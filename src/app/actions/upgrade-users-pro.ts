@@ -1,6 +1,9 @@
 'use server';
 
 import { createSupabaseServerClient } from '@/lib/supabase-server';
+import { getSupabaseAdmin, verifyAdminStatus } from '@/lib/supabase-admin';
+import { getEffectiveSubscriptionTier } from '@/lib/subscription-utils';
+import { logAdminAction } from '@/lib/admin-audit';
 
 interface UpgradeUsersOptions {
   durationMonths?: number;
@@ -8,118 +11,172 @@ interface UpgradeUsersOptions {
   userIds?: string[];
 }
 
-/**
- * Upgrade users to Pro tier for a specified duration
- * Admin-only action
- */
 export async function upgradeUsersToPro(options: UpgradeUsersOptions = {}) {
   try {
     const supabase = await createSupabaseServerClient();
     
-    // Verify admin access
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
-      return { 
-        success: false, 
-        message: 'Authentication required' 
-      };
+      return { success: false, message: 'Authentication required', upgraded: 0, totalEligible: 0, skipped: 0 };
     }
 
-    // Check if user is admin using centralized verification
-    const { verifyAdminStatus } = await import('@/lib/supabase-admin');
     const isAdmin = await verifyAdminStatus(user);
     
     if (!isAdmin) {
-      return { 
-        success: false, 
-        message: 'Admin access required' 
-      };
+      return { success: false, message: 'Admin access required', upgraded: 0, totalEligible: 0, skipped: 0 };
     }
 
     const { durationMonths = 1, upgradeAll = false, userIds = [] } = options;
     
-    // Calculate expiration date
     const expirationDate = new Date();
     expirationDate.setMonth(expirationDate.getMonth() + durationMonths);
+
+    const supabaseAdmin = getSupabaseAdmin();
+    if (!supabaseAdmin) {
+      return { success: false, message: 'Admin API credentials not configured', upgraded: 0, totalEligible: 0, skipped: 0 };
+    }
 
     let targetUserIds: string[] = [];
 
     if (upgradeAll) {
-      // Get all free users
-      const { data: freeUsers, error: fetchError } = await supabase
+      const { data: allProfiles, error: fetchError } = await supabaseAdmin
         .from('profiles')
-        .select('id')
-        .eq('subscription_tier', 'free');
+        .select('id, subscription_tier, subscription_expires_at, is_admin');
 
       if (fetchError) {
         return {
           success: false,
-          message: `Failed to fetch users: ${fetchError.message}`
+          message: `Failed to fetch users: ${fetchError.message}`,
+          upgraded: 0,
+          totalEligible: 0,
+          skipped: 0,
         };
       }
 
-      targetUserIds = freeUsers.map(u => u.id);
+      targetUserIds = (allProfiles ?? [])
+        .filter((p) => {
+          if (p.is_admin) return false;
+          return getEffectiveSubscriptionTier(
+            p.subscription_tier as 'free' | 'pro' | 'lifetime' | null,
+            p.subscription_expires_at,
+            p.is_admin
+          ) === 'free';
+        })
+        .map((p) => p.id);
     } else if (userIds.length > 0) {
       targetUserIds = userIds;
     } else {
       return {
         success: false,
-        message: 'No users selected for upgrade'
+        message: 'No users selected for upgrade',
+        upgraded: 0,
+        totalEligible: 0,
+        skipped: 0,
       };
     }
 
-    if (targetUserIds.length === 0) {
+    const totalEligible = targetUserIds.length;
+
+    if (totalEligible === 0) {
       return {
         success: false,
-        message: 'No users found to upgrade'
+        message: 'No eligible free users found to upgrade',
+        upgraded: 0,
+        totalEligible: 0,
+        skipped: 0,
       };
     }
 
-    // Use admin client for bulk update
-    const supabaseAdminUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    
-    if (!supabaseAdminUrl || !supabaseServiceKey) {
-      return {
-        success: false,
-        message: 'Admin API credentials not configured'
-      };
-    }
-
-    const { createClient } = await import('@supabase/supabase-js');
-    const adminClient = createClient(supabaseAdminUrl, supabaseServiceKey);
-
-    // Update users to Pro tier
-    const { data: updatedUsers, error: updateError } = await adminClient
+    const { data: updatedUsers, error: updateError } = await supabaseAdmin
       .from('profiles')
       .update({
         subscription_tier: 'pro',
         subscription_expires_at: expirationDate.toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .in('id', targetUserIds)
-      .eq('subscription_tier', 'free')
       .select('id');
 
     if (updateError) {
       return {
         success: false,
-        message: `Failed to upgrade users: ${updateError.message}`
+        message: `Failed to upgrade users: ${updateError.message}`,
+        upgraded: 0,
+        totalEligible,
+        skipped: totalEligible,
       };
     }
 
+    const upgraded = updatedUsers?.length ?? 0;
+    const skipped = totalEligible - upgraded;
+
+    await logAdminAction({
+      adminId: user.id,
+      action: 'bulk_upgrade_pro',
+      metadata: {
+        upgraded,
+        totalEligible,
+        skipped,
+        durationMonths,
+        expirationDate: expirationDate.toISOString(),
+      },
+    });
+
     return {
       success: true,
-      upgraded: updatedUsers?.length || 0,
-      total: targetUserIds.length,
+      upgraded,
+      totalEligible,
+      skipped,
       expirationDate: expirationDate.toISOString(),
-      message: `Successfully upgraded ${updatedUsers?.length || 0} user(s) to Pro for ${durationMonths} month(s)`
+      message: `Successfully upgraded ${upgraded} user(s) to Pro for ${durationMonths} month(s)`,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Failed to upgrade users';
     return {
       success: false,
-      message: error.message || 'Failed to upgrade users',
+      message,
+      upgraded: 0,
+      totalEligible: 0,
+      skipped: 0,
     };
   }
+}
+
+export async function getUpgradeEligibleCount(): Promise<{ count: number; error: string | null }> {
+  const supabase = await createSupabaseServerClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return { count: 0, error: 'Authentication required' };
+  }
+
+  const isAdmin = await verifyAdminStatus(user);
+  if (!isAdmin) {
+    return { count: 0, error: 'Admin access required' };
+  }
+
+  const supabaseAdmin = getSupabaseAdmin();
+  if (!supabaseAdmin) {
+    return { count: 0, error: 'Admin client unavailable' };
+  }
+
+  const { data: allProfiles, error } = await supabaseAdmin
+    .from('profiles')
+    .select('id, subscription_tier, subscription_expires_at, is_admin');
+
+  if (error) {
+    return { count: 0, error: error.message };
+  }
+
+  const count = (allProfiles ?? []).filter((p) => {
+    if (p.is_admin) return false;
+    return getEffectiveSubscriptionTier(
+      p.subscription_tier as 'free' | 'pro' | 'lifetime' | null,
+      p.subscription_expires_at,
+      p.is_admin
+    ) === 'free';
+  }).length;
+
+  return { count, error: null };
 }

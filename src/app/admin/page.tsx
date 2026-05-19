@@ -1,6 +1,7 @@
 
 "use client";
 
+import { Suspense } from 'react';
 import { L9ToolsLayout } from '@/components/layout/l9tools-layout';
 import { AdminDashboard } from '@/components/views/admin/admin-dashboard';
 import { useAuth } from '@/context/auth-context';
@@ -28,7 +29,9 @@ export default function AdminPage() {
   return (
     <main className="flex">
       <L9ToolsLayout hideHeader={true}>
-        <AdminDashboard />
+        <Suspense fallback={null}>
+          <AdminDashboard />
+        </Suspense>
       </L9ToolsLayout>
     </main>
   );

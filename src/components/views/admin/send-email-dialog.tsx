@@ -19,6 +19,19 @@ import { useToast } from '@/hooks/use-toast';
 import Loader from '@/components/ui/loader';
 import { Mail, Send, Eye, Code, Save } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { getEmailRecipientCount } from '@/app/actions/get-email-recipient-count';
+import type { EmailAudience } from '@/lib/admin-constants';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface SendEmailDialogProps {
   isOpen: boolean;
@@ -198,6 +211,16 @@ export function SendEmailDialog({ isOpen, onClose }: SendEmailDialogProps) {
   const [htmlContent, setHtmlContent] = useState(defaultEmailTemplate);
   const [isSending, setIsSending] = useState(false);
   const [previewMode, setPreviewMode] = useState<'preview' | 'html'>('preview');
+  const [audience, setAudience] = useState<EmailAudience>('all');
+  const [recipientCount, setRecipientCount] = useState(0);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmText, setConfirmText] = useState('');
+
+  useEffect(() => {
+    if (isOpen) {
+      getEmailRecipientCount(audience).then(({ count }) => setRecipientCount(count));
+    }
+  }, [isOpen, audience]);
 
   // Load template from database when dialog opens
   useEffect(() => {
@@ -304,7 +327,7 @@ export function SendEmailDialog({ isOpen, onClose }: SendEmailDialogProps) {
     setIsSavingTemplate(false);
   };
 
-  const handleSend = async () => {
+  const handleSendClick = () => {
     if (!subject.trim() || !htmlContent.trim()) {
       toast({
         variant: 'destructive',
@@ -313,9 +336,18 @@ export function SendEmailDialog({ isOpen, onClose }: SendEmailDialogProps) {
       });
       return;
     }
+    setConfirmText('');
+    setConfirmOpen(true);
+  };
+
+  const handleSend = async () => {
+    if (confirmText !== 'SEND') {
+      toast({ variant: 'destructive', title: 'Type SEND to confirm' });
+      return;
+    }
 
     setIsSending(true);
-    const result = await sendBulkEmailToAllUsers(subject, htmlContent);
+    const result = await sendBulkEmailToAllUsers(subject, htmlContent, audience);
     
     if (result.success) {
       toast({
@@ -323,6 +355,7 @@ export function SendEmailDialog({ isOpen, onClose }: SendEmailDialogProps) {
         description: `Successfully sent ${result.sent} out of ${result.total} emails.${(result.failed ?? 0) > 0 ? ` ${result.failed} failed.` : ''}`,
       });
       // Don't reset form - keep template as is
+      setConfirmOpen(false);
       onClose();
     } else {
       toast({
@@ -357,6 +390,22 @@ export function SendEmailDialog({ isOpen, onClose }: SendEmailDialogProps) {
               placeholder="Enter email subject"
               disabled={isSending || isSendingTest}
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Audience</Label>
+            <Select value={audience} onValueChange={(v) => setAudience(v as EmailAudience)} disabled={isSending}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All users</SelectItem>
+                <SelectItem value="free">Free tier</SelectItem>
+                <SelectItem value="pro">Pro tier</SelectItem>
+                <SelectItem value="lifetime">Lifetime tier</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">{recipientCount} recipient(s) with valid email</p>
           </div>
 
           <div className="space-y-2">
@@ -483,8 +532,8 @@ export function SendEmailDialog({ isOpen, onClose }: SendEmailDialogProps) {
             Cancel
           </Button>
           <Button
-            onClick={handleSend}
-            disabled={isSending || isSendingTest || !subject.trim() || !htmlContent.trim()}
+            onClick={handleSendClick}
+            disabled={isSending || isSendingTest || !subject.trim() || !htmlContent.trim() || recipientCount === 0}
           >
             {isSending ? (
               <>
@@ -500,6 +549,25 @@ export function SendEmailDialog({ isOpen, onClose }: SendEmailDialogProps) {
           </Button>
         </div>
       </DialogContent>
+
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm bulk email</AlertDialogTitle>
+            <AlertDialogDescription>
+              Send to <strong>{recipientCount}</strong> user(s) ({audience} audience). Type SEND to confirm.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <Input value={confirmText} onChange={(e) => setConfirmText(e.target.value)} placeholder="SEND" />
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isSending}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSend} disabled={isSending || confirmText !== 'SEND'}>
+              {isSending ? 'Sending...' : 'Send now'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   );
 }
+

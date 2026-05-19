@@ -10,6 +10,41 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_audit_log: {
+        Row: {
+          id: string
+          admin_id: string | null
+          action: string
+          target_user_id: string | null
+          metadata: Json | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          admin_id?: string | null
+          action: string
+          target_user_id?: string | null
+          metadata?: Json | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          admin_id?: string | null
+          action?: string
+          target_user_id?: string | null
+          metadata?: Json | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_audit_log_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       app_stats: {
         Row: {
           created_at: string
@@ -316,6 +351,40 @@ export type Database = {
         Returns: undefined
       }
       refresh_user_stats_cache: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      get_admin_profiles: {
+        Args: {
+          p_page?: number
+          p_page_size?: number
+          p_search?: string | null
+          p_tier_filter?: string
+          p_extra_filter?: string | null
+        }
+        Returns: {
+          profiles: Json
+          total_count: number
+        }[]
+      }
+      get_admin_analytics: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          signups_last_7_days: number
+          pro_expiring_next_7_days: number
+        }[]
+      }
+      get_admin_audit_log: {
+        Args: {
+          p_page?: number
+          p_page_size?: number
+        }
+        Returns: {
+          entries: Json
+          total_count: number
+        }[]
+      }
+      force_logout_all_users: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }

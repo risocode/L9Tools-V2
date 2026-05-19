@@ -1,21 +1,26 @@
-
 'use server'
 
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { getSupabaseAdmin, verifyAdminStatus } from '@/lib/supabase-admin';
 import { getEffectiveSubscriptionTier } from '@/lib/subscription-utils';
 import type { Profile } from '@/types'
-
-type SubscriptionTier = 'all' | 'free' | 'pro' | 'lifetime';
+import type { AdminExtraFilter, SubscriptionTierFilter } from '@/lib/admin-constants';
 
 interface GetAllProfilesParams {
   page: number;
   pageSize: number;
   query?: string;
-  tier?: SubscriptionTier;
+  tier?: SubscriptionTierFilter;
+  extraFilter?: AdminExtraFilter;
 }
 
-export async function getAllProfiles({ page, pageSize, query, tier = 'all' }: GetAllProfilesParams): Promise<{ profiles: Profile[] | null; count: number | null; error: string | null; }> {
+export async function getAllProfiles({
+  page,
+  pageSize,
+  query,
+  tier = 'all',
+  extraFilter = 'none',
+}: GetAllProfilesParams): Promise<{ profiles: Profile[] | null; count: number | null; error: string | null; }> {
   
   const supabaseUserClient = await createSupabaseServerClient();
   const { data: authData, error: authError } = await supabaseUserClient.auth.getUser();
@@ -25,7 +30,6 @@ export async function getAllProfiles({ page, pageSize, query, tier = 'all' }: Ge
   }
   
   const user = authData.user;
-  
   const isAdmin = await verifyAdminStatus(user);
   
   if (!isAdmin) {
@@ -37,61 +41,86 @@ export async function getAllProfiles({ page, pageSize, query, tier = 'all' }: Ge
     return { profiles: null, count: null, error: 'Could not create admin database client.' };
   }
 
+  const search = query?.trim() || null;
+  const extra = extraFilter === 'none' ? null : extraFilter;
+
+  const { data: rpcRows, error: rpcError } = await supabaseAdmin.rpc('get_admin_profiles', {
+    p_page: page,
+    p_page_size: pageSize,
+    p_search: search,
+    p_tier_filter: tier,
+    p_extra_filter: extra,
+  });
+
+  if (!rpcError && rpcRows && rpcRows.length > 0) {
+    const row = rpcRows[0] as { profiles: Profile[] | string; total_count: number };
+    const profilesRaw = row.profiles;
+    const profiles = (typeof profilesRaw === 'string' ? JSON.parse(profilesRaw) : profilesRaw) as Profile[];
+    return {
+      profiles: Array.isArray(profiles) ? profiles : [],
+      count: Number(row.total_count) ?? 0,
+      error: null,
+    };
+  }
+
+  if (rpcError) {
+    console.warn('[Admin Action] get_admin_profiles RPC failed, using fallback:', rpcError.message);
+  }
+
+  return getAllProfilesFallback(supabaseAdmin, { page, pageSize, query: search ?? undefined, tier });
+}
+
+async function getAllProfilesFallback(
+  supabaseAdmin: NonNullable<ReturnType<typeof getSupabaseAdmin>>,
+  { page, pageSize, query, tier }: { page: number; pageSize: number; query?: string; tier: SubscriptionTierFilter }
+): Promise<{ profiles: Profile[] | null; count: number | null; error: string | null; }> {
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
 
-  let queryBuilder = supabaseAdmin
-    .from('profiles')
-    .select('*', { count: 'exact' });
+  let queryBuilder = supabaseAdmin.from('profiles').select('*', { count: 'exact' });
 
-  // Apply tier filter
   if (tier && tier !== 'all') {
-      if (tier === 'free') {
-          // Free tier includes: free, null, AND expired pro users
-          // We'll filter expired pro users in post-processing
-          queryBuilder = queryBuilder.or('subscription_tier.eq.free,subscription_tier.is.null,subscription_tier.eq.pro');
-      } else if (tier === 'pro') {
-          // Pro tier: only active (non-expired) pro users
-          // subscription_tier = 'pro' AND (subscription_expires_at IS NULL OR subscription_expires_at > now())
-          const now = new Date().toISOString();
-          queryBuilder = queryBuilder
-            .eq('subscription_tier', 'pro')
-            .or(`subscription_expires_at.is.null,subscription_expires_at.gt.${now}`);
-      } else {
-          // Lifetime tier: just filter by subscription_tier
-          queryBuilder = queryBuilder.eq('subscription_tier', tier);
-      }
+    if (tier === 'free') {
+      queryBuilder = queryBuilder.or('subscription_tier.eq.free,subscription_tier.is.null,subscription_tier.eq.pro');
+    } else if (tier === 'pro') {
+      const now = new Date().toISOString();
+      queryBuilder = queryBuilder
+        .eq('subscription_tier', 'pro')
+        .or(`subscription_expires_at.is.null,subscription_expires_at.gt.${now}`);
+    } else {
+      queryBuilder = queryBuilder.eq('subscription_tier', tier);
+    }
   }
 
-  // Apply search query if it exists
   if (query) {
-    const searchPattern = `%${query}%`;
-    queryBuilder = queryBuilder.or(
-      `email.ilike.${searchPattern},display_name.ilike.${searchPattern},short_id.ilike.${searchPattern}`
-    );
+    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (uuidPattern.test(query)) {
+      queryBuilder = queryBuilder.eq('id', query);
+    } else {
+      const searchPattern = `%${query}%`;
+      queryBuilder = queryBuilder.or(
+        `email.ilike.${searchPattern},display_name.ilike.${searchPattern},short_id.ilike.${searchPattern}`
+      );
+    }
   }
 
-  // Apply ordering and pagination
   queryBuilder = queryBuilder
-    .order('last_sign_in_at', { ascending: false, nullsFirst: false }) // Online/recently active first
-    .order('created_at', { ascending: false }) // Then by creation date
+    .order('last_sign_in_at', { ascending: false, nullsFirst: false })
+    .order('created_at', { ascending: false })
     .range(from, to);
 
-  // Execute the query
   const { data: paginatedProfiles, error: profilesError, count } = await queryBuilder;
 
   if (profilesError) {
-    console.error('[Admin Action] Supabase error fetching paginated profiles with admin client:', profilesError.message);
+    console.error('[Admin Action] Supabase error fetching paginated profiles:', profilesError.message);
     return { profiles: null, count: null, error: 'Database error: Could not fetch profiles.' };
   }
 
-  // Post-process for free tier filter: filter out active pro users, keep expired pro users
   let filteredProfiles = paginatedProfiles || [];
   let finalCount = count;
-  
+
   if (tier === 'free' && paginatedProfiles) {
-    // Filter to only show free tier users (including expired pro users)
-    filteredProfiles = paginatedProfiles.filter(profile => {
+    filteredProfiles = paginatedProfiles.filter((profile) => {
       const effectiveTier = getEffectiveSubscriptionTier(
         profile.subscription_tier as 'free' | 'pro' | 'lifetime' | null,
         profile.subscription_expires_at,
@@ -100,24 +129,26 @@ export async function getAllProfiles({ page, pageSize, query, tier = 'all' }: Ge
       return effectiveTier === 'free';
     });
 
-    // Recalculate count for free tier: need to count all free users (including expired pro)
-    // Fetch all profiles matching search query (if any) to get accurate count
     const countQueryBuilder = supabaseAdmin
       .from('profiles')
       .select('id, subscription_tier, subscription_expires_at, is_admin');
-    
+
     if (query) {
-      const searchPattern = `%${query}%`;
-      countQueryBuilder.or(
-        `email.ilike.${searchPattern},display_name.ilike.${searchPattern},short_id.ilike.${searchPattern}`
-      );
+      const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (uuidPattern.test(query)) {
+        countQueryBuilder.eq('id', query);
+      } else {
+        const searchPattern = `%${query}%`;
+        countQueryBuilder.or(
+          `email.ilike.${searchPattern},display_name.ilike.${searchPattern},short_id.ilike.${searchPattern}`
+        );
+      }
     }
 
     const { data: allMatchingProfiles } = await countQueryBuilder;
-    
+
     if (allMatchingProfiles) {
-      // Count all users with effective tier = 'free'
-      const freeCount = allMatchingProfiles.filter(profile => {
+      finalCount = allMatchingProfiles.filter((profile) => {
         const effectiveTier = getEffectiveSubscriptionTier(
           profile.subscription_tier as 'free' | 'pro' | 'lifetime' | null,
           profile.subscription_expires_at,
@@ -125,7 +156,6 @@ export async function getAllProfiles({ page, pageSize, query, tier = 'all' }: Ge
         );
         return effectiveTier === 'free';
       }).length;
-      finalCount = freeCount;
     }
   }
 

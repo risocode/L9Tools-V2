@@ -1,4 +1,3 @@
-
 'use server'
 
 import { createSupabaseServerClient } from '@/lib/supabase-server';
@@ -27,8 +26,28 @@ export async function getCachedUserStats(): Promise<{ data: { total_users: numbe
   }
 
   try {
-    // Fetch ALL profiles to calculate effective tiers (including expired subscriptions)
-    // NO online status filtering - count ALL users regardless of online_status
+    const { data: rpcData, error: rpcError } = await supabaseAdmin.rpc('get_cached_user_stats');
+
+    if (!rpcError && rpcData) {
+      const row = Array.isArray(rpcData) ? rpcData[0] : rpcData;
+      if (row && typeof row === 'object' && 'total_users' in row) {
+        const stats = row as { total_users: number; pro_users: number; lifetime_users: number; free_users: number };
+        return {
+          data: {
+            total_users: stats.total_users,
+            pro_users: stats.pro_users,
+            lifetime_users: stats.lifetime_users,
+            free_users: stats.free_users < 0 ? 0 : stats.free_users,
+          },
+          error: null,
+        };
+      }
+    }
+
+    if (rpcError) {
+      console.warn('[Admin Action] get_cached_user_stats RPC failed, using fallback:', rpcError.message);
+    }
+
     const { data: allProfiles, error: fetchError } = await supabaseAdmin
       .from('profiles')
       .select('id, subscription_tier, subscription_expires_at, is_admin');
@@ -40,53 +59,39 @@ export async function getCachedUserStats(): Promise<{ data: { total_users: numbe
 
     if (!allProfiles || allProfiles.length === 0) {
       return {
-        data: {
-          total_users: 0,
-          pro_users: 0,
-          lifetime_users: 0,
-          free_users: 0,
-        },
-        error: null
+        data: { total_users: 0, pro_users: 0, lifetime_users: 0, free_users: 0 },
+        error: null,
       };
     }
 
-    // Count users by effective tier (considering expired subscriptions)
-    let totalUsers = 0;
     let proUsers = 0;
     let lifetimeUsers = 0;
     let freeUsers = 0;
 
     for (const profile of allProfiles) {
-      totalUsers++;
-      
       const effectiveTier = getEffectiveSubscriptionTier(
         profile.subscription_tier as 'free' | 'pro' | 'lifetime' | null,
         profile.subscription_expires_at,
         profile.is_admin
       );
 
-      if (effectiveTier === 'pro') {
-        proUsers++;
-      } else if (effectiveTier === 'lifetime') {
-        lifetimeUsers++;
-      } else {
-        // Free tier includes: free, null, expired pro, and any other value
-        freeUsers++;
-      }
+      if (effectiveTier === 'pro') proUsers++;
+      else if (effectiveTier === 'lifetime') lifetimeUsers++;
+      else freeUsers++;
     }
 
-    return { 
+    return {
       data: {
-        total_users: totalUsers,
+        total_users: allProfiles.length,
         pro_users: proUsers,
         lifetime_users: lifetimeUsers,
-        free_users: freeUsers < 0 ? 0 : freeUsers, // Ensure free users isn't negative
+        free_users: freeUsers < 0 ? 0 : freeUsers,
       },
-      error: null 
+      error: null,
     };
-
-  } catch (err: any) {
-    console.error('[Admin Action] Unexpected exception in getCachedUserStats:', err.message);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    console.error('[Admin Action] Unexpected exception in getCachedUserStats:', message);
     return { data: null, error: 'An unexpected server error occurred while fetching user stats.' };
   }
 }

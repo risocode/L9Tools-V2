@@ -6,7 +6,9 @@ import type { Profile } from '@/types';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { addMonths } from 'date-fns';
+import { addMonths, format } from 'date-fns';
+import { Copy } from 'lucide-react';
+import { getEffectiveSubscriptionTier } from '@/lib/subscription-utils';
 import {
   Dialog,
   DialogContent,
@@ -83,6 +85,32 @@ export function UpdateSubscriptionDialog({ isOpen, onClose, profile, onSubscript
 
     if (!profile) return null;
 
+    const isTrial =
+      profile.subscription_tier === 'pro' &&
+      profile.subscription_expires_at &&
+      profile.created_at &&
+      (() => {
+        const expiresDate = new Date(profile.subscription_expires_at);
+        if (expiresDate.getTime() <= Date.now()) return false;
+        const daysDiff =
+          (expiresDate.getTime() - new Date(profile.created_at).getTime()) / (1000 * 60 * 60 * 24);
+        return daysDiff >= 2.5 && daysDiff <= 3.5;
+      })();
+
+    const applyQuick = async (tier: 'free' | 'pro', expiresAt: string | null) => {
+      setIsSubmitting(true);
+      const result = await updateUserSubscription({ userId: profile.id, tier, expiresAt });
+      setIsSubmitting(false);
+      if (result.success) {
+        toast({ variant: 'success', title: 'Updated', description: 'Subscription updated.' });
+        await refreshUserStatsCache();
+        onSubscriptionUpdate();
+        onClose();
+      } else {
+        toast({ variant: 'destructive', title: 'Failed', description: result.error ?? undefined });
+      }
+    };
+
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         setIsSubmitting(true);
         const result = await updateUserSubscription({
@@ -111,6 +139,72 @@ export function UpdateSubscriptionDialog({ isOpen, onClose, profile, onSubscript
                         Modify the subscription tier and expiration date for {profile.display_name || profile.email}.
                     </DialogDescription>
                 </DialogHeader>
+                <div className="rounded-md border border-border/50 bg-muted/30 p-3 text-xs space-y-2">
+                  <div className="flex justify-between gap-2">
+                    <span className="text-muted-foreground">User ID</span>
+                    <button
+                      type="button"
+                      className="font-mono flex items-center gap-1 hover:text-primary"
+                      onClick={() => {
+                        navigator.clipboard.writeText(profile.id);
+                        toast({ title: 'Copied user ID' });
+                      }}
+                    >
+                      {profile.id.slice(0, 8)}… <Copy className="h-3 w-3" />
+                    </button>
+                  </div>
+                  {profile.username && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Username</span>
+                      <span>{profile.username}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Created</span>
+                    <span>{format(new Date(profile.created_at), 'MMM d, yyyy')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Last sign-in</span>
+                    <span>
+                      {profile.last_sign_in_at
+                        ? format(new Date(profile.last_sign_in_at), 'MMM d, yyyy h:mm a')
+                        : 'Never'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Effective tier</span>
+                    <span className="capitalize">
+                      {getEffectiveSubscriptionTier(
+                        profile.subscription_tier as 'free' | 'pro' | 'lifetime',
+                        profile.subscription_expires_at,
+                        profile.is_admin
+                      )}
+                      {isTrial ? ' (trial)' : ''}
+                    </span>
+                  </div>
+                  <div className="flex gap-2 pt-1">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={isSubmitting}
+                      onClick={() => applyQuick('pro', addMonths(new Date(), 1).toISOString())}
+                    >
+                      +1 month Pro
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={isSubmitting}
+                      onClick={() => {
+                        if (confirm('Revoke to free tier?')) applyQuick('free', null);
+                      }}
+                    >
+                      Revoke to free
+                    </Button>
+                  </div>
+                </div>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
                         <FormField
@@ -188,3 +282,5 @@ export function UpdateSubscriptionDialog({ isOpen, onClose, profile, onSubscript
         </Dialog>
     )
 }
+
+

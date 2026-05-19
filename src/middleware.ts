@@ -43,8 +43,28 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // Validate session (optional - can be used for protected routes)
-  // Don't clear cookies here - let client handle invalid sessions
+  // Admin route guard
+  if (pathname.startsWith('/admin')) {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      const redirectUrl = new URL('/boss-hunt', request.url);
+      redirectUrl.searchParams.set('error', 'login_required');
+      return NextResponse.redirect(redirectUrl);
+    }
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (!profile?.is_admin) {
+      const redirectUrl = new URL('/boss-hunt', request.url);
+      redirectUrl.searchParams.set('error', 'unauthorized');
+      return NextResponse.redirect(redirectUrl);
+    }
+  }
 
   return response;
 }
