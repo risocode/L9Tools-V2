@@ -224,25 +224,6 @@ async function updateUserWithProfile(
           profile.is_admin
         );
 
-        // If subscription expired and needs downgrade, update in database
-        if (profile.subscription_tier === 'pro' && effectiveTier === 'free' && !profile.is_admin) {
-          // Auto-downgrade expired Pro subscriptions
-          try {
-            const { supabase: supabaseClient } = await import('@/lib/supabase-client');
-            await supabaseClient.from('profiles')
-              .update({
-                subscription_tier: 'free',
-                updated_at: new Date().toISOString(),
-              })
-              .eq('id', sessionUser.id);
-            
-            // Update profile object to reflect the downgrade
-            profile.subscription_tier = 'free';
-          } catch (err) {
-            // Silent fail - will be corrected on next fetch or by server action
-          }
-        }
-
         const mergedUser: User = {
           ...sessionUser,
           ...profile,

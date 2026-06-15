@@ -45,6 +45,33 @@ export type Database = {
           },
         ]
       }
+      trial_history: {
+        Row: {
+          id: string
+          auth_user_id: string
+          email_hash: string
+          provider: string
+          first_trial_at: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          auth_user_id: string
+          email_hash: string
+          provider?: string
+          first_trial_at?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          auth_user_id?: string
+          email_hash?: string
+          provider?: string
+          first_trial_at?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
       payment_records: {
         Row: {
           id: string
@@ -462,6 +489,22 @@ export type Database = {
           payments: Json
           total_count: number
         }[]
+      }
+      claim_trial_if_eligible: {
+        Args: {
+          p_auth_user_id: string
+          p_email: string
+          p_provider?: string
+        }
+        Returns: boolean
+      }
+      preserve_trial_history_on_deletion: {
+        Args: {
+          p_auth_user_id: string
+          p_email: string
+          p_provider?: string
+        }
+        Returns: undefined
       }
     }
     Enums: {

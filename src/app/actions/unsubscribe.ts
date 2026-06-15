@@ -101,6 +101,26 @@ export async function deleteAccount(
       };
     }
 
+    const provider =
+      typeof user.app_metadata?.provider === 'string' && user.app_metadata.provider.trim()
+        ? user.app_metadata.provider.trim()
+        : 'google';
+
+    if (user.email) {
+      const { error: preserveError } = await supabaseAdmin.rpc(
+        'preserve_trial_history_on_deletion',
+        {
+          p_auth_user_id: userId,
+          p_email: user.email,
+          p_provider: provider,
+        }
+      );
+
+      if (preserveError) {
+        console.error('[Delete Account] Failed to preserve trial history:', preserveError.message);
+      }
+    }
+
     // Delete user account using admin client
     const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(userId);
 

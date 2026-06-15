@@ -2,6 +2,7 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import type { Database } from '@/types/supabase';
+import { resolveOAuthProvider, resolveTrialSubscription } from '@/lib/trial-eligibility';
 
 /**
  * OAuth callback route - handles the return from Google OAuth.
@@ -127,17 +128,38 @@ export async function GET(request: NextRequest) {
           last_sign_in_at: new Date().toISOString(),
         };
 
-        // Only set defaults on new profiles
+        // Only set defaults on new profiles — trial gated by server-side trial_history
         if (!existingProfile) {
+          const email = data.user.email ?? '';
+          const provider = resolveOAuthProvider(data.user.app_metadata);
+
+          let grantTrial = false;
+          if (email) {
+            const { data: eligible, error: trialError } = await adminClient.rpc(
+              'claim_trial_if_eligible',
+              {
+                p_auth_user_id: data.user.id,
+                p_email: email,
+                p_provider: provider,
+              }
+            );
+
+            if (trialError) {
+              console.error('[Auth Callback] Trial eligibility check failed:', trialError);
+            } else {
+              grantTrial = eligible === true;
+            }
+          }
+
+          const trialDefaults = resolveTrialSubscription(grantTrial);
+
           updateData.created_at = new Date().toISOString();
-          updateData.subscription_tier = 'pro'; // 3-day Pro trial for new users
-          updateData.subscription_expires_at = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(); // 3 days from now
+          updateData.subscription_tier = trialDefaults.subscription_tier;
+          updateData.subscription_expires_at = trialDefaults.subscription_expires_at;
           updateData.is_admin = false;
           updateData.notifications_enabled = true;
-          // Generate short_id from first 8 characters of UUID (uppercase, no dashes)
           updateData.short_id = data.user.id.replace(/-/g, '').substring(0, 8).toUpperCase();
-          // Generate username from email (part before @)
-          updateData.username = data.user.email?.split('@')[0] || null;
+          updateData.username = email.split('@')[0] || null;
         } else {
           // Preserve existing admin status and subscription for existing profiles
           updateData.is_admin = existingProfile.is_admin;
