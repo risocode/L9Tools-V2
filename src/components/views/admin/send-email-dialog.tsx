@@ -12,19 +12,25 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { sendBulkEmailToAllUsers } from '@/app/actions/send-bulk-email';
+import {
+  BULK_EMAIL_BATCH_DELAY_MS,
+  BULK_EMAIL_BATCH_SIZE,
+  finalizeBulkEmailSend,
+  getBulkEmailRecipients,
+  sendBulkEmailChunk,
+} from '@/app/actions/send-bulk-email';
 import { sendTestEmail } from '@/app/actions/send-test-email';
 import { getEmailTemplate, saveEmailTemplate } from '@/app/actions/email-template';
 import { useToast } from '@/hooks/use-toast';
 import Loader from '@/components/ui/loader';
-import { Mail, Send, Eye, Code, Save } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { Mail, Send, Eye, Code, Save, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getEmailRecipientCount } from '@/app/actions/get-email-recipient-count';
 import type { EmailAudience } from '@/lib/admin-constants';
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -216,6 +222,21 @@ export function SendEmailDialog({ isOpen, onClose }: SendEmailDialogProps) {
   const [recipientCount, setRecipientCount] = useState(0);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmText, setConfirmText] = useState('');
+  const [sendProgress, setSendProgress] = useState<{
+    total: number;
+    sent: number;
+    failed: number;
+    processed: number;
+    phase: 'sending' | 'complete';
+  } | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setSendProgress(null);
+      setConfirmOpen(false);
+      setConfirmText('');
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (isOpen) {
@@ -348,25 +369,74 @@ export function SendEmailDialog({ isOpen, onClose }: SendEmailDialogProps) {
     }
 
     setIsSending(true);
-    const result = await sendBulkEmailToAllUsers(subject, htmlContent, audience);
-    
-    if (result.success) {
-      toast({
-        title: 'Emails Sent Successfully!',
-        description: `Successfully sent ${result.sent} out of ${result.total} emails.${(result.failed ?? 0) > 0 ? ` ${result.failed} failed.` : ''}`,
-      });
-      // Don't reset form - keep template as is
-      setConfirmOpen(false);
-      onClose();
-    } else {
+    setSendProgress({ total: recipientCount, sent: 0, failed: 0, processed: 0, phase: 'sending' });
+
+    const recipients = await getBulkEmailRecipients(audience);
+    if (!recipients.success || recipients.total === 0) {
       toast({
         variant: 'destructive',
         title: 'Error Sending Emails',
-        description: result.message || 'Failed to send emails. Please try again.',
+        description: recipients.message || 'No recipients found.',
       });
+      setIsSending(false);
+      setSendProgress(null);
+      return;
     }
+
+    const { emails, total } = recipients;
+    setSendProgress({ total, sent: 0, failed: 0, processed: 0, phase: 'sending' });
+
+    let sent = 0;
+    let failed = 0;
+
+    for (let i = 0; i < emails.length; i += BULK_EMAIL_BATCH_SIZE) {
+      const batch = emails.slice(i, i + BULK_EMAIL_BATCH_SIZE);
+      const result = await sendBulkEmailChunk(batch, subject, htmlContent);
+
+      if (!result.success) {
+        toast({
+          variant: 'destructive',
+          title: 'Send interrupted',
+          description: result.message || 'Failed to send a batch.',
+        });
+        failed += batch.length;
+      } else {
+        sent += result.sent;
+        failed += result.failed;
+      }
+
+      setSendProgress({
+        total,
+        sent,
+        failed,
+        processed: Math.min(i + batch.length, total),
+        phase: 'sending',
+      });
+
+      if (i + BULK_EMAIL_BATCH_SIZE < emails.length) {
+        await new Promise((resolve) => setTimeout(resolve, BULK_EMAIL_BATCH_DELAY_MS));
+      }
+    }
+
+    await finalizeBulkEmailSend(audience, subject, sent, failed, total);
+
+    setSendProgress({ total, sent, failed, processed: total, phase: 'complete' });
     setIsSending(false);
+
+    toast({
+      title: failed === 0 ? 'All emails sent!' : 'Bulk send finished',
+      description:
+        failed === 0
+          ? `Successfully sent ${sent} of ${total} emails.`
+          : `Sent ${sent} of ${total}. ${failed} failed.`,
+      variant: failed === 0 ? 'default' : 'destructive',
+    });
   };
+
+  const progressPercent =
+    sendProgress && sendProgress.total > 0
+      ? Math.round((sendProgress.processed / sendProgress.total) * 100)
+      : 0;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -524,6 +594,43 @@ export function SendEmailDialog({ isOpen, onClose }: SendEmailDialogProps) {
           </div>
         </div>
 
+        {sendProgress && (
+          <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-3">
+            {sendProgress.phase === 'complete' ? (
+              <div className="flex items-start gap-3">
+                {sendProgress.failed === 0 ? (
+                  <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                ) : (
+                  <AlertCircle className="h-5 w-5 text-yellow-500 shrink-0 mt-0.5" />
+                )}
+                <div className="space-y-1 min-w-0">
+                  <p className="font-semibold text-sm">
+                    {sendProgress.failed === 0
+                      ? 'All emails sent successfully'
+                      : 'Bulk send completed with errors'}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {sendProgress.sent} sent · {sendProgress.failed} failed · {sendProgress.total} total
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium">Sending emails…</span>
+                  <span className="text-muted-foreground tabular-nums">
+                    {sendProgress.processed} / {sendProgress.total}
+                  </span>
+                </div>
+                <Progress value={progressPercent} className="h-2" />
+                <p className="text-xs text-muted-foreground tabular-nums">
+                  {sendProgress.sent} sent · {sendProgress.failed} failed · {progressPercent}%
+                </p>
+              </>
+            )}
+          </div>
+        )}
+
         <div className="flex justify-end gap-2">
           <Button
             variant="outline"
@@ -539,7 +646,12 @@ export function SendEmailDialog({ isOpen, onClose }: SendEmailDialogProps) {
             {isSending ? (
               <>
                 <Loader className="h-4 w-4 mr-2" />
-                Sending...
+                Sending {sendProgress ? `${sendProgress.processed}/${sendProgress.total}` : '…'}
+              </>
+            ) : sendProgress?.phase === 'complete' ? (
+              <>
+                <CheckCircle2 className="h-4 w-4 mr-2 text-green-500" />
+                Sent {sendProgress.sent}/{sendProgress.total}
               </>
             ) : (
               <>
@@ -551,20 +663,79 @@ export function SendEmailDialog({ isOpen, onClose }: SendEmailDialogProps) {
         </div>
       </DialogContent>
 
-      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+      <AlertDialog
+        open={confirmOpen}
+        onOpenChange={(open) => {
+          if (!isSending) setConfirmOpen(open);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirm bulk email</AlertDialogTitle>
-            <AlertDialogDescription>
-              Send to <strong>{recipientCount}</strong> user(s) ({audience} audience). Type SEND to confirm.
+            <AlertDialogTitle>
+              {sendProgress?.phase === 'complete' ? 'Send complete' : 'Confirm bulk email'}
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3">
+                {!sendProgress && (
+                  <p>
+                    Send to <strong>{recipientCount}</strong> user(s) ({audience} audience). Type SEND to confirm.
+                  </p>
+                )}
+                {sendProgress?.phase === 'sending' && (
+                  <div className="space-y-2 pt-1">
+                    <div className="flex justify-between text-sm">
+                      <span>Sending…</span>
+                      <span className="tabular-nums">{sendProgress.processed} / {sendProgress.total}</span>
+                    </div>
+                    <Progress value={progressPercent} />
+                    <p className="text-xs text-muted-foreground tabular-nums">
+                      {sendProgress.sent} sent · {sendProgress.failed} failed
+                    </p>
+                  </div>
+                )}
+                {sendProgress?.phase === 'complete' && (
+                  <div className="flex items-start gap-2 pt-1">
+                    <CheckCircle2 className={`h-5 w-5 shrink-0 ${sendProgress.failed === 0 ? 'text-green-500' : 'text-yellow-500'}`} />
+                    <p>
+                      <strong>{sendProgress.sent}</strong> of <strong>{sendProgress.total}</strong> emails sent successfully.
+                      {sendProgress.failed > 0 && (
+                        <> <strong>{sendProgress.failed}</strong> failed.</>
+                      )}
+                    </p>
+                  </div>
+                )}
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <Input value={confirmText} onChange={(e) => setConfirmText(e.target.value)} placeholder="SEND" />
+          {!sendProgress && (
+            <Input value={confirmText} onChange={(e) => setConfirmText(e.target.value)} placeholder="SEND" />
+          )}
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isSending}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleSend} disabled={isSending || confirmText !== 'SEND'}>
-              {isSending ? 'Sending...' : 'Send now'}
-            </AlertDialogAction>
+            {sendProgress?.phase === 'complete' ? (
+              <Button
+                onClick={() => {
+                  setConfirmOpen(false);
+                  setConfirmText('');
+                }}
+              >
+                Done
+              </Button>
+            ) : (
+              <>
+                <AlertDialogCancel disabled={isSending}>Cancel</AlertDialogCancel>
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    void handleSend();
+                  }}
+                  disabled={isSending || confirmText !== 'SEND'}
+                >
+                  {isSending
+                    ? `Sending… ${sendProgress ? `${sendProgress.processed}/${sendProgress.total}` : ''}`
+                    : 'Send now'}
+                </Button>
+              </>
+            )}
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
