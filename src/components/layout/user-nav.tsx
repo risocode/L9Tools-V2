@@ -19,7 +19,7 @@ import Loader from "../ui/loader";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { hasActiveProSubscription } from "@/lib/subscription-utils";
+import { getEffectiveSubscription, hasActiveProSubscription, NO_CAMPAIGN } from "@/lib/subscription-utils";
 import { isUserAdmin } from "@/lib/supabase-admin";
 
 interface UserNavProps {
@@ -63,9 +63,20 @@ export function UserNav({ size = 'default' }: UserNavProps) {
     if (user) {
       const fallback = user.display_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || '?';
       const isAdmin = isUserAdmin(user);
-      const isSubscribed = hasActiveProSubscription(user.subscription_tier as any, user.subscription_expires_at, isAdmin);
-      const isPro = user.subscription_tier === 'pro';
-      const isLifetime = user.subscription_tier === 'lifetime';
+      const profileFields = {
+        subscription_tier: user.subscription_tier,
+        subscription_expires_at: user.subscription_expires_at,
+        is_admin: user.is_admin,
+      };
+      const subscription = getEffectiveSubscription(profileFields);
+      const billing = getEffectiveSubscription(profileFields, NO_CAMPAIGN);
+      const isSubscribed = hasActiveProSubscription(
+        user.subscription_tier as any,
+        user.subscription_expires_at,
+        isAdmin
+      );
+      const isPro = billing.effectiveTier === 'pro';
+      const isLifetime = billing.effectiveTier === 'lifetime';
       const canRenew = isPro && !isLifetime && !isAdmin && isSubscribed;
 
       const buttonSizeClass = size === 'large' ? 'profile-avatar' : (size === 'small' ? 'h-10 w-10 md:h-12 md:w-12' : 'h-10 w-10 md:h-12 md:w-12');
@@ -80,7 +91,7 @@ export function UserNav({ size = 'default' }: UserNavProps) {
               )} 
               aria-label="Open user menu"
             >
-              <Avatar className={cn("h-full w-full border-2", getAvatarBorderClass(user.subscription_tier, user.is_admin))}>
+              <Avatar className={cn("h-full w-full border-2", getAvatarBorderClass(subscription.effectiveTier, user.is_admin))}>
                 {user.user_photo_url && <AvatarImage src={user.user_photo_url} alt={user.display_name || 'User'} />}
                 <AvatarFallback>{fallback}</AvatarFallback>
               </Avatar>

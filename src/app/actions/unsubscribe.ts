@@ -2,20 +2,39 @@
 
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
+import { verifyUnsubscribeToken } from '@/lib/unsubscribe-token';
+
+function normalizeEmail(email: string): string {
+  return email.trim().toLowerCase();
+}
 
 /**
  * Unsubscribe user from email notifications
- * @param email - User's email address
- * @returns Success status and message
  */
 export async function unsubscribeFromEmails(
-  email: string
+  email: string,
+  token?: string | null
 ): Promise<{ success: boolean; message: string }> {
   try {
     if (!email || !email.includes('@')) {
       return {
         success: false,
         message: 'Invalid email address provided.'
+      };
+    }
+
+    const supabase = await createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    const normalizedEmail = normalizeEmail(email);
+    const loggedInMatch =
+      !!user?.email && normalizeEmail(user.email) === normalizedEmail;
+    const tokenValid = verifyUnsubscribeToken(email, token);
+
+    if (!loggedInMatch && !tokenValid) {
+      return {
+        success: false,
+        message: 'Invalid or expired unsubscribe link. Please log in to manage notifications.'
       };
     }
 
@@ -27,7 +46,6 @@ export async function unsubscribeFromEmails(
       };
     }
 
-    // Update notifications_enabled to false for the user
     const { error } = await supabaseAdmin
       .from('profiles')
       .update({ 
@@ -59,8 +77,6 @@ export async function unsubscribeFromEmails(
 
 /**
  * Delete user account and all associated data
- * @param userId - User's ID (must be authenticated)
- * @returns Success status and message
  */
 export async function deleteAccount(
   userId: string
@@ -73,7 +89,6 @@ export async function deleteAccount(
       };
     }
 
-    // Verify user is authenticated
     const supabase = await createSupabaseServerClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
@@ -84,7 +99,6 @@ export async function deleteAccount(
       };
     }
 
-    // Verify the user is deleting their own account
     if (user.id !== userId) {
       return {
         success: false,
@@ -92,7 +106,6 @@ export async function deleteAccount(
       };
     }
 
-    // Use admin client to delete user account (this will cascade delete the profile due to foreign key)
     const supabaseAdmin = getSupabaseAdmin();
     if (!supabaseAdmin) {
       return {
@@ -121,7 +134,6 @@ export async function deleteAccount(
       }
     }
 
-    // Delete user account using admin client
     const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(userId);
 
     if (deleteError) {

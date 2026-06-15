@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { buildUnsubscribeUrl } from '@/lib/unsubscribe-token';
 
 /**
  * Validates and sanitizes a Resend API key
@@ -123,7 +124,7 @@ export async function sendBulkEmail(
           html,
           text: plainText,
           headers: {
-            'List-Unsubscribe': `<https://www.l9tools.online/unsubscribe?email=${encodeURIComponent(email)}>`,
+            'List-Unsubscribe': `<${buildUnsubscribeUrl(email)}>`,
             'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
             'Precedence': 'bulk',
           },

@@ -17,7 +17,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useIsMobile } from '@/hooks/use-is-mobile';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAuth } from '@/context/auth-context';
-import { getEffectiveSubscriptionTier } from '@/lib/subscription-utils';
+import { getEffectiveSubscriptionTier, NO_CAMPAIGN } from '@/lib/subscription-utils';
 import { isProfileAway, isProfileOnline } from '@/lib/admin-online-status';
 
 interface UserTableProps {
@@ -54,7 +54,8 @@ const TierBadge = ({ profile }: { profile: Profile }) => {
     const effectiveTier = getEffectiveSubscriptionTier(
         profile.subscription_tier as any,
         profile.subscription_expires_at,
-        profile.is_admin
+        profile.is_admin,
+        NO_CAMPAIGN
     );
 
     if (effectiveTier === 'pro' && isFreeTrialAccount(profile)) {
@@ -79,7 +80,8 @@ const ExpiresCell = ({ profile }: { profile: Profile }) => {
     const effectiveTier = getEffectiveSubscriptionTier(
         profile.subscription_tier as any,
         profile.subscription_expires_at,
-        profile.is_admin
+        profile.is_admin,
+        NO_CAMPAIGN
     );
     
     if (effectiveTier === 'lifetime') {

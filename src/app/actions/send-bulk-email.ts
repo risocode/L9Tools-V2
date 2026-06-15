@@ -2,7 +2,7 @@
 
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { getSupabaseAdmin, verifyAdminStatus } from '@/lib/supabase-admin';
-import { getEffectiveSubscriptionTier } from '@/lib/subscription-utils';
+import { getEffectiveSubscriptionTier, NO_CAMPAIGN } from '@/lib/subscription-utils';
 import { sendBulkEmail } from '@/lib/resend';
 import { logAdminAction } from '@/lib/admin-audit';
 import type { EmailAudience } from '@/lib/admin-constants';
@@ -48,7 +48,8 @@ export async function sendBulkEmailToAllUsers(
         const effective = getEffectiveSubscriptionTier(
           p.subscription_tier as 'free' | 'pro' | 'lifetime' | null,
           p.subscription_expires_at,
-          p.is_admin
+          p.is_admin,
+          NO_CAMPAIGN
         );
         return effective === audience;
       })

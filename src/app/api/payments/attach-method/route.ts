@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
+import { fetchPayMongoPaymentIntent } from '@/lib/paymongo-intent';
 
 /**
  * Attach payment method to payment intent and get redirect URL
@@ -54,8 +55,23 @@ export async function POST(request: NextRequest) {
 
     const secretKey = process.env.PAYMONGO_SECRET_KEY;
     if (!secretKey) {
-      console.error('[Attach Payment Method] PAYMONGO_SECRET_KEY not configured');
       throw new Error('PAYMONGO_SECRET_KEY not configured');
+    }
+
+    const verifiedIntent = await fetchPayMongoPaymentIntent(payment_intent_id, secretKey);
+    if (!verifiedIntent) {
+      return NextResponse.json(
+        { error: 'Payment intent not found' },
+        { status: 404 }
+      );
+    }
+
+    const intentUserId = verifiedIntent.attributes.metadata?.user_id;
+    if (!intentUserId || intentUserId !== user.id) {
+      return NextResponse.json(
+        { error: 'Payment intent does not belong to current user' },
+        { status: 403 }
+      );
     }
 
     console.log('[Attach Payment Method] Creating payment method (QRPh)...');
@@ -130,15 +146,24 @@ export async function POST(request: NextRequest) {
     }
 
     const attachData = await attachResponse.json();
-    const paymentIntent = attachData.data;
+    const attachedIntent = attachData.data as {
+      id: string;
+      attributes: {
+        status: string;
+        next_action?: {
+          type?: string;
+          code?: { image_url?: string; id?: string; amount?: number };
+          redirect?: { url?: string };
+        };
+        payment_url?: string;
+      };
+    };
 
-    // QRPh returns a QR code image in next_action, not a redirect URL
-    // Structure: next_action.type = "consume_qr", next_action.code.image_url = base64 PNG
-    const nextAction = paymentIntent.attributes.next_action;
+    const nextAction = attachedIntent.attributes.next_action;
     
     console.log('[Attach Payment Method] ✅ Payment method attached:', {
-      paymentIntentId: paymentIntent.id,
-      status: paymentIntent.attributes.status,
+      paymentIntentId: attachedIntent.id,
+      status: attachedIntent.attributes.status,
       hasNextAction: !!nextAction,
       nextActionType: nextAction?.type,
       hasQrCode: !!nextAction?.code?.image_url,
@@ -147,12 +172,12 @@ export async function POST(request: NextRequest) {
     });
 
     // Extract payment URL if available (for mobile deep linking)
-    const paymentUrl = nextAction?.redirect?.url || paymentIntent.attributes.payment_url || null;
+    const paymentUrl = nextAction?.redirect?.url || attachedIntent.attributes.payment_url || null;
 
     return NextResponse.json({
       success: true,
       next_action: nextAction,
-      status: paymentIntent.attributes.status,
+      status: attachedIntent.attributes.status,
       // QRPh specific: QR code image URL (base64 PNG) and ID
       // Dynamic QRPh uses next_action.type = "consume_qr" and next_action.code.image_url
       qr_code: nextAction?.code?.image_url,

@@ -2,6 +2,7 @@
 
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { getResend } from '@/lib/resend';
+import { buildUnsubscribeUrl } from '@/lib/unsubscribe-token';
 
 /**
  * Converts HTML email content to plain text version
@@ -116,7 +117,7 @@ export async function sendTestEmail(
       html: htmlContent,
       text: plainText,
       headers: {
-        'List-Unsubscribe': `<https://www.l9tools.online/unsubscribe?email=${encodeURIComponent(testEmail)}>`,
+        'List-Unsubscribe': `<${buildUnsubscribeUrl(testEmail)}>`,
         'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
         'Precedence': 'bulk',
       },

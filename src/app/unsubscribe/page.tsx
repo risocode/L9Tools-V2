@@ -15,6 +15,7 @@ export default function UnsubscribePage() {
   const router = useRouter();
   const { user, logout } = useAuth();
   const emailParam = searchParams.get('email');
+  const tokenParam = searchParams.get('token');
   
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
@@ -37,7 +38,7 @@ export default function UnsubscribePage() {
     setActionType('unsubscribe');
     
     try {
-      const response = await unsubscribeFromEmails(email);
+      const response = await unsubscribeFromEmails(email, tokenParam);
       setResult(response);
     } catch (error: any) {
       setResult({

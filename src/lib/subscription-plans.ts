@@ -53,6 +53,34 @@ export function getCheckoutTotalPhp(planId: SubscriptionPlanId, months: number):
   return plan.pricePhp;
 }
 
+/** Server-side checkout resolution — ignores client-supplied amount (C1). */
+export function resolveCheckoutRequest(
+  plan: string | null | undefined,
+  clientMonths: number | null | undefined
+): { planId: SubscriptionPlanId; months: number; amountPhp: number } | null {
+  if (!isSubscriptionPlanId(plan)) {
+    return null;
+  }
+
+  const months =
+    plan === 'monthly'
+      ? Math.max(1, Math.min(120, Math.floor(Number(clientMonths) || 1)))
+      : SUBSCRIPTION_PLANS[plan].months;
+
+  return {
+    planId: plan,
+    months,
+    amountPhp: getCheckoutTotalPhp(plan, months),
+  };
+}
+
+export function getExpectedAmountCents(plan: string, months: number): number | null {
+  if (!isSubscriptionPlanId(plan)) {
+    return null;
+  }
+  return Math.round(getCheckoutTotalPhp(plan, months) * 100);
+}
+
 export function getCheckoutOriginalTotalPhp(planId: SubscriptionPlanId, months: number): number {
   const plan = SUBSCRIPTION_PLANS[planId];
   if (planId === 'monthly') {

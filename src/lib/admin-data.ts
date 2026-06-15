@@ -1,4 +1,4 @@
-import { getEffectiveSubscriptionTier } from '@/lib/subscription-utils';
+import { getEffectiveSubscriptionTier, NO_CAMPAIGN } from '@/lib/subscription-utils';
 import { ONLINE_THRESHOLD_MS, type AdminExtraFilter, type SubscriptionTierFilter } from '@/lib/admin-constants';
 import type { Profile } from '@/types';
 import type { AdminSupabaseClient } from '@/lib/admin-session';
@@ -59,7 +59,8 @@ export async function queryUserStats(admin: AdminSupabaseClient): Promise<AdminS
     const effectiveTier = getEffectiveSubscriptionTier(
       profile.subscription_tier as 'free' | 'pro' | 'lifetime' | null,
       profile.subscription_expires_at,
-      profile.is_admin
+      profile.is_admin,
+      NO_CAMPAIGN
     );
     if (effectiveTier === 'pro') proUsers++;
     else if (effectiveTier === 'lifetime') lifetimeUsers++;
@@ -160,7 +161,8 @@ async function queryProfilePageFallback(
       const effectiveTier = getEffectiveSubscriptionTier(
         profile.subscription_tier as 'free' | 'pro' | 'lifetime' | null,
         profile.subscription_expires_at,
-        profile.is_admin
+        profile.is_admin,
+        NO_CAMPAIGN
       );
       return effectiveTier === 'free';
     });
@@ -188,7 +190,8 @@ async function queryProfilePageFallback(
         const effectiveTier = getEffectiveSubscriptionTier(
           profile.subscription_tier as 'free' | 'pro' | 'lifetime' | null,
           profile.subscription_expires_at,
-          profile.is_admin
+          profile.is_admin,
+          NO_CAMPAIGN
         );
         return effectiveTier === 'free';
       }).length;

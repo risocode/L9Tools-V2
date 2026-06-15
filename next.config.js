@@ -42,18 +42,20 @@ const withPWA = require('next-pwa')({
 
 const nextConfig = {
   output: 'standalone',
+  serverExternalPackages: ['@opentelemetry/instrumentation'],
   images: {
     remotePatterns: [],
   },
-  webpack: (config, { isServer }) => {
+  turbopack: {
+    resolveAlias: {
+      handlebars: 'handlebars/dist/handlebars.js',
+    },
+  },
+  webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      "handlebars": "handlebars/dist/handlebars.js",
+      handlebars: 'handlebars/dist/handlebars.js',
     };
-    
-    config.externals.push({
-      '@opentelemetry/instrumentation': 'commonjs @opentelemetry/instrumentation',
-    });
 
     return config;
   },

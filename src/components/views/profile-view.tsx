@@ -15,6 +15,7 @@ import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
 import { supabase } from "@/lib/supabase-client";
 import { useToast } from "@/hooks/use-toast";
+import { getEffectiveSubscription, NO_CAMPAIGN } from "@/lib/subscription-utils";
 
 export function ProfileView() {
     const { user, isInitialLoading, refreshUser } = useAuth();
@@ -87,10 +88,19 @@ export function ProfileView() {
         }
     }
 
-    const isLifetimeOrAdmin = user.subscription_tier === 'lifetime' || user.is_admin;
+    const profileFields = {
+        subscription_tier: user.subscription_tier,
+        subscription_expires_at: user.subscription_expires_at,
+        is_admin: user.is_admin,
+    };
+    const subscription = getEffectiveSubscription(profileFields);
+    const billing = getEffectiveSubscription(profileFields, NO_CAMPAIGN);
+    const effectiveTier = subscription.effectiveTier;
+
+    const isLifetimeOrAdmin = effectiveTier === 'lifetime' || user.is_admin;
     const expiresDate = user.subscription_expires_at ? new Date(user.subscription_expires_at) : null;
-    const isExpired = !isLifetimeOrAdmin && expiresDate ? new Date() > expiresDate : false;
-    const tierLabel = user.is_admin ? 'Admin' : (user.subscription_tier || 'free');
+    const isExpired = subscription.isExpired;
+    const tierLabel = user.is_admin ? 'Admin' : effectiveTier;
     const displayName = user.display_name || user.username || 'L9 Player';
     const subscriptionDateLabel = isLifetimeOrAdmin ? 'Access' : isExpired ? 'Expired' : 'Expires On';
     const subscriptionDateValue = isLifetimeOrAdmin ? 'Never' : expiresDate ? format(expiresDate, 'MMM d, yyyy') : 'N/A';
@@ -104,7 +114,7 @@ export function ProfileView() {
                 </div>
                 <div className="profile-avatar-container">
                     <div className="profile-avatar-ring" />
-                     <Avatar className={cn("profile-avatar", getAvatarBorderClass(user.subscription_tier, user.is_admin))}>
+                     <Avatar className={cn("profile-avatar", getAvatarBorderClass(effectiveTier, user.is_admin))}>
                         <AvatarImage src={user.user_photo_url || ''} alt={displayName} />
                         <AvatarFallback className="text-4xl bg-gray-800">{fallback}</AvatarFallback>
                     </Avatar>
@@ -115,7 +125,7 @@ export function ProfileView() {
                         {user.is_admin && <Crown className="h-5 w-5 text-red-400" />}
                     </h1>
                     <p className="profile-email">{user.email}</p>
-                    <div className={cn("profile-tier-pill mt-4", getTierPillClass(user.subscription_tier))}>
+                    <div className={cn("profile-tier-pill mt-4", getTierPillClass(effectiveTier))}>
                         {user.is_admin && <Crown className="h-4 w-4 mr-2" />}
                         {user.subscription_tier === 'lifetime' && <Gem className="h-4 w-4 mr-2"/>}
                         {tierLabel}
@@ -162,7 +172,7 @@ export function ProfileView() {
                      <div className="profile-subscription-panel">
                         <div className="flex items-start gap-4">
                             <div className="profile-stat-icon profile-stat-icon-gold">
-                                {user.is_admin ? <Crown className="h-5 w-5" /> : user.subscription_tier === 'lifetime' ? <Gem className="h-5 w-5" /> : <ShieldCheck className="h-5 w-5" />}
+                                {user.is_admin ? <Crown className="h-5 w-5" /> : effectiveTier === 'lifetime' ? <Gem className="h-5 w-5" /> : <ShieldCheck className="h-5 w-5" />}
                             </div>
                             <div className="min-w-0">
                                 <p className="profile-detail-label">Current Tier</p>
@@ -170,18 +180,20 @@ export function ProfileView() {
                                 <p className="profile-muted">
                                     {user.is_admin
                                         ? 'Administrator access includes all premium features.'
-                                        : user.subscription_tier === 'lifetime'
+                                        : subscription.isJulyPromoActive
+                                            ? 'From July 1–31, unlock the complete Pro toolkit at no cost.'
+                                        : effectiveTier === 'lifetime'
                                             ? 'Lifetime access is active and never expires.'
-                                            : user.subscription_tier === 'pro' && !isExpired
+                                            : effectiveTier === 'pro' && !isExpired
                                                 ? 'Your Pro benefits are active.'
                                                 : 'Upgrade to remove ads and unlock premium boss tools.'}
                                 </p>
                             </div>
                         </div>
                         <div className="profile-subscription-side">
-                            <div className={cn("profile-tier-pill", getTierPillClass(user.subscription_tier))}>
+                            <div className={cn("profile-tier-pill", getTierPillClass(effectiveTier))}>
                                 {user.is_admin && <Crown className="h-4 w-4 mr-2" />}
-                                {user.subscription_tier === 'lifetime' && <Gem className="h-4 w-4 mr-2"/>}
+                                {effectiveTier === 'lifetime' && <Gem className="h-4 w-4 mr-2"/>}
                                 {tierLabel}
                             </div>
                             <p className={cn(
@@ -191,7 +203,7 @@ export function ProfileView() {
                                 <Clock className="h-4 w-4" />
                                 {subscriptionDateLabel}: {subscriptionDateValue}
                             </p>
-                            {(!user.subscription_tier || user.subscription_tier === 'free' || isExpired) && !user.is_admin && (
+                            {(billing.effectiveTier === 'free' || isExpired) && !user.is_admin && (
                                 <Button asChild className="profile-upgrade-button">
                                     <Link href="/subscribe">Upgrade / Manage Plan</Link>
                                 </Button>

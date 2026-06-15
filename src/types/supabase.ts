@@ -87,6 +87,7 @@ export type Database = {
           user_email: string | null
           paid_at: string
           created_at: string
+          subscription_fulfilled_at: string | null
         }
         Insert: {
           id?: string
@@ -102,6 +103,7 @@ export type Database = {
           user_email?: string | null
           paid_at?: string
           created_at?: string
+          subscription_fulfilled_at?: string | null
         }
         Update: {
           id?: string
@@ -117,6 +119,7 @@ export type Database = {
           user_email?: string | null
           paid_at?: string
           created_at?: string
+          subscription_fulfilled_at?: string | null
         }
         Relationships: [
           {
