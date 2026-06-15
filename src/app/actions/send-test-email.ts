@@ -8,7 +8,7 @@ import {
   prepareBulkEmailPlainText,
   validateMarketingSubject,
 } from '@/lib/email-deliverability';
-import { buildUnsubscribeUrl } from '@/lib/unsubscribe-token';
+import { buildUnsubscribeOneClickUrl } from '@/lib/unsubscribe-token';
 
 export async function sendTestEmail(
   testEmail: string,
@@ -80,7 +80,7 @@ export async function sendTestEmail(
       html: recipientHtml,
       text: plainText,
       headers: {
-        'List-Unsubscribe': `<${buildUnsubscribeUrl(testEmail)}>`,
+        'List-Unsubscribe': `<${buildUnsubscribeOneClickUrl(testEmail)}>`,
         'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
       },
       tags: [{ name: 'category', value: 'notification' }],

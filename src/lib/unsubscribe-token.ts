@@ -60,12 +60,30 @@ export function verifyUnsubscribeToken(
   }
 }
 
-export function buildUnsubscribeUrl(email: string): string {
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.l9tools.online').replace(/\/$/, '');
+function buildUnsubscribeParams(email: string): URLSearchParams {
   const token = createUnsubscribeToken(email);
   const params = new URLSearchParams({ email });
   if (token) {
     params.set('token', token);
   }
-  return `${siteUrl}/unsubscribe?${params.toString()}`;
+  return params;
+}
+
+function getSiteUrl(): string {
+  return (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.l9tools.online').replace(/\/$/, '');
+}
+
+/** Human-facing unsubscribe page (GET). */
+export function buildUnsubscribePageUrl(email: string): string {
+  return `${getSiteUrl()}/unsubscribe?${buildUnsubscribeParams(email).toString()}`;
+}
+
+/** RFC 8058 one-click POST endpoint (List-Unsubscribe header). */
+export function buildUnsubscribeOneClickUrl(email: string): string {
+  return `${getSiteUrl()}/api/unsubscribe?${buildUnsubscribeParams(email).toString()}`;
+}
+
+/** @deprecated Use buildUnsubscribePageUrl or buildUnsubscribeOneClickUrl */
+export function buildUnsubscribeUrl(email: string): string {
+  return buildUnsubscribePageUrl(email);
 }

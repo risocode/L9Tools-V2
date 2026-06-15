@@ -5,7 +5,7 @@ import {
   prepareBulkEmailHtml,
   prepareBulkEmailPlainText,
 } from '@/lib/email-deliverability';
-import { buildUnsubscribeUrl } from '@/lib/unsubscribe-token';
+import { buildUnsubscribeOneClickUrl } from '@/lib/unsubscribe-token';
 
 function sanitizeApiKey(apiKey: string): string {
   if (!apiKey) {
@@ -75,7 +75,7 @@ export async function sendBulkEmail(
           html: recipientHtml,
           text: plainText,
           headers: {
-            'List-Unsubscribe': `<${buildUnsubscribeUrl(email)}>`,
+            'List-Unsubscribe': `<${buildUnsubscribeOneClickUrl(email)}>`,
             'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
             Precedence: 'bulk',
           },

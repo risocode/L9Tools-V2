@@ -1,5 +1,5 @@
 import { getReplyToEmail, DEFAULT_SENDER_ADDRESS } from '@/lib/email-config';
-import { buildUnsubscribeUrl } from '@/lib/unsubscribe-token';
+import { buildUnsubscribePageUrl } from '@/lib/unsubscribe-token';
 
 export const UNSUBSCRIBE_URL_PLACEHOLDER = '{{UNSUBSCRIBE_URL}}';
 
@@ -115,7 +115,7 @@ export function buildComplianceFooterPlainText(unsubscribeUrl: string): string {
  * Per-recipient HTML: tokenized unsubscribe URL + compliance footer when missing.
  */
 export function prepareBulkEmailHtml(html: string, recipientEmail: string): string {
-  const unsubscribeUrl = buildUnsubscribeUrl(recipientEmail);
+  const unsubscribeUrl = buildUnsubscribePageUrl(recipientEmail);
   let prepared = html.replace(/\{\{UNSUBSCRIBE_URL\}\}/gi, unsubscribeUrl);
 
   const hasSignedUnsubscribe = prepared.includes(unsubscribeUrl);
@@ -132,7 +132,7 @@ export function prepareBulkEmailHtml(html: string, recipientEmail: string): stri
 }
 
 export function prepareBulkEmailPlainText(html: string, recipientEmail: string): string {
-  const unsubscribeUrl = buildUnsubscribeUrl(recipientEmail);
+  const unsubscribeUrl = buildUnsubscribePageUrl(recipientEmail);
   const base = htmlToPlainText(
     html.replace(/\{\{UNSUBSCRIBE_URL\}\}/gi, unsubscribeUrl)
   );
