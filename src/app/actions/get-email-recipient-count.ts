@@ -26,8 +26,9 @@ export async function getEmailRecipientCount(
 
   const { data: profiles, error } = await supabaseAdmin
     .from('profiles')
-    .select('email, subscription_tier, subscription_expires_at, is_admin')
-    .not('email', 'is', null);
+    .select('email, subscription_tier, subscription_expires_at, is_admin, notifications_enabled')
+    .not('email', 'is', null)
+    .eq('notifications_enabled', true);
 
   if (error) {
     return { count: 0, error: error.message };

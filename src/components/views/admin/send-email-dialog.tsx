@@ -197,8 +197,9 @@ export function SendEmailDialog({ isOpen, onClose }: SendEmailDialogProps) {
                 <tr>
                   <td align="center">
                     <p class="email-text-small" style="color: #757575; font-size: 11px; margin: 0 0 10px 0; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">You're receiving this email because you have an L9 Tools account.</p>
+                    <p class="email-text-small" style="color: #757575; font-size: 11px; margin: 0 0 10px 0; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">Contact: <a href="mailto:team@l9tools.online" style="color: #6C63FF;">team@l9tools.online</a> · www.l9tools.online</p>
                     <p class="email-text-small" style="color: #555; font-size: 11px; margin: 0; letter-spacing: 0.3px; font-family: Arial, Helvetica, sans-serif;">© 2025 L9 Tools | Lord Nine Infinite Class</p>
-                    <p class="email-text-small" style="color: #555; font-size: 11px; margin: 10px 0 0 0; font-family: Arial, Helvetica, sans-serif;"><a href="https://www.l9tools.online/unsubscribe" style="color: #6C63FF; text-decoration: underline;">Unsubscribe</a></p>
+                    <p class="email-text-small" style="color: #555; font-size: 11px; margin: 10px 0 0 0; font-family: Arial, Helvetica, sans-serif;"><a href="{{UNSUBSCRIBE_URL}}" style="color: #6C63FF; text-decoration: underline;">Unsubscribe</a></p>
                   </td>
                 </tr>
               </table>

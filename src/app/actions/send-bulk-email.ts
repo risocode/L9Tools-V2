@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { getSupabaseAdmin, verifyAdminStatus } from '@/lib/supabase-admin';
 import { getEffectiveSubscriptionTier, NO_CAMPAIGN } from '@/lib/subscription-utils';
 import { sendBulkEmail } from '@/lib/resend';
+import { validateMarketingSubject } from '@/lib/email-deliverability';
 import { logAdminAction } from '@/lib/admin-audit';
 import type { EmailAudience } from '@/lib/admin-constants';
 
@@ -27,6 +28,11 @@ export async function sendBulkEmailToAllUsers(
       return { success: false, message: 'Admin access required' };
     }
 
+    const subjectCheck = validateMarketingSubject(subject);
+    if (!subjectCheck.ok) {
+      return { success: false, message: subjectCheck.reason };
+    }
+
     const supabaseAdmin = getSupabaseAdmin();
     if (!supabaseAdmin) {
       return { success: false, message: 'Admin client unavailable' };
@@ -34,8 +40,9 @@ export async function sendBulkEmailToAllUsers(
     
     const { data: profiles, error } = await supabaseAdmin
       .from('profiles')
-      .select('email, subscription_tier, subscription_expires_at, is_admin')
-      .not('email', 'is', null);
+      .select('email, subscription_tier, subscription_expires_at, is_admin, notifications_enabled')
+      .not('email', 'is', null)
+      .eq('notifications_enabled', true);
 
     if (error) {
       return { success: false, message: `Failed to fetch users: ${error.message}` };
