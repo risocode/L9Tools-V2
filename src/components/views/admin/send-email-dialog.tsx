@@ -13,12 +13,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-  BULK_EMAIL_BATCH_DELAY_MS,
-  BULK_EMAIL_BATCH_SIZE,
   finalizeBulkEmailSend,
   getBulkEmailRecipients,
   sendBulkEmailChunk,
 } from '@/app/actions/send-bulk-email';
+import { BULK_EMAIL_BATCH_DELAY_MS, BULK_EMAIL_BATCH_SIZE } from '@/lib/bulk-email-constants';
 import { sendTestEmail } from '@/app/actions/send-test-email';
 import { getEmailTemplate, saveEmailTemplate } from '@/app/actions/email-template';
 import { useToast } from '@/hooks/use-toast';

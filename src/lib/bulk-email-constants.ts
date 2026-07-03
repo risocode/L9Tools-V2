@@ -1,0 +1,2 @@
+export const BULK_EMAIL_BATCH_SIZE = 10;
+export const BULK_EMAIL_BATCH_DELAY_MS = 1000;

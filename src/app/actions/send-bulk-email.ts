@@ -7,9 +7,7 @@ import { sendBulkEmail } from '@/lib/resend';
 import { validateMarketingSubject } from '@/lib/email-deliverability';
 import { logAdminAction } from '@/lib/admin-audit';
 import type { EmailAudience } from '@/lib/admin-constants';
-
-export const BULK_EMAIL_BATCH_SIZE = 10;
-export const BULK_EMAIL_BATCH_DELAY_MS = 1000;
+import { BULK_EMAIL_BATCH_DELAY_MS, BULK_EMAIL_BATCH_SIZE } from '@/lib/bulk-email-constants';
 
 async function requireAdminSender() {
   const supabase = await createSupabaseServerClient();
