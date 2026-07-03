@@ -216,33 +216,6 @@ async function updateUserWithProfile(
         const googleDisplayName = sessionUser.user_metadata?.full_name || sessionUser.user_metadata?.name;
         const googlePhotoUrl = sessionUser.user_metadata?.avatar_url || sessionUser.user_metadata?.picture;
 
-        // Validate subscription and auto-downgrade if expired
-        const { getEffectiveSubscriptionTier } = await import('@/lib/subscription-utils');
-        const effectiveTier = getEffectiveSubscriptionTier(
-          profile.subscription_tier as any,
-          profile.subscription_expires_at,
-          profile.is_admin
-        );
-
-        // If subscription expired and needs downgrade, update in database
-        if (profile.subscription_tier === 'pro' && effectiveTier === 'free' && !profile.is_admin) {
-          // Auto-downgrade expired Pro subscriptions
-          try {
-            const { supabase: supabaseClient } = await import('@/lib/supabase-client');
-            await supabaseClient.from('profiles')
-              .update({
-                subscription_tier: 'free',
-                updated_at: new Date().toISOString(),
-              })
-              .eq('id', sessionUser.id);
-            
-            // Update profile object to reflect the downgrade
-            profile.subscription_tier = 'free';
-          } catch (err) {
-            // Silent fail - will be corrected on next fetch or by server action
-          }
-        }
-
         const mergedUser: User = {
           ...sessionUser,
           ...profile,
@@ -254,8 +227,6 @@ async function updateUserWithProfile(
           created_at: profile.created_at ?? sessionUser.created_at,
           last_sign_in_at: profile.last_sign_in_at ?? null,
           updated_at: profile.updated_at ?? null,
-          // Use effective tier (handles expired subscriptions)
-          subscription_tier: effectiveTier,
         };
 
         // Cache in memory for current session

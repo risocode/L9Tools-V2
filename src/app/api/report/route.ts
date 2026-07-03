@@ -3,10 +3,15 @@ import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { sendBossReport } from '@/ai/flows/send-boss-report';
 import { NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
+import { isAllowedDiscordWebhookUrl } from '@/lib/discord-webhook';
 
 export async function POST(request: Request) {
     const supabase = await createSupabaseServerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+        return NextResponse.json({ error: 'Authentication required.' }, { status: 401 });
+    }
 
     try {
         const { bosses, webhookUrl: clientWebhookUrl } = await request.json();
@@ -15,26 +20,39 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Missing or invalid bosses data.' }, { status: 400 });
         }
 
-        let finalWebhookUrl = clientWebhookUrl;
+        const supabaseAdmin = getSupabaseAdmin();
+        if (!supabaseAdmin) {
+            return NextResponse.json({ error: 'Service unavailable.' }, { status: 503 });
+        }
 
-        // If the user is logged in, prioritize their saved webhook URL.
-        if (user) {
-            const supabaseAdmin = getSupabaseAdmin();
-            if (supabaseAdmin) {
-                const { data: profile, error } = await supabaseAdmin
-                    .from('profiles')
-                    .select('discord_webhook_url')
-                    .eq('id', user.id)
-                    .single();
-                
-                if (profile?.discord_webhook_url) {
-                    finalWebhookUrl = profile.discord_webhook_url;
-                }
+        const { data: profile, error } = await supabaseAdmin
+            .from('profiles')
+            .select('discord_webhook_url')
+            .eq('id', user.id)
+            .single();
+
+        if (error) {
+            return NextResponse.json({ error: 'Could not load profile.' }, { status: 500 });
+        }
+
+        let finalWebhookUrl = profile?.discord_webhook_url ?? null;
+
+        if (!finalWebhookUrl && clientWebhookUrl && isAllowedDiscordWebhookUrl(clientWebhookUrl)) {
+            const { error: saveError } = await supabaseAdmin
+                .from('profiles')
+                .update({
+                    discord_webhook_url: clientWebhookUrl,
+                    updated_at: new Date().toISOString(),
+                })
+                .eq('id', user.id);
+
+            if (!saveError) {
+                finalWebhookUrl = clientWebhookUrl;
             }
         }
-        
-        if (!finalWebhookUrl) {
-            return NextResponse.json({ error: 'Missing Discord webhook URL.' }, { status: 400 });
+
+        if (!finalWebhookUrl || !isAllowedDiscordWebhookUrl(finalWebhookUrl)) {
+            return NextResponse.json({ error: 'Missing or invalid Discord webhook URL.' }, { status: 400 });
         }
         
         await sendBossReport({ 

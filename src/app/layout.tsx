@@ -27,6 +27,7 @@ import "../styles/components/dropdowns.css";
 import "../styles/components/forms.css";
 import "../styles/components/loaders.css";
 import "../styles/components/profile.css";
+import "../styles/components/july-event-banner.css";
 import "../styles/components/selects.css";
 import "../styles/components/tables.css";
 import "../styles/components/tooltips.css";

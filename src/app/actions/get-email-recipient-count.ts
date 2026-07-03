@@ -2,7 +2,7 @@
 
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { getSupabaseAdmin, verifyAdminStatus } from '@/lib/supabase-admin';
-import { getEffectiveSubscriptionTier } from '@/lib/subscription-utils';
+import { getEffectiveSubscriptionTier, NO_CAMPAIGN } from '@/lib/subscription-utils';
 import type { EmailAudience } from '@/lib/admin-constants';
 
 export async function getEmailRecipientCount(
@@ -26,8 +26,9 @@ export async function getEmailRecipientCount(
 
   const { data: profiles, error } = await supabaseAdmin
     .from('profiles')
-    .select('email, subscription_tier, subscription_expires_at, is_admin')
-    .not('email', 'is', null);
+    .select('email, subscription_tier, subscription_expires_at, is_admin, notifications_enabled')
+    .not('email', 'is', null)
+    .eq('notifications_enabled', true);
 
   if (error) {
     return { count: 0, error: error.message };
@@ -39,7 +40,8 @@ export async function getEmailRecipientCount(
     const effective = getEffectiveSubscriptionTier(
       p.subscription_tier as 'free' | 'pro' | 'lifetime' | null,
       p.subscription_expires_at,
-      p.is_admin
+      p.is_admin,
+      NO_CAMPAIGN
     );
     return effective === audience;
   });

@@ -1,0 +1,1084 @@
+/*
+ * July Free Pro — Legendary MMORPG seasonal event banner
+ */
+
+.july-event-banner {
+  --event-cycle: 6s;
+  --legendary-gold: #e2c56a;
+  --legendary-amber: #ffb020;
+  --arcane-cyan: #3dd6ff;
+  --rarity-violet: #9b6dff;
+  --july-navy: #050a12;
+  --july-navy-mid: #0b1524;
+  --july-platinum: #c8dce8;
+  --july-frame-glow: rgba(255, 176, 32, 0.32);
+  --title-shimmer-cycle: 7s;
+  --bg-mist-cycle: 18s;
+  --bg-energy-cycle: 14s;
+  --bg-glow-cycle: 8s;
+  --bg-sweep-cycle: 12s;
+
+  position: relative;
+  z-index: 30;
+  width: 100%;
+  flex-shrink: 0;
+  padding: 0.5rem 0.5rem 0;
+}
+
+@media (min-width: 640px) {
+  .july-event-banner {
+    padding: 0.625rem 0.75rem 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .july-event-banner {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* ── Shell & frame ── */
+
+.july-event-banner__shell {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  max-width: 80rem;
+  padding: 3px;
+  border-radius: 6px;
+  isolation: isolate;
+  background: linear-gradient(
+    160deg,
+    #ffe082 0%,
+    var(--legendary-amber) 10%,
+    #6b5210 26%,
+    #0a1628 42%,
+    #142238 58%,
+    #6b5210 74%,
+    var(--legendary-gold) 90%,
+    #ffe082 100%
+  );
+  box-shadow:
+    0 4px 28px rgba(0, 0, 0, 0.55),
+    0 0 28px var(--july-frame-glow),
+    0 0 1px rgba(61, 214, 255, 0.35),
+    inset 0 2px 0 rgba(255, 224, 130, 0.45),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.65);
+}
+
+.july-event-banner__rarity-aura {
+  pointer-events: none;
+  position: absolute;
+  border-radius: 5px;
+  inset: -2px;
+  z-index: 0;
+  background: radial-gradient(
+    ellipse 80% 120% at 50% 50%,
+    rgba(155, 109, 255, 0.18) 0%,
+    rgba(61, 214, 255, 0.08) 40%,
+    transparent 70%
+  );
+  opacity: 0.45;
+  will-change: opacity;
+  animation: july-rarity-aura var(--event-cycle) ease-in-out infinite;
+}
+
+.july-event-banner__frame-bevel {
+  pointer-events: none;
+  position: absolute;
+  border-radius: 4px;
+  inset: 2px;
+  z-index: 1;
+  border: 1px solid rgba(61, 214, 255, 0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 224, 130, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+    0 0 14px rgba(255, 176, 32, 0.12);
+}
+
+/* ── Inner panel (Layer 1 — deep fantasy base) ── */
+
+.july-event-banner__inner {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  contain: layout style paint;
+  min-height: auto;
+  padding: 0.625rem 0.5rem;
+  border-radius: 4px;
+  background:
+    radial-gradient(ellipse 90% 80% at 18% 50%, rgba(11, 29, 51, 0.85) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 100% at 82% 45%, rgba(8, 17, 31, 0.9) 0%, transparent 58%),
+    radial-gradient(ellipse 55% 120% at 50% 35%, rgba(61, 214, 255, 0.08) 0%, transparent 62%),
+    radial-gradient(ellipse 45% 80% at 50% 100%, rgba(255, 176, 32, 0.05) 0%, transparent 55%),
+    radial-gradient(ellipse 100% 140% at 50% -20%, #0b1d33 0%, transparent 50%),
+    linear-gradient(180deg, #08111f 0%, #050a12 42%, #050a12 100%);
+  box-shadow:
+    inset 0 0 56px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(61, 214, 255, 0.08),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.55);
+}
+
+@media (min-width: 480px) {
+  .july-event-banner__inner {
+    padding: 0.75rem 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .july-event-banner__inner {
+    padding: 0.875rem 1.25rem;
+    min-height: 76px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .july-event-banner__inner {
+    padding: 1rem 1.5rem;
+    min-height: 84px;
+  }
+}
+
+.july-event-banner__inner::before {
+  content: none;
+}
+
+/* ── Background scene (layers 2–7) ── */
+
+.july-event-banner__bg-scene {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* Layer 4 — legendary glow core behind title */
+.july-event-banner__bg-glow-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(72%, 28rem);
+  height: 140%;
+  transform: translate(-50%, -50%) translateZ(0);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(61, 214, 255, 0.22) 0%,
+    rgba(61, 214, 255, 0.08) 28%,
+    rgba(255, 176, 32, 0.06) 48%,
+    transparent 68%
+  );
+  will-change: opacity;
+  animation: july-bg-glow-pulse var(--bg-glow-cycle) ease-in-out infinite;
+}
+
+/* Layer 5 — ancient runes */
+.july-event-banner__bg-runes {
+  position: absolute;
+  inset: 0;
+  opacity: 0.055;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='28' fill='none' stroke='%233dd6ff' stroke-width='0.6'/%3E%3Cpath d='M60 20v8M60 92v8M20 60h8M92 60h8' stroke='%23ffb020' stroke-width='0.5'/%3E%3Cpath d='M35 35l5 5M80 80l5 5M85 35l-5 5M40 85l-5-5' stroke='%233dd6ff' stroke-width='0.4'/%3E%3Ctext x='52' y='66' fill='%23ffb020' font-size='10' font-family='serif'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E");
+  background-size: 140px 140px;
+  background-position: center;
+}
+
+/* Layer 2 — arcane mist */
+.july-event-banner__bg-arcane-mist {
+  position: absolute;
+  inset: -20% -10%;
+  opacity: 0.35;
+  background:
+    radial-gradient(ellipse 40% 60% at 20% 50%, rgba(61, 214, 255, 0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 35% 50% at 75% 40%, rgba(11, 29, 51, 0.5) 0%, transparent 65%),
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(61, 214, 255, 0.04) 25%,
+      rgba(61, 214, 255, 0.08) 50%,
+      rgba(61, 214, 255, 0.04) 75%,
+      transparent 100%
+    );
+  background-size: 200% 100%;
+  will-change: background-position, opacity;
+  animation: july-bg-mist-drift var(--bg-mist-cycle) ease-in-out infinite;
+}
+
+/* Layer 2 — cyan energy streams */
+.july-event-banner__bg-energy-stream {
+  position: absolute;
+  inset: 0;
+  opacity: 0.28;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 30%,
+    rgba(61, 214, 255, 0.03) 42%,
+    rgba(61, 214, 255, 0.1) 50%,
+    rgba(61, 214, 255, 0.03) 58%,
+    transparent 70%,
+    transparent 100%
+  );
+  background-size: 220% 100%;
+  will-change: background-position;
+  animation: july-bg-energy-flow var(--bg-energy-cycle) linear infinite;
+}
+
+/* Occasional light sweep */
+.july-event-banner__bg-light-sweep {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    transparent 44%,
+    rgba(61, 214, 255, 0.06) 48%,
+    rgba(255, 224, 130, 0.08) 50%,
+    rgba(61, 214, 255, 0.06) 52%,
+    transparent 56%,
+    transparent 100%
+  );
+  background-size: 280% 100%;
+  will-change: background-position, opacity;
+  animation: july-bg-light-sweep var(--bg-sweep-cycle) ease-in-out infinite;
+}
+
+/* Layer 6 — crown energy (both sides) */
+.july-event-banner__bg-crown-energy {
+  position: absolute;
+  top: 50%;
+  width: clamp(3rem, 14vw, 7rem);
+  height: clamp(3rem, 14vw, 7rem);
+  transform: translateY(-50%) translateZ(0);
+  background: radial-gradient(
+    circle,
+    rgba(61, 214, 255, 0.22) 0%,
+    rgba(255, 176, 32, 0.12) 35%,
+    transparent 68%
+  );
+  will-change: transform, opacity;
+  animation: july-bg-crown-energy 10s ease-in-out infinite;
+}
+
+.july-event-banner__bg-crown-energy--left {
+  left: 3%;
+}
+
+.july-event-banner__bg-crown-energy--right {
+  right: 3%;
+  animation-delay: -5s;
+}
+
+/* Layer 3 — stars */
+.july-event-banner__bg-star {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(circle, #fff 0%, rgba(61, 214, 255, 0.85) 45%, transparent 72%);
+  will-change: transform, opacity;
+  animation: july-bg-star-float 11s ease-in-out infinite;
+}
+
+.july-event-banner__bg-star--1 { width: 3px; height: 3px; left: 22%; top: 18%; opacity: 0.35; animation-delay: 0s; }
+.july-event-banner__bg-star--2 { width: 2px; height: 2px; left: 68%; top: 22%; opacity: 0.28; animation-delay: 2.4s; }
+.july-event-banner__bg-star--3 { width: 2px; height: 2px; left: 42%; top: 72%; opacity: 0.22; animation-delay: 4.8s; }
+.july-event-banner__bg-star--4 { width: 3px; height: 3px; left: 85%; top: 65%; opacity: 0.32; animation-delay: 1.2s; }
+.july-event-banner__bg-star--5 { width: 2px; height: 2px; left: 55%; top: 12%; opacity: 0.25; animation-delay: 3.6s; }
+.july-event-banner__bg-star--6 { width: 2px; height: 2px; left: 12%; top: 78%; opacity: 0.2; animation-delay: 5.5s; }
+.july-event-banner__bg-star--7 { width: 2px; height: 2px; left: 35%; top: 44%; opacity: 0.38; animation-delay: 1.8s; }
+.july-event-banner__bg-star--8 { width: 3px; height: 3px; left: 62%; top: 36%; opacity: 0.32; animation-delay: 3.1s; }
+.july-event-banner__bg-star--9 { width: 2px; height: 2px; left: 18%; top: 52%; opacity: 0.28; animation-delay: 6.2s; }
+.july-event-banner__bg-star--10 { width: 2px; height: 2px; left: 76%; top: 46%; opacity: 0.35; animation-delay: 0.6s; }
+.july-event-banner__bg-star--11 { width: 3px; height: 3px; left: 50%; top: 24%; opacity: 0.42; animation-delay: 4.4s; }
+.july-event-banner__bg-star--12 { width: 2px; height: 2px; left: 28%; top: 34%; opacity: 0.22; animation-delay: 7.1s; }
+.july-event-banner__bg-star--13 { width: 2px; height: 2px; left: 88%; top: 38%; opacity: 0.26; animation-delay: 2.2s; }
+.july-event-banner__bg-star--14 { width: 2px; height: 2px; left: 8%; top: 40%; opacity: 0.3; animation-delay: 5.8s; }
+
+/* Layer 3 — sparkles */
+.july-event-banner__bg-sparkle {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)) center / 1px 100% no-repeat,
+    linear-gradient(rgba(61, 214, 255, 0.75), rgba(61, 214, 255, 0.75)) center / 100% 1px no-repeat;
+  will-change: transform, opacity;
+  animation: july-bg-sparkle-twinkle 9s ease-in-out infinite;
+}
+
+.july-event-banner__bg-sparkle--1 { left: 33%; top: 28%; opacity: 0.35; animation-delay: 0s; }
+.july-event-banner__bg-sparkle--2 { left: 71%; top: 52%; opacity: 0.28; animation-delay: 2.1s; }
+.july-event-banner__bg-sparkle--3 { left: 48%; top: 58%; opacity: 0.4; animation-delay: 4.3s; }
+.july-event-banner__bg-sparkle--4 { left: 24%; top: 62%; opacity: 0.22; animation-delay: 1.4s; }
+.july-event-banner__bg-sparkle--5 { left: 61%; top: 16%; opacity: 0.32; animation-delay: 3.7s; }
+.july-event-banner__bg-sparkle--6 { left: 39%; top: 80%; opacity: 0.26; animation-delay: 5.9s; }
+.july-event-banner__bg-sparkle--7 { left: 82%; top: 28%; opacity: 0.3; animation-delay: 0.8s; }
+.july-event-banner__bg-sparkle--8 { left: 15%; top: 68%; opacity: 0.24; animation-delay: 6.5s; }
+
+/* Layer 3 — magical dust */
+.july-event-banner__bg-dust {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 176, 32, 0.5) 50%, transparent 75%);
+  will-change: transform, opacity;
+  animation: july-bg-dust-drift 13s ease-in-out infinite;
+}
+
+.july-event-banner__bg-dust--1 { width: 4px; height: 4px; left: 30%; bottom: 15%; opacity: 0.3; animation-delay: 0s; }
+.july-event-banner__bg-dust--2 { width: 3px; height: 3px; left: 58%; bottom: 20%; opacity: 0.25; animation-delay: 2.8s; }
+.july-event-banner__bg-dust--3 { width: 3px; height: 3px; left: 78%; bottom: 28%; opacity: 0.2; animation-delay: 5.2s; }
+.july-event-banner__bg-dust--4 { width: 4px; height: 4px; left: 38%; bottom: 10%; opacity: 0.35; animation-delay: 1.5s; }
+.july-event-banner__bg-dust--5 { width: 2px; height: 2px; left: 48%; bottom: 32%; opacity: 0.18; animation-delay: 7s; }
+.july-event-banner__bg-dust--6 { width: 3px; height: 3px; left: 15%; bottom: 18%; opacity: 0.32; animation-delay: 3.4s; }
+.july-event-banner__bg-dust--7 { width: 2px; height: 2px; left: 65%; bottom: 14%; opacity: 0.28; animation-delay: 6.1s; }
+.july-event-banner__bg-dust--8 { width: 3px; height: 3px; left: 44%; bottom: 8%; opacity: 0.24; animation-delay: 1.9s; }
+.july-event-banner__bg-dust--9 { width: 2px; height: 2px; left: 82%; bottom: 22%; opacity: 0.2; animation-delay: 8.3s; }
+
+/* Layer 7 — corner gem reflections */
+.july-event-banner__bg-corner-flash {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, #fff 0%, rgba(255, 176, 32, 0.8) 40%, transparent 70%);
+  opacity: 0;
+  will-change: opacity, transform;
+  animation: july-bg-corner-sparkle 5.5s ease-in-out infinite;
+}
+
+.july-event-banner__bg-corner-flash--tl { left: 0.5rem; top: 0.5rem; animation-delay: 0s; }
+.july-event-banner__bg-corner-flash--tr { right: 0.5rem; top: 0.5rem; animation-delay: 1.4s; }
+.july-event-banner__bg-corner-flash--bl { left: 0.5rem; bottom: 0.5rem; animation-delay: 2.8s; }
+.july-event-banner__bg-corner-flash--br { right: 0.5rem; bottom: 0.5rem; animation-delay: 4.2s; }
+
+/* ── Magical vortex (Layer 6 — right portal) ── */
+
+.july-event-banner__vortex {
+  pointer-events: none;
+  position: absolute;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  top: 50%;
+  width: clamp(3rem, 10vw, 5.5rem);
+  height: clamp(3rem, 10vw, 5.5rem);
+  transform: translateY(-50%) translateZ(0);
+  will-change: transform;
+}
+
+.july-event-banner__vortex--right {
+  right: clamp(0.35rem, 1.5vw, 1rem);
+  opacity: 0.55;
+  animation: july-vortex-breathe 10s ease-in-out infinite;
+}
+
+@media (min-width: 640px) {
+  .july-event-banner--inline .july-event-banner__vortex--right {
+    display: flex;
+  }
+}
+
+@media (min-width: 768px) {
+  .july-event-banner:not(.july-event-banner--inline) .july-event-banner__vortex--right {
+    display: flex;
+  }
+}
+
+.july-event-banner__vortex-outer {
+  position: absolute;
+  border-radius: 9999px;
+  inset: 0;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(61, 214, 255, 0.45) 55deg,
+    rgba(255, 176, 32, 0.35) 120deg,
+    transparent 180deg,
+    rgba(155, 109, 255, 0.3) 260deg,
+    transparent 360deg
+  );
+  mask: radial-gradient(circle, black 14%, transparent 64%);
+  -webkit-mask: radial-gradient(circle, black 14%, transparent 64%);
+  will-change: transform;
+  animation: july-vortex-spin 14s linear infinite;
+}
+
+.july-event-banner__vortex-inner {
+  position: absolute;
+  border-radius: 9999px;
+  inset: 20%;
+  background: conic-gradient(
+    from 180deg,
+    transparent 0deg,
+    rgba(255, 224, 130, 0.4) 70deg,
+    rgba(61, 214, 255, 0.28) 140deg,
+    transparent 220deg
+  );
+  mask: radial-gradient(circle, black 22%, transparent 58%);
+  -webkit-mask: radial-gradient(circle, black 22%, transparent 58%);
+  will-change: transform;
+  animation: july-vortex-spin-reverse 9s linear infinite;
+}
+
+.july-event-banner__vortex-arc {
+  position: absolute;
+  border-radius: 9999px;
+  inset: -6%;
+  border: 2px solid transparent;
+  border-top-color: rgba(61, 214, 255, 0.4);
+  border-right-color: rgba(255, 176, 32, 0.28);
+  will-change: transform;
+  animation: july-vortex-spin 11s linear infinite;
+}
+
+/* Background keyframes */
+@keyframes july-bg-mist-drift {
+  0%, 100% { background-position: 0% 50%; opacity: 0.28; }
+  50% { background-position: 100% 50%; opacity: 0.38; }
+}
+
+@keyframes july-bg-energy-flow {
+  0% { background-position: 120% 0; }
+  100% { background-position: -120% 0; }
+}
+
+@keyframes july-bg-glow-pulse {
+  0%, 100% { opacity: 0.55; transform: translate(-50%, -50%) scale(0.95) translateZ(0); }
+  50% { opacity: 0.85; transform: translate(-50%, -50%) scale(1.05) translateZ(0); }
+}
+
+@keyframes july-bg-light-sweep {
+  0%, 78%, 100% { background-position: 200% 0; opacity: 0; }
+  42%, 48% { background-position: -80% 0; opacity: 0.45; }
+}
+
+@keyframes july-bg-crown-energy {
+  0%, 100% { opacity: 0.45; transform: translateY(-50%) scale(0.92) translateZ(0); }
+  50% { opacity: 0.75; transform: translateY(-50%) scale(1.08) translateZ(0); }
+}
+
+@keyframes july-bg-star-float {
+  0%, 100% { transform: translate(0, 0) translateZ(0); opacity: 0.2; }
+  50% { transform: translate(3px, -5px) translateZ(0); opacity: 0.45; }
+}
+
+@keyframes july-bg-dust-drift {
+  0% { transform: translateY(0) translateZ(0); opacity: 0.15; }
+  40% { opacity: 0.4; }
+  100% { transform: translateY(-90%) translateZ(0); opacity: 0; }
+}
+
+@keyframes july-bg-sparkle-twinkle {
+  0%, 100% { transform: scale(0.7) rotate(0deg) translateZ(0); opacity: 0.15; }
+  45% { transform: scale(1.2) rotate(45deg) translateZ(0); opacity: 0.5; }
+  70% { transform: scale(0.9) rotate(90deg) translateZ(0); opacity: 0.25; }
+}
+
+@keyframes july-bg-corner-sparkle {
+  0%, 82%, 100% { opacity: 0; transform: scale(0.6) translateZ(0); }
+  8%, 14% { opacity: 0.5; transform: scale(1.15) translateZ(0); }
+  20% { opacity: 0; transform: scale(0.8) translateZ(0); }
+}
+
+/* ── Corner ornaments (static) ── */
+
+.july-event-banner__corner {
+  pointer-events: none;
+  position: absolute;
+  z-index: 20;
+  width: 1rem;
+  height: 1rem;
+  color: var(--legendary-gold);
+  filter: drop-shadow(0 0 4px rgba(255, 176, 32, 0.6));
+  opacity: 0.95;
+}
+
+.july-event-banner__corner--tl { left: 0.25rem; top: 0.25rem; }
+.july-event-banner__corner--tr { right: 0.25rem; top: 0.25rem; transform: rotate(90deg); }
+.july-event-banner__corner--bl { bottom: 0.25rem; left: 0.25rem; transform: rotate(-90deg); }
+.july-event-banner__corner--br { bottom: 0.25rem; right: 0.25rem; transform: rotate(180deg); }
+
+@media (min-width: 640px) {
+  .july-event-banner__corner {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+/* ── Center content ── */
+
+.july-event-banner__center {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  flex-direction: row;
+  gap: clamp(0.375rem, 1.5vw, 1.375rem);
+  max-width: min(100%, 56rem);
+  padding: 0.125rem 0.375rem;
+}
+
+@media (min-width: 480px) {
+  .july-event-banner__center {
+    gap: 0.875rem;
+    padding: 0.125rem 0.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .july-event-banner__center {
+    gap: 1.125rem;
+    max-width: min(96%, 60rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .july-event-banner__center {
+    gap: 1.375rem;
+  }
+}
+
+/* ── Emblem & crystal halo ── */
+
+.july-event-banner__emblem {
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: clamp(2rem, 5.5vw + 0.4rem, 4rem);
+  height: clamp(2rem, 5.5vw + 0.4rem, 4rem);
+}
+
+.july-event-banner__emblem--right .july-event-banner__emblem-svg {
+  transform: scaleX(-1);
+}
+
+.july-event-banner__crystal-halo {
+  pointer-events: none;
+  position: absolute;
+  border-radius: 9999px;
+  inset: -35%;
+  background: radial-gradient(
+    circle,
+    rgba(61, 214, 255, 0.45) 0%,
+    rgba(255, 176, 32, 0.25) 35%,
+    rgba(155, 109, 255, 0.1) 55%,
+    transparent 72%
+  );
+  will-change: transform, opacity;
+  transform: scale(0.85) translateZ(0);
+  animation: july-crystal-pulse var(--event-cycle) ease-out infinite;
+}
+
+.july-event-banner__crystal-halo--right {
+  animation-delay: calc(var(--event-cycle) / -2);
+}
+
+.july-event-banner__emblem-svg {
+  position: relative;
+  z-index: 10;
+  width: 82%;
+  height: 82%;
+  filter:
+    drop-shadow(0 2px 4px rgba(0, 0, 0, 0.65))
+    drop-shadow(0 0 14px rgba(255, 176, 32, 0.5))
+    drop-shadow(0 0 18px rgba(61, 214, 255, 0.28));
+}
+
+.july-event-banner__emblem-gem--center {
+  transform-origin: 36px 45.5px;
+  will-change: transform, opacity;
+  animation: july-gem-legendary-flash var(--event-cycle) ease-out infinite;
+}
+
+.july-event-banner__emblem-gem--peak {
+  transform-origin: 36px 18px;
+  will-change: transform, opacity;
+  animation: july-gem-legendary-flash var(--event-cycle) ease-out infinite;
+}
+
+.july-event-banner__emblem-gem--side {
+  will-change: transform, opacity;
+  animation: july-gem-legendary-flash var(--event-cycle) ease-out infinite;
+  animation-delay: calc(var(--event-cycle) / -3);
+}
+
+/* ── Copy / reward panel ── */
+
+.july-event-banner__copy {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  text-align: center;
+  width: auto;
+  isolation: isolate;
+  gap: 0.25rem;
+}
+
+.july-event-banner__copy::before {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  inset: -4px -8px;
+  z-index: -1;
+  border-radius: 3px;
+  background: linear-gradient(
+    180deg,
+    rgba(4, 8, 16, 0.55) 0%,
+    rgba(8, 16, 28, 0.68) 50%,
+    rgba(4, 8, 16, 0.55) 100%
+  );
+  border: 1px solid rgba(255, 176, 32, 0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(61, 214, 255, 0.06),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.35);
+}
+
+.july-event-banner__title {
+  font-family: var(--font-cinzel), Georgia, 'Times New Roman', serif;
+  font-weight: 700;
+  line-height: 1.22;
+  font-size: clamp(0.625rem, 1.65vw + 0.32rem, 1.375rem);
+  letter-spacing: 0.06em;
+  text-wrap: balance;
+  text-transform: none;
+  text-align: center;
+  margin: 0;
+  position: relative;
+  z-index: 2;
+  padding: 0 0.125rem 0.3rem;
+  background: linear-gradient(
+    105deg,
+    #6b5210 0%,
+    #a8841a 14%,
+    #ffe082 28%,
+    #ffb020 42%,
+    #fffef5 50%,
+    #ffb020 58%,
+    #ffe082 72%,
+    #c9a227 86%,
+    #6b5210 100%
+  );
+  background-size: 220% 100%;
+  background-position: 0% 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-stroke: 0.35px rgba(107, 82, 16, 0.45);
+  paint-order: stroke fill;
+  filter:
+    drop-shadow(0 2px 3px rgba(0, 0, 0, 0.95))
+    drop-shadow(0 1px 0 rgba(0, 0, 0, 0.65))
+    drop-shadow(0 0 10px rgba(61, 214, 255, 0.32))
+    drop-shadow(0 0 16px rgba(255, 176, 32, 0.18));
+  will-change: background-position;
+  animation: july-title-gold-shimmer var(--title-shimmer-cycle) ease-in-out infinite;
+}
+
+@media (min-width: 480px) {
+  .july-event-banner__title {
+    letter-spacing: 0.075em;
+    padding-bottom: 0.35rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .july-event-banner__title {
+    letter-spacing: 0.09em;
+    line-height: 1.18;
+    font-size: clamp(0.8125rem, 1.4vw + 0.4rem, 1.4375rem);
+  }
+}
+
+.july-event-banner__title::after {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  height: 1px;
+  width: min(100%, 20rem);
+  transform: translateX(-50%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(61, 214, 255, 0.12) 15%,
+    rgba(255, 176, 32, 0.55) 50%,
+    rgba(61, 214, 255, 0.12) 85%,
+    transparent 100%
+  );
+  opacity: 0.85;
+}
+
+.july-event-banner__subtitle {
+  font-family: var(--font-orbitron), system-ui, sans-serif;
+  font-weight: 500;
+  line-height: 1.45;
+  font-size: clamp(0.5rem, 0.95vw + 0.26rem, 0.75rem);
+  letter-spacing: 0.045em;
+  text-wrap: balance;
+  text-transform: none;
+  text-align: center;
+  margin: 0;
+  position: relative;
+  z-index: 2;
+  max-width: 36rem;
+  padding: 0 0.125rem;
+  color: #d4e8f4;
+  text-shadow:
+    0 0 10px rgba(61, 214, 255, 0.22),
+    0 1px 2px rgba(0, 0, 0, 0.85),
+    0 2px 6px rgba(0, 0, 0, 0.55);
+}
+
+.july-event-banner__subtitle-highlight {
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #ffd54f;
+  text-shadow:
+    0 0 10px rgba(255, 176, 32, 0.75),
+    0 0 18px rgba(255, 176, 32, 0.4),
+    0 1px 2px rgba(0, 0, 0, 0.85);
+}
+
+@media (min-width: 480px) {
+  .july-event-banner__subtitle {
+    letter-spacing: 0.065em;
+    margin-top: 0.0625rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .july-event-banner__subtitle {
+    letter-spacing: 0.075em;
+    font-size: clamp(0.5625rem, 0.75vw + 0.3rem, 0.8125rem);
+    line-height: 1.5;
+  }
+}
+
+@keyframes july-title-gold-shimmer {
+  0%, 72%, 100% {
+    background-position: 0% 50%;
+  }
+  36%, 40% {
+    background-position: 100% 50%;
+  }
+}
+
+/* ── Hero keyframes (transform + opacity only) ── */
+
+@keyframes july-rarity-aura {
+  0%, 23%, 27%, 48%, 52%, 73%, 77%, 100% { opacity: 0.35; }
+  4%, 54% { opacity: 0.9; }
+}
+
+@keyframes july-vortex-spin {
+  from { transform: rotate(0deg) translateZ(0); }
+  to { transform: rotate(360deg) translateZ(0); }
+}
+
+@keyframes july-vortex-spin-reverse {
+  from { transform: rotate(360deg) translateZ(0); }
+  to { transform: rotate(0deg) translateZ(0); }
+}
+
+@keyframes july-vortex-breathe {
+  0%, 100% { transform: translateY(-50%) scale(0.94) translateZ(0); opacity: 0.45; }
+  50% { transform: translateY(-50%) scale(1.04) translateZ(0); opacity: 0.65; }
+}
+
+@keyframes july-crystal-pulse {
+  0%, 23%, 27%, 48%, 52%, 73%, 77%, 100% {
+    transform: scale(0.8) translateZ(0);
+    opacity: 0.35;
+  }
+  6%, 56% {
+    transform: scale(1.35) translateZ(0);
+    opacity: 0.95;
+  }
+  16%, 66% {
+    transform: scale(1.05) translateZ(0);
+    opacity: 0.5;
+  }
+}
+
+@keyframes july-gem-legendary-flash {
+  0%, 20%, 30%, 48%, 52%, 70%, 80%, 100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  5%, 55% {
+    transform: scale(1.18);
+    opacity: 1;
+  }
+  12%, 62% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+}
+
+/* ── Reduced motion ── */
+
+@media (prefers-reduced-motion: reduce) {
+  .july-event-banner__rarity-aura,
+  .july-event-banner__bg-arcane-mist,
+  .july-event-banner__bg-energy-stream,
+  .july-event-banner__bg-glow-core,
+  .july-event-banner__bg-light-sweep,
+  .july-event-banner__bg-crown-energy,
+  .july-event-banner__bg-crown-energy--left,
+  .july-event-banner__bg-crown-energy--right,
+  .july-event-banner__bg-star,
+  .july-event-banner__bg-sparkle,
+  .july-event-banner__bg-dust,
+  .july-event-banner__bg-corner-flash,
+  .july-event-banner__vortex,
+  .july-event-banner__vortex--right,
+  .july-event-banner__vortex-outer,
+  .july-event-banner__vortex-inner,
+  .july-event-banner__vortex-arc,
+  .july-event-banner__crystal-halo,
+  .july-event-banner__emblem-gem,
+  .july-event-banner__emblem-gem--side,
+  .july-event-banner__title {
+    animation: none !important;
+  }
+}
+
+/* ── Header row layout ── */
+
+.view-header-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+.view-header-row__banner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+}
+
+.view-header-row__banner:empty {
+  display: none;
+}
+
+.view-header-row--no-banner {
+  grid-template-columns: 1fr auto;
+}
+
+@media (max-width: 639px) {
+  .view-header-row--no-banner {
+    grid-template-areas: "title cta";
+    grid-template-columns: 1fr auto;
+  }
+
+  .view-header-row {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "title cta"
+      "banner banner";
+    gap: 0.375rem 0.5rem;
+  }
+
+  .view-header-row__title { grid-area: title; }
+  .view-header-row__banner { grid-area: banner; }
+  .view-header-row__cta { grid-area: cta; }
+}
+
+@media (min-width: 640px) {
+  .view-header-row__banner {
+    padding-inline: 0.25rem;
+  }
+}
+
+/* ── Inline header variant ── */
+
+.july-event-banner--inline .july-event-banner__bg-glow-core {
+  left: 50%;
+  width: min(75%, 18rem);
+}
+
+.july-event-banner--inline .july-event-banner__bg-crown-energy--left {
+  left: 2%;
+  width: clamp(1.75rem, 8vw, 3.5rem);
+  height: clamp(1.75rem, 8vw, 3.5rem);
+}
+
+.july-event-banner--inline .july-event-banner__bg-crown-energy--right {
+  right: 2%;
+  width: clamp(1.75rem, 8vw, 3.5rem);
+  height: clamp(1.75rem, 8vw, 3.5rem);
+}
+
+.july-event-banner--inline .july-event-banner__emblem {
+  width: clamp(1.5rem, 3.8vw, 2.125rem);
+  height: clamp(1.5rem, 3.8vw, 2.125rem);
+}
+
+.july-event-banner--inline .july-event-banner__emblem-svg {
+  width: 86%;
+  height: 86%;
+}
+
+.july-event-banner--inline {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: none;
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 0;
+}
+
+.july-event-banner--inline .july-event-banner__shell {
+  max-width: none;
+  padding: 2px;
+  box-shadow:
+    0 2px 16px rgba(0, 0, 0, 0.5),
+    0 0 20px var(--july-frame-glow),
+    0 0 1px rgba(61, 214, 255, 0.4),
+    inset 0 1px 0 rgba(255, 224, 130, 0.35);
+}
+
+.july-event-banner--inline .july-event-banner__inner {
+  padding: 0.3125rem 0.4375rem;
+  min-height: 0;
+}
+
+.july-event-banner--inline .july-event-banner__corner {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+.july-event-banner--inline {
+  width: 82%;
+  height: 82%;
+}
+
+.july-event-banner--inline .july-event-banner__center {
+  flex-direction: row;
+  gap: 0.4375rem;
+  max-width: 100%;
+  padding: 0;
+  width: 100%;
+}
+
+.july-event-banner--inline .july-event-banner__copy {
+  align-items: center;
+  text-align: center;
+  width: auto;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 0.125rem;
+}
+
+.july-event-banner--inline .july-event-banner__copy::before {
+  inset: -2px -4px;
+}
+
+.july-event-banner--inline .july-event-banner__title {
+  font-size: clamp(0.5625rem, 1.05vw + 0.3rem, 0.9375rem);
+  letter-spacing: 0.045em;
+  line-height: 1.2;
+  padding-bottom: 0.2rem;
+  text-wrap: balance;
+}
+
+.july-event-banner--inline .july-event-banner__title::after {
+  width: min(100%, 14rem);
+}
+
+.july-event-banner--inline .july-event-banner__subtitle {
+  font-size: clamp(0.4375rem, 0.6vw + 0.24rem, 0.6875rem);
+  letter-spacing: 0.035em;
+  line-height: 1.35;
+  text-wrap: balance;
+  max-width: 100%;
+}
+
+@media (min-width: 640px) {
+  .july-event-banner--inline .july-event-banner__inner {
+    padding: 0.375rem 0.625rem;
+  }
+
+  .july-event-banner--inline .july-event-banner__center {
+    gap: 0.5rem;
+  }
+
+  .july-event-banner--inline .july-event-banner__title {
+    letter-spacing: 0.05em;
+  }
+
+  .july-event-banner--inline .july-event-banner__subtitle {
+    letter-spacing: 0.08em;
+    margin-top: 0.1875rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .july-event-banner--inline .july-event-banner__inner {
+    padding: 0.4375rem 0.75rem;
+  }
+
+  .july-event-banner--inline .july-event-banner__title {
+    font-size: clamp(0.6875rem, 0.9vw + 0.35rem, 1rem);
+    letter-spacing: 0.06em;
+  }
+}
+
+@media (max-width: 479px) {
+  .july-event-banner--inline .july-event-banner__emblem {
+    width: clamp(1.25rem, 4.5vw, 1.5rem);
+    height: clamp(1.25rem, 4.5vw, 1.5rem);
+  }
+
+  .july-event-banner:not(.july-event-banner--inline) .july-event-banner__emblem {
+    width: clamp(1.5rem, 5vw, 2rem);
+    height: clamp(1.5rem, 5vw, 2rem);
+  }
+
+  .july-event-banner--inline .july-event-banner__title {
+    font-size: clamp(0.5rem, 2.8vw + 0.22rem, 0.6875rem);
+    letter-spacing: 0.035em;
+    padding-bottom: 0.15rem;
+  }
+
+  .july-event-banner--inline .july-event-banner__subtitle {
+    font-size: clamp(0.4375rem, 2.2vw + 0.18rem, 0.5625rem);
+    letter-spacing: 0.03em;
+    line-height: 1.3;
+  }
+
+  .july-event-banner--inline .july-event-banner__bg-star--3,
+  .july-event-banner--inline .july-event-banner__bg-star--9,
+  .july-event-banner--inline .july-event-banner__bg-star--12,
+  .july-event-banner--inline .july-event-banner__bg-sparkle--5,
+  .july-event-banner--inline .july-event-banner__bg-sparkle--6,
+  .july-event-banner--inline .july-event-banner__bg-sparkle--7,
+  .july-event-banner--inline .july-event-banner__bg-sparkle--8 {
+    display: none;
+  }
+}
+
+@media (max-width: 359px) {
+  .july-event-banner--inline .july-event-banner__corner {
+    display: none;
+  }
+}
