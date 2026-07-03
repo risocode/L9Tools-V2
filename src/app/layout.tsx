@@ -94,6 +94,12 @@ export default function RootLayout({
         />
         <link rel="shortcut icon" href="/favicon/favicon.ico" />
         <meta name="theme-color" content="#18181b" />
+        <meta name="google-adsense-account" content="ca-pub-1482729173853463" />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1482729173853463"
+          crossOrigin="anonymous"
+        />
       </head>
       <body className="font-roboto h-full flex flex-col bg-background">
         <AdProvider>
