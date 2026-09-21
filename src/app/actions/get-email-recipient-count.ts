@@ -33,17 +33,24 @@ export async function getEmailRecipientCount(
     return { count: 0, error: error.message };
   }
 
-  const filtered = (profiles ?? []).filter((p) => {
-    if (!p.email) return false;
-    if (audience === 'all') return true;
-    const effective = getEffectiveSubscriptionTier(
-      p.subscription_tier as 'free' | 'pro' | 'lifetime' | null,
-      p.subscription_expires_at,
-      p.is_admin,
-      NO_CAMPAIGN
-    );
-    return effective === audience;
-  });
+    const emails = (profiles ?? [])
+    .filter((p) => {
+      if (!p.email) return false;
+      if (audience === 'all') return true;
 
-  return { count: filtered.length, error: null };
+      const effective = getEffectiveSubscriptionTier(
+        p.subscription_tier as 'free' | 'pro' | 'lifetime' | null,
+        p.subscription_expires_at,
+        p.is_admin,
+        NO_CAMPAIGN
+      );
+
+      return effective === audience;
+    })
+    .map((p) => p.email!.trim().toLowerCase())
+    .filter(Boolean);
+
+  const uniqueEmails = [...new Set(emails)];
+
+  return { count: uniqueEmails.length, error: null };
 }
