@@ -32,10 +32,9 @@ async function fetchRecipientEmails(audience: EmailAudience): Promise<string[]> 
   }
 
   const { data: profiles, error } = await supabaseAdmin
-    .from('profiles')
-    .select('email, subscription_tier, subscription_expires_at, is_admin, notifications_enabled')
-    .not('email', 'is', null)
-    .eq('notifications_enabled', true);
+  .from('profiles')
+  .select('email, subscription_tier, subscription_expires_at, is_admin')
+  .not('email', 'is', null);
 
   if (error) {
     throw new Error(`Failed to fetch users: ${error.message}`);
