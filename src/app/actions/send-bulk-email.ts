@@ -40,19 +40,24 @@ async function fetchRecipientEmails(audience: EmailAudience): Promise<string[]> 
     throw new Error(`Failed to fetch users: ${error.message}`);
   }
 
-  return (profiles ?? [])
+    const emails = (profiles ?? [])
     .filter((p) => {
       if (!p.email) return false;
       if (audience === 'all') return true;
+
       const effective = getEffectiveSubscriptionTier(
         p.subscription_tier as 'free' | 'pro' | 'lifetime' | null,
         p.subscription_expires_at,
         p.is_admin,
         NO_CAMPAIGN
       );
+
       return effective === audience;
     })
-    .map((p) => p.email as string);
+    .map((p) => p.email!.trim().toLowerCase())
+    .filter(Boolean);
+
+  return [...new Set(emails)];
 }
 
 export async function getBulkEmailRecipients(audience: EmailAudience = 'all') {
